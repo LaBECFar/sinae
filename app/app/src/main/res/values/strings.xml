@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SINAE</string>
+    <string name="btn_iniciar_extracao">Iniciar Extração de Frames</string>
+</resources>

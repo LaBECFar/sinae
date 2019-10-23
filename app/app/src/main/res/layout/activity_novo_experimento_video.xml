@@ -6,10 +6,12 @@
     android:orientation="vertical"
     tools:context=".NovoExperimentoVideoActivity">
 
+
     <VideoView
-        android:layout_height="wrap_content"
+        android:id="@+id/videoview"
         android:layout_width="fill_parent"
-        android:id="@+id/videoview" />
+        android:layout_height="wrap_content" />
+
 
     <ScrollView android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,14 +20,175 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:padding="10dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="2">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tempo"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txt_tempo"
+                        android:textAlignment="center"
+                        android:text="00:00s" />
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_selecionar_tempo"
+                    style="@style/Base.Widget.AppCompat.Button.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Selecionar Tempo"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <!-- Q1 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:text="Q1" />
 
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:hint="@string/inicio"
+                    android:id="@+id/q1_inicio"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:hint="@string/fim"
+                    android:id="@+id/q1_fim"/>
+
+            </LinearLayout>
+
+            <!-- Q2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:text="Q2" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:hint="@string/inicio"
+                    android:id="@+id/q2_inicio"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="12dp"
+                    android:hint="@string/fim"
+                    android:id="@+id/q2_fim"/>
+
+            </LinearLayout>
+
+
+            <!-- Q3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:text="Q3" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/inicio"
+                    android:textSize="12dp"
+                    android:id="@+id/q3_inicio"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/fim"
+                    android:textSize="12dp"
+                    android:id="@+id/q3_fim"/>
+
+            </LinearLayout>
+
+            <!-- Q4 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:text="Q4" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/inicio"
+                    android:textSize="12dp"
+                    android:id="@+id/q4_inicio"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/fim"
+                    android:textSize="12dp"
+                    android:id="@+id/q4_fim"/>
 
             </LinearLayout>
 

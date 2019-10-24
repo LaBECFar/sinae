@@ -9,7 +9,7 @@
 
     <VideoView
         android:id="@+id/videoview"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 
@@ -52,7 +52,6 @@
 
                 <Button
                     android:id="@+id/btn_selecionar_tempo"
-                    style="@style/Base.Widget.AppCompat.Button.Colored"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Selecionar Tempo"
@@ -191,6 +190,7 @@
                     android:id="@+id/q4_fim"/>
 
             </LinearLayout>
+
 
             <Button
                 android:id="@+id/btn_iniciar_extracao"

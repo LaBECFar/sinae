@@ -1,21 +1,22 @@
 package br.com.webgenium.sinae.room
 
-import androidx.annotation.NonNull
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity
-data class Experimento (
+class Experimento : Serializable{
 
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var id: Int = 0
 
-    var codigo: String,
+    var codigo: String = ""
 
-    var tempo: String?,
+    var tempo: String? = ""
 
-    var label: String?,
+    var label: String? = ""
 
     var fps: Int = 1
-)
+
+    var quadrantes: List<String> = listOf()
+}

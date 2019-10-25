@@ -10,8 +10,6 @@ import br.com.webgenium.sinae.room.Experimento
 import br.com.webgenium.sinae.room.ExperimentoDao
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import androidx.recyclerview.widget.RecyclerView
-
 import br.com.webgenium.sinae.adapter.ExperimentoAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,9 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 class MainActivity : AppCompatActivity() {
 
-    var mRecyclerView: RecyclerView? = null
     private var mAdapter: ExperimentoAdapter? = null
-
 
     private val db: AppDatabase by lazy {
         AppDatabase(this)
@@ -30,25 +26,29 @@ class MainActivity : AppCompatActivity() {
     private val dao: ExperimentoDao by lazy {
         db.experimentoDao()
     }
-    private var experimentos : List<Experimento>? = listOf()
+    private var experimentos : List<Experimento> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //setTitle("Experimentos")
+
         btn_novo_experimento.setOnClickListener {
             novoExperimento()
         }
 
+        setupRecycler()
+
         lifecycleScope.launch {
             dao?.all().collect { list ->
                 experimentos = list
+                mAdapter?.changeExperimentos(experimentos)
+
             }
         }
 
-        setupRecycler()
     }
-
 
     private fun novoExperimento(){
 
@@ -57,17 +57,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecycler() {
-        // Configurando o gerenciador de layout para ser uma lista.
-        val layoutManager = LinearLayoutManager(this)
-        mRecyclerView?.setLayoutManager(layoutManager)
+        this.mAdapter = ExperimentoAdapter(listOf())
 
-        // Adiciona o adapter que irá anexar os objetos à lista.
-        // Está sendo criado com lista vazia, pois será preenchida posteriormente.
-        mAdapter = ExperimentoAdapter(ArrayList(0))
-        mRecyclerView?.setAdapter(mAdapter)
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        recyclerview.layoutManager = layoutManager
+        recyclerview.adapter = this.mAdapter
 
         // Configurando um dividr entre linhas, para uma melhor visualização.
-        mRecyclerView?.addItemDecoration(
+        recyclerview.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         )
     }

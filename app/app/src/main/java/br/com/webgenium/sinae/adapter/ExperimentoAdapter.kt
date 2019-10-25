@@ -18,18 +18,18 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
     }
 
     override fun onBindViewHolder(holder: ExperimentoHolder, position: Int) {
-        holder.codigo.text = mExperimentos.get(index = position).codigo
+        holder.codigo.text = "Experimento " + mExperimentos.get(position).codigo
     }
 
     override fun getItemCount(): Int {
         return mExperimentos.size
     }
 
+    fun changeExperimentos(experimentos: List<Experimento>){
+        this.mExperimentos = experimentos
+        notifyDataSetChanged()
+    }
 
-
-    /*fun updateList(experimento: Experimento) {
-        insertItem(experimento)
-    }*/
 
     // Método responsável por inserir um novo usuário na lista
     //e notificar que há novos itens.

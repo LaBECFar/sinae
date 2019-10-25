@@ -9,9 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NovoExperimentoActivity"></activity>
-        <activity android:name=".NovoExperimentoVideoActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".NovoExperimentoActivity" android:label="Novo Experimento"></activity>
+        <activity android:name=".NovoExperimentoVideoActivity" android:label="Novo Experimento" />
+        <activity android:name=".MainActivity" android:label="Experimentos">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

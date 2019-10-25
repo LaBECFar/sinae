@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(
     entities = [Experimento::class, ImagemExperimento::class],
-    version = 1
+    version = 2
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun experimentoDao(): ExperimentoDao
 
@@ -21,6 +23,6 @@ abstract class AppDatabase : RoomDatabase(){
             instance ?: buildDatabase(context).also { instance = it}
         }
 
-        private fun buildDatabase(context: Context) = Room.databaseBuilder(context, AppDatabase::class.java, "sinae.db").build()
+        private fun buildDatabase(context: Context) = Room.databaseBuilder(context, AppDatabase::class.java, "sinae.db").fallbackToDestructiveMigration().build()
     }
 }

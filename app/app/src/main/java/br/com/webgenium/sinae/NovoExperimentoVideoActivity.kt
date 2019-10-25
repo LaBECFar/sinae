@@ -6,7 +6,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import br.com.webgenium.sinae.room.AppDatabase
+import br.com.webgenium.sinae.room.Experimento
+import br.com.webgenium.sinae.room.ExperimentoDao
 import kotlinx.android.synthetic.main.activity_novo_experimento_video.*
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 
@@ -15,21 +20,30 @@ class NovoExperimentoVideoActivity : AppCompatActivity() {
 
     private var videoUri : Uri? = null
     private var timerHandler: Handler? = null
-    private var timerInterval: Long = 1000
+    private var timerInterval: Long = 500
+
+    private var experimento: Experimento? = null
+
+    private val db: AppDatabase by lazy {
+        AppDatabase(this)
+    }
+
+    private val dao: ExperimentoDao by lazy {
+        db.experimentoDao()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_novo_experimento_video)
 
+        var intent = getIntent()
+
+        this.experimento = intent.getSerializableExtra("experimento") as Experimento
+
         timerHandler = Handler()
 
-        val codigo = intent.getStringExtra("codigo")
-        val tempo = intent.getStringExtra("tempo")
-        val label = intent.getStringExtra("label")
-        val fps = intent.getStringExtra("fps")
         val video = intent.getStringExtra("video")
-
         this.videoUri = Uri.parse( video )
         videoview.setVideoURI(this.videoUri)
 
@@ -50,39 +64,35 @@ class NovoExperimentoVideoActivity : AppCompatActivity() {
         btn_selecionar_tempo.setOnClickListener {
             val currentTime = timeToString(videoview.currentPosition.toLong())
 
-            if(q1_inicio.text.isEmpty()) {
-                q1_inicio.setText(currentTime)
-            } else if(q1_fim.text.isEmpty()) {
-                q1_fim.setText(currentTime)
-            } else if(q2_inicio.text.isEmpty()) {
-                q2_inicio.setText(currentTime)
-            } else if(q2_fim.text.isEmpty()) {
-                q2_fim.setText(currentTime)
-            } else if(q3_inicio.text.isEmpty()) {
-                q3_inicio.setText(currentTime)
-            } else if(q3_fim.text.isEmpty()) {
-                q3_fim.setText(currentTime)
-            } else if(q4_inicio.text.isEmpty()) {
-                q4_inicio.setText(currentTime)
-            } else if(q4_fim.text.isEmpty()) {
-                q4_fim.setText(currentTime)
+            when {
+                q1_inicio.text.isEmpty() -> q1_inicio.setText(currentTime)
+                q1_fim.text.isEmpty() -> q1_fim.setText(currentTime)
+                q2_inicio.text.isEmpty() -> q2_inicio.setText(currentTime)
+                q2_fim.text.isEmpty() -> q2_fim.setText(currentTime)
+                q3_inicio.text.isEmpty() -> q3_inicio.setText(currentTime)
+                q3_fim.text.isEmpty() -> q3_fim.setText(currentTime)
+                q4_inicio.text.isEmpty() -> q4_inicio.setText(currentTime)
+                q4_fim.text.isEmpty() -> q4_fim.setText(currentTime)
             }
         }
 
         btn_iniciar_extracao.setOnClickListener {
-            val intent = Intent(this, NovoExperimentoVideoActivity::class.java)
+            var intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-            intent.putExtra("q1_inicio", stringToTime(q1_inicio.text.toString()) )
-            intent.putExtra("q1_fim", stringToTime(q1_fim.text.toString()) )
+            val q1 = q1_inicio.text.toString() + '-' + q1_fim.text.toString()
+            val q2 = q2_inicio.text.toString() + '-' + q2_fim.text.toString()
+            val q3 = q3_inicio.text.toString() + '-' + q3_fim.text.toString()
+            val q4 = q4_inicio.text.toString() + '-' + q4_fim.text.toString()
 
-            intent.putExtra("q2_inicio", stringToTime(q2_inicio.text.toString()) )
-            intent.putExtra("q2_fim", stringToTime(q2_fim.text.toString()) )
+            experimento?.quadrantes = listOf(q1, q2, q3, q4)
 
-            intent.putExtra("q3_inicio", stringToTime(q3_inicio.text.toString()) )
-            intent.putExtra("q3_fim", stringToTime(q3_fim.text.toString()) )
 
-            intent.putExtra("q4_inicio", stringToTime(q4_inicio.text.toString()) )
-            intent.putExtra("q4_fim", stringToTime(q4_fim.text.toString()) )
+            lifecycleScope.launch {
+                if (experimento != null){
+                    dao?.insert(experimento!!)
+                }
+            }
 
             startActivity( intent )
         }

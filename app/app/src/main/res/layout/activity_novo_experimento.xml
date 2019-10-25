@@ -15,56 +15,70 @@
 
 
         <!-- Código do Experimento -->
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Código do Experimento" />
+            android:hint="Código do Experimento">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/et_codigo"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textVisiblePassword"
+                android:id="@+id/et_codigo"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
 
         <!-- Tempo do Experimento -->
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tempo do Experimento" />
+            android:hint="Tempo do Experimento">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/et_tempo"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textVisiblePassword"
+                android:id="@+id/et_tempo"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
 
         <!-- Label -->
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Label" />
+            android:hint="Label">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/et_label"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textVisiblePassword"
+                android:id="@+id/et_label"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
 
         <!-- Frames por segundo -->
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Frames por segundo" />
+            android:hint="Frames por segundo">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/et_fps"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:id="@+id/et_fps"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
 
+
+        <!-- Continuar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import br.com.webgenium.sinae.room.Experimento
 import kotlinx.android.synthetic.main.activity_novo_experimento.*
 import java.io.IOException
 
@@ -48,13 +49,15 @@ class NovoExperimentoActivity : AppCompatActivity() {
 
                         val videoURI = data.data
 
+                        var experimento = Experimento()
+                        experimento.codigo = et_codigo.text.toString()
+                        experimento.tempo = et_tempo.text.toString()
+                        experimento.fps = et_fps.text.toString().toInt()
+                        experimento.label = et_label.text.toString()
+
                         val intent = Intent(this, NovoExperimentoVideoActivity::class.java)
-                        //intent.data = videoURI
                         intent.putExtra("video", videoURI.toString())
-                        intent.putExtra("codigo", et_codigo.text)
-                        intent.putExtra("tempo", et_tempo.text)
-                        intent.putExtra("label", et_label.text)
-                        intent.putExtra("fps", et_fps.text)
+                        intent.putExtra("experimento", experimento)
                         startActivity( intent )
 
                         /*

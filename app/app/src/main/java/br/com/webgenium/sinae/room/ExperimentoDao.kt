@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExperimentoDao {
-    @Query("SELECT * FROM Experimento")
+    @Query("SELECT * FROM Experimento ORDER BY id DESC")
     fun all(): Flow<List<Experimento>>
 
 

@@ -3,10 +3,10 @@ package br.com.webgenium.sinae
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import br.com.webgenium.sinae.room.Experimento
 import kotlinx.android.synthetic.main.activity_novo_experimento.*
-import java.io.IOException
+
 
 class NovoExperimentoActivity : AppCompatActivity() {
 
@@ -15,63 +15,29 @@ class NovoExperimentoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_novo_experimento)
 
         btn_continuar.setOnClickListener {
-            selecionarVideo()
+            var experimento = Experimento()
+            experimento.codigo = et_codigo.text.toString()
+
+            val intent = Intent(this, NovoExperimentoOpcoesActivity::class.java)
+            intent.putExtra("experimento", experimento)
+            startActivity( intent )
         }
     }
 
-    // Intents possiveis usados nessa activity
-    companion object {
-        private const val SELECT_VIDEO_REQUEST = 1 // selecionar vídeo da galeria
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+
+        savedInstanceState.putString("codigo", et_codigo.text.toString())
+        Log.d("teste", "Saindo: "  + savedInstanceState.getString("codigo"))
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        val codigo = savedInstanceState.getString("codigo") as String
+        et_codigo.setText(codigo)
+        Log.d("teste", "Restaudado: " + codigo)
     }
 
 
-    // Abre uma tela para o usuário selecionar o video desejado
-    private fun selecionarVideo(){
-
-        val galleryIntent = Intent(
-            Intent.ACTION_PICK,
-            android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        )
-
-        startActivityForResult(galleryIntent, SELECT_VIDEO_REQUEST)
-    }
-
-
-    // Retorno/callback dos Intents solicitados nessa activity
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-
-        if (requestCode == SELECT_VIDEO_REQUEST && resultCode == RESULT_OK) {
-            if (data != null) {
-                try {
-                    if (data.data != null) {
-
-                        val videoURI = data.data
-
-                        var experimento = Experimento()
-                        experimento.codigo = et_codigo.text.toString()
-                        experimento.tempo = et_tempo.text.toString()
-                        experimento.fps = et_fps.text.toString().toInt()
-                        experimento.label = et_label.text.toString()
-
-                        val intent = Intent(this, NovoExperimentoVideoActivity::class.java)
-                        intent.putExtra("video", videoURI.toString())
-                        intent.putExtra("experimento", experimento)
-                        startActivity( intent )
-
-                        /*
-                        // converte video em frame
-                        val mMMR = MediaMetadataRetriever()
-                        mMMR.setDataSource(this, videoURI)
-                        iv.setImageBitmap( mMMR.frameAtTime )
-                        frame2.setImageBitmap(mMMR.getFrameAtTime(2000000))
-                        */
-                    }
-                } catch (e: IOException){
-                    Toast.makeText(this, "Erro ao selecionar vídeo!", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
 }

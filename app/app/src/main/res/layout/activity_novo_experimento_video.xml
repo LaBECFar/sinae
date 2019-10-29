@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="15dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -62,7 +62,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -76,7 +77,10 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
                     android:textSize="12dp"
                     android:inputType="datetime"
                     android:hint="@string/inicio"
@@ -85,9 +89,12 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
-                    android:inputType="datetime"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
                     android:textSize="12dp"
+                    android:inputType="datetime"
                     android:hint="@string/fim"
                     android:id="@+id/q1_fim"/>
 
@@ -97,7 +104,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -111,8 +119,10 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
-                    android:inputType="datetime"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
                     android:textSize="12dp"
                     android:hint="@string/inicio"
                     android:id="@+id/q2_inicio"/>
@@ -120,9 +130,12 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
-                    android:inputType="datetime"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
                     android:textSize="12dp"
+                    android:inputType="datetime"
                     android:hint="@string/fim"
                     android:id="@+id/q2_fim"/>
 
@@ -133,7 +146,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -147,20 +161,26 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
-                    android:hint="@string/inicio"
-                    android:inputType="datetime"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
                     android:textSize="12dp"
-                    android:id="@+id/q3_inicio"/>
+                    android:inputType="datetime"
+                    android:id="@+id/q3_inicio"
+                    android:hint="@string/inicio" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
-                    android:hint="@string/fim"
-                    android:inputType="datetime"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
                     android:textSize="12dp"
-                    android:id="@+id/q3_fim"/>
+                    android:inputType="datetime"
+                    android:id="@+id/q3_fim"
+                    android:hint="@string/fim" />
 
             </LinearLayout>
 
@@ -168,7 +188,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -182,19 +203,25 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
+                    android:textSize="12dp"
                     android:hint="@string/inicio"
                     android:inputType="datetime"
-                    android:textSize="12dp"
                     android:id="@+id/q4_inicio"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="#f2f2f2"
                     android:layout_weight="1"
+                    android:padding="8dp"
+                    android:layout_marginRight="4dp"
+                    android:textSize="12dp"
                     android:hint="@string/fim"
                     android:inputType="datetime"
-                    android:textSize="12dp"
                     android:id="@+id/q4_fim"/>
 
             </LinearLayout>

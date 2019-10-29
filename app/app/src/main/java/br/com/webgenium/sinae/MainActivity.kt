@@ -32,8 +32,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //setTitle("Experimentos")
-
         btn_novo_experimento.setOnClickListener {
             novoExperimento()
         }
@@ -44,15 +42,21 @@ class MainActivity : AppCompatActivity() {
             dao?.all().collect { list ->
                 experimentos = list
                 mAdapter?.changeExperimentos(experimentos)
-
             }
         }
 
     }
 
-    private fun novoExperimento(){
 
+    private fun novoExperimento(){
         val intent = Intent(this, NovoExperimentoActivity::class.java)
+        startActivity( intent )
+    }
+
+
+    private fun verExperimento(id: String){
+        val intent = Intent(this, ExperimentoActivity::class.java)
+        intent.putExtra("codigo", id)
         startActivity( intent )
     }
 
@@ -61,6 +65,10 @@ class MainActivity : AppCompatActivity() {
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        this.mAdapter?.onItemClick = { experimento ->
+            verExperimento(experimento.codigo)
+        }
 
         recyclerview.layoutManager = layoutManager
         recyclerview.adapter = this.mAdapter

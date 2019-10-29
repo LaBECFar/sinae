@@ -9,12 +9,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NovoExperimentoActivity" android:label="Novo Experimento"></activity>
-        <activity android:name=".NovoExperimentoVideoActivity" android:label="Novo Experimento" />
-        <activity android:name=".MainActivity" android:label="Experimentos">
+
+        <activity
+            android:parentActivityName=".MainActivity"
+            android:name=".ExperimentoActivity"
+            android:label="Experimento" />
+
+        <activity
+            android:parentActivityName=".NovoExperimentoOpcoesActivity"
+            android:launchMode="singleTop"
+            android:name=".NovoExperimentoVideoActivity"
+            android:label="Novo Experimento" />
+
+        <activity
+            android:parentActivityName=".NovoExperimentoActivity"
+            android:launchMode="singleTop"
+            android:name=".NovoExperimentoOpcoesActivity"
+            android:label="Opções do Experimento" />
+
+        <activity
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop"
+            android:name=".NovoExperimentoActivity"
+            android:label="Novo Experimento"/>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="Experimentos"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

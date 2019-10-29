@@ -1,29 +1,42 @@
 package br.com.webgenium.sinae.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.room.Experimento
 
 
-class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter<ExperimentoHolder>() {
+class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter<ExperimentoAdapter.ViewHolder>() {
 
     private var mExperimentos: List<Experimento> = experimentos
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExperimentoHolder {
-        return ExperimentoHolder(
+    var onItemClick: ( (Experimento) -> Unit )? = null
+
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.experimento_listitem, parent, false)
         )
     }
 
-    override fun onBindViewHolder(holder: ExperimentoHolder, position: Int) {
-        holder.codigo.text = "Experimento " + mExperimentos.get(position).codigo
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val experimento = mExperimentos[position]
+
+        holder.titulo.text = "Experimento " + mExperimentos.get(position).codigo
+        holder.label.text = mExperimentos.get(position).label
+        holder.tempo.text = mExperimentos.get(position).tempo
     }
+
 
     override fun getItemCount(): Int {
         return mExperimentos.size
     }
+
 
     fun changeExperimentos(experimentos: List<Experimento>){
         this.mExperimentos = experimentos
@@ -31,25 +44,17 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
     }
 
 
-    // Método responsável por inserir um novo usuário na lista
-    //e notificar que há novos itens.
-    /*private fun insertItem(experimento: Experimento) {
-        mExperimentos += experimento
-        notifyItemInserted(itemCount)
-    }*/
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    // Método responsável por atualizar um usuário já existente na lista.
-    /*private fun updateItem(position: Int) {
-        val experimento = mExperimentos.get(position)
-        experimento.incrementAge()
-        notifyItemChanged(position)
-    }*/
+        var titulo: TextView = itemView.findViewById(R.id.titulo)
+        var label: TextView = itemView.findViewById(R.id.label)
+        var tempo: TextView = itemView.findViewById(R.id.tempo)
 
-    // Método responsável por remover um usuário da lista.
-    /*private fun removerItem(position: Int) {
-        mExperimentos -= mExperimentos.get(position)
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, mExperimentos.size)
-    }*/
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(mExperimentos[adapterPosition])
+            }
+        }
 
+    }
 }

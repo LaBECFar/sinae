@@ -1,8 +1,6 @@
 package br.com.webgenium.sinae.room
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(foreignKeys = [
     ForeignKey(
@@ -11,13 +9,14 @@ import androidx.room.PrimaryKey
         childColumns = ["experimentoId"]
     )]
 )
-data class ImagemExperimento (
+class ImagemExperimento {
     @PrimaryKey(autoGenerate = true)
-    var id: Long,
+    var id: Long = 0
 
-    var experimentoId: Long,
+    @ColumnInfo(index = true)
+    var experimentoId: Long = 0
 
-    var frame: String,
+    var frame: String = ""
 
     var uploaded: Boolean = false
-)
+}

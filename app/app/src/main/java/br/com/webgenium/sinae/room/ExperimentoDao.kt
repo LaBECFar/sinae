@@ -10,7 +10,7 @@ interface ExperimentoDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(vararg experimento: Experimento)
+    suspend fun insert(experimento: Experimento): Long
 
 
     @Update
@@ -22,13 +22,16 @@ interface ExperimentoDao {
 
 
     @Query("SELECT * FROM Experimento WHERE id = :experimentoId LIMIT 1")
-    fun getById(experimentoId: Int): Flow<Experimento>?
+    fun getById(experimentoId: Long): Flow<Experimento>?
 
 
     @Query("SELECT * FROM Experimento WHERE codigo = :experimentoCodigo LIMIT 1")
-    fun getByCodigo(experimentoCodigo: Int): Flow<Experimento>?
+    fun getByCodigo(experimentoCodigo: Long): Flow<Experimento>?
 
 
     @Query("SELECT * FROM ImagemExperimento WHERE experimentoId = :experimentoId")
-    suspend fun getImagesFromExperimento(experimentoId: Int): List<ImagemExperimento>
+    fun getFramesFromExperimento(experimentoId: Long): Flow<List<ImagemExperimento>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertImage(vararg image: ImagemExperimento)
 }

@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         setupRecycler()
 
         lifecycleScope.launch {
-            dao?.all().collect { list ->
+            dao.all().collect { list ->
                 experimentos = list
                 mAdapter?.changeExperimentos(experimentos)
             }
@@ -54,9 +54,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun verExperimento(id: String){
+    private fun verExperimento(id: Long){
         val intent = Intent(this, ExperimentoActivity::class.java)
-        intent.putExtra("codigo", id)
+        intent.putExtra("experimentoId", id)
         startActivity( intent )
     }
 
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
         this.mAdapter?.onItemClick = { experimento ->
-            verExperimento(experimento.codigo)
+            verExperimento(experimento.id)
         }
 
         recyclerview.layoutManager = layoutManager

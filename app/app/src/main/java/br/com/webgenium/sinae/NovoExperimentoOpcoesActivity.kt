@@ -21,7 +21,14 @@ class NovoExperimentoOpcoesActivity : AppCompatActivity() {
         this.experimento = intent.getSerializableExtra("experimento") as Experimento
 
         btn_continuar.setOnClickListener {
-            selecionarVideo()
+            experimento?.tempo = et_tempo.text.toString()
+            experimento?.fps = et_fps.text.toString().toInt()
+            experimento?.label = et_label.text.toString()
+
+            val intent = Intent(this, NovoExperimentoVideoActivity::class.java)
+            //intent.putExtra("video", videoURI.toString())
+            intent.putExtra("experimento", experimento)
+            startActivity( intent )
         }
     }
 
@@ -63,13 +70,6 @@ class NovoExperimentoOpcoesActivity : AppCompatActivity() {
                         intent.putExtra("experimento", experimento)
                         startActivity( intent )
 
-                        /*
-                        // converte video em frame
-                        val mMMR = MediaMetadataRetriever()
-                        mMMR.setDataSource(this, videoURI)
-                        iv.setImageBitmap( mMMR.frameAtTime )
-                        frame2.setImageBitmap(mMMR.getFrameAtTime(2000000))
-                        */
                     }
                 } catch (e: IOException){
                     Toast.makeText(this, "Erro ao selecionar vídeo!", Toast.LENGTH_SHORT).show()

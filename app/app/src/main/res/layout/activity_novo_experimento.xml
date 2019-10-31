@@ -19,17 +19,19 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14dp"
-            android:text="Cadastrar o experimento no sistema antes de iniciar"
+            android:textSize="14sp"
+            android:text="@string/cadastre_no_sistema"
             android:layout_marginBottom="20dp"/>
 
 
+        <!-- Código -->
         <TextView
+            android:labelFor="@id/et_codigo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="12dp"
-            android:text="Código do Experimento" />
+            android:textSize="12sp"
+            android:text="@string/codigo_experimento" />
 
         <EditText
             android:layout_width="match_parent"
@@ -39,8 +41,35 @@
             android:padding="10dp"
             android:layout_marginTop="4dp"
             android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/ic_search_black_24dp"
-            style="@style/Widget.AppCompat.EditText" />
+            android:drawableStart="@drawable/ic_search_black_24dp"
+            style="@style/Widget.AppCompat.EditText"
+            android:importantForAutofill="no"
+            android:inputType="number" />
+
+
+
+        <!-- Label -->
+        <TextView
+            android:labelFor="@id/et_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:text="@string/label"
+            android:layout_marginTop="10dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_label"
+            android:background="#EEE"
+            android:padding="10dp"
+            android:layout_marginTop="3dp"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_label_black_24dp"
+            style="@style/Widget.AppCompat.EditText"
+            android:importantForAutofill="no"
+            android:inputType="text" />
 
     </LinearLayout>
 
@@ -50,8 +79,8 @@
         android:layout_height="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         style="@style/Widget.MaterialComponents.Button"
-        android:text="INICIAR"
-        android:textSize="14dp"
+        android:text="@string/btn_iniciar"
+        android:textSize="14sp"
         android:id="@+id/btn_continuar"/>
 
 

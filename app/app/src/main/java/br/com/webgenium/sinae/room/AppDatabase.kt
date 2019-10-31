@@ -7,12 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Experimento::class, ImagemExperimento::class],
-    version = 4
+    entities = [Experimento::class, ImagemExperimento::class, TesteExperimento::class],
+    version = 5
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){
-    abstract fun experimentoDao(): ExperimentoDao
+    abstract fun dao(): AppDao
 
     // singleton
     companion object {

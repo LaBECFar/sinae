@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="15dp"
-    tools:context=".NovoExperimentoOpcoesActivity">
+    tools:context=".NovoTesteActivity">
 
 
     <LinearLayout
@@ -19,8 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="12dp"
-            android:text="Tempo do Experimento" />
+            android:textSize="12sp"
+            android:text="@string/tempo_experimento" />
 
         <EditText
             android:layout_width="match_parent"
@@ -30,29 +30,10 @@
             android:padding="10dp"
             android:layout_marginTop="3dp"
             android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/ic_access_time_black_24dp"
-            style="@style/Widget.AppCompat.EditText" />
-
-
-        <!-- Label -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="12dp"
-            android:text="Label"
-            android:layout_marginTop="10dp" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/et_label"
-            android:background="#EEE"
-            android:padding="10dp"
-            android:layout_marginTop="3dp"
-            android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/ic_label_black_24dp"
-            style="@style/Widget.AppCompat.EditText" />
+            android:drawableStart="@drawable/ic_access_time_black_24dp"
+            style="@style/Widget.AppCompat.EditText"
+            android:importantForAutofill="no"
+            android:inputType="text" />
 
 
         <!-- Frames por segundo -->
@@ -60,8 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="12dp"
-            android:text="Frames por Segundo"
+            android:textSize="12sp"
+            android:text="@string/fps"
             android:layout_marginTop="10dp" />
 
         <EditText
@@ -72,8 +53,10 @@
             android:padding="10dp"
             android:layout_marginTop="3dp"
             android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/ic_local_movies_black_24dp"
-            style="@style/Widget.AppCompat.EditText" />
+            android:drawableStart="@drawable/ic_local_movies_black_24dp"
+            style="@style/Widget.AppCompat.EditText"
+            android:importantForAutofill="no"
+            android:inputType="number" />
 
 
     </LinearLayout>
@@ -89,16 +72,16 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Continue para selecionar o vídeo do experimento"
-            android:textSize="12dp" />
+            android:text="@string/continue_video_teste"
+            android:textSize="12sp" />
 
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="55dp"
             style="@style/Widget.MaterialComponents.Button"
-            android:text="INICIAR"
-            android:textSize="14dp"
+            android:text="@string/btn_iniciar"
+            android:textSize="14sp"
             android:id="@+id/btn_continuar"/>
 
     </LinearLayout>

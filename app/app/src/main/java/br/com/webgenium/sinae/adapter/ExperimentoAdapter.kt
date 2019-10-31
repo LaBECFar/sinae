@@ -29,7 +29,7 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
 
         holder.titulo.text = "Experimento " + mExperimentos.get(position).codigo
         holder.label.text = mExperimentos.get(position).label
-        holder.tempo.text = mExperimentos.get(position).tempo
+        //holder.tempo.text = mExperimentos.get(position).tempo
     }
 
 
@@ -48,7 +48,7 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
 
         var titulo: TextView = itemView.findViewById(R.id.titulo)
         var label: TextView = itemView.findViewById(R.id.label)
-        var tempo: TextView = itemView.findViewById(R.id.tempo)
+        //var tempo: TextView = itemView.findViewById(R.id.tempo)
 
         init {
             itemView.setOnClickListener {

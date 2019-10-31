@@ -6,7 +6,7 @@ import androidx.room.*
     ForeignKey(
         entity = Experimento::class,
         parentColumns = ["id"],
-        childColumns = ["experimentoId"]
+        childColumns = ["testeId"]
     )]
 )
 class ImagemExperimento {
@@ -14,7 +14,7 @@ class ImagemExperimento {
     var id: Long = 0
 
     @ColumnInfo(index = true)
-    var experimentoId: Long = 0
+    var testeId: Long = 0
 
     var frame: String = ""
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="br.com.webgenium.sinae">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -11,30 +12,31 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:parentActivityName=".MainActivity"
             android:name=".ExperimentoActivity"
-            android:label="Experimento" />
+            android:label="Experimento"
+            android:parentActivityName=".MainActivity" />
 
         <activity
-            android:parentActivityName=".NovoExperimentoOpcoesActivity"
+            android:name=".NovoTesteVideoActivity"
+            android:label="Vídeo do Teste"
             android:launchMode="singleTop"
-            android:name=".NovoExperimentoVideoActivity"
-            android:label="Novo Experimento" />
+            android:parentActivityName=".NovoTesteActivity" />
 
         <activity
-            android:parentActivityName=".NovoExperimentoActivity"
+            android:name=".NovoTesteActivity"
+            android:label="Novo Teste"
             android:launchMode="singleTop"
-            android:name=".NovoExperimentoOpcoesActivity"
-            android:label="Opções do Experimento" />
+            android:parentActivityName=".ExperimentoActivity" />
 
         <activity
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTop"
             android:name=".NovoExperimentoActivity"
-            android:label="Novo Experimento"/>
+            android:label="Novo Experimento"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity" />
 
         <activity
             android:name=".MainActivity"

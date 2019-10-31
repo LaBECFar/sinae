@@ -1,6 +1,5 @@
 package br.com.webgenium.sinae
 
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
@@ -16,10 +15,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import br.com.webgenium.sinae.room.AppDatabase
-import br.com.webgenium.sinae.room.Experimento
-import br.com.webgenium.sinae.room.ExperimentoDao
-import br.com.webgenium.sinae.room.ImagemExperimento
+import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_novo_experimento_video.*
 import kotlinx.android.synthetic.main.include_progress_overlay.*
 import java.io.File
@@ -28,29 +24,27 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
+import java.lang.Exception
 
 
-class NovoExperimentoVideoActivity : AppCompatActivity() {
+class NovoTesteVideoActivity : AppCompatActivity() {
 
     private var videoUri : Uri? = null
     private var timerHandler: Handler = Handler()
     private var timerInterval: Long = 500
-    private var experimento: Experimento? = null
 
-    private val db: AppDatabase by lazy {
-        AppDatabase(this)
-    }
+    private var testeExperimento: TesteExperimento? = null
 
-    private val dao: ExperimentoDao by lazy {
-        db.experimentoDao()
-    }
+    private val db: AppDatabase by lazy { AppDatabase(this) }
+    private val dao: AppDao by lazy { db.dao() }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_novo_experimento_video)
 
-        experimento = intent.getSerializableExtra("experimento") as Experimento
+        testeExperimento = intent.getSerializableExtra("testeExperimento") as TesteExperimento
 
         selecionarVideo()
 
@@ -67,46 +61,58 @@ class NovoExperimentoVideoActivity : AppCompatActivity() {
         }
 
         btn_iniciar_extracao.setOnClickListener {
-            saveExperimento()
+            clearFocus()
+            salvarTesteExperimento()
         }
     }
 
+    private fun clearFocus(){
+        q1_inicio.clearFocus()
+        q1_fim.clearFocus()
+
+        q2_inicio.clearFocus()
+        q2_fim.clearFocus()
+
+        q3_inicio.clearFocus()
+        q3_fim.clearFocus()
+
+        q4_inicio.clearFocus()
+        q4_fim.clearFocus()
+    }
 
     // Salva o experimento no banco de dados
-    private fun saveExperimento(){
+    private fun salvarTesteExperimento(){
 
         // Se o experimento não for null, inserir no banco de dados
-        experimento?.let {
+        testeExperimento?.let {
 
             progress_overlay.visibility = View.VISIBLE
 
             it.quadrantes = getQuadrantes()
 
-            val r = Runnable {
-                lifecycleScope.launch {
-                    val experimentoId = dao.insert(it)
+            /*lifecycleScope.launch(newSingleThreadContext("TESTE_SAVE")) {
+                val experimentoId = dao.insert(experimento)
 
-                    if (it.id <= 0) {
-                        it.id = experimentoId
-                    }
-
-
-                    val frames: List<Frame> = extractFrames(experimentoId)
-
-                    updateProgress(frames.size.toString())
-
-                    saveFrames(frames)
-
-                    runOnUiThread {
-                        progress_overlay.visibility = View.INVISIBLE
-
-                        val intent = Intent(baseContext, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(intent)
-                    }
+                if (experimento.id <= 0) {
+                    experimento.id = experimentoId
                 }
-            }
-            Thread(r).start()
+
+
+                val frames: List<Frame> = extractFrames(experimentoId)
+
+                updateProgress(frames.size.toString())
+
+                saveFrames(frames)
+
+                runOnUiThread {
+                    progress_overlay.visibility = View.INVISIBLE
+
+                    val intent = Intent(baseContext, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                }
+            }*/
+
         }
     }
 
@@ -114,10 +120,10 @@ class NovoExperimentoVideoActivity : AppCompatActivity() {
     private fun extractFrames(experimentoId: Long): List<Frame> {
 
         val frames = mutableListOf<Frame>()
-        val milisecondsToFrame: Long = (1000 / experimento!!.fps).toLong()
+        val milisecondsToFrame: Long = (1000 / testeExperimento!!.fps).toLong()
 
         var q = 1
-        experimento?.quadrantes?.forEach {
+        testeExperimento?.quadrantes?.forEach {
             val tempo = it.split("-")
 
             val inicioQuadrante = stringToTime(tempo[0])
@@ -130,7 +136,7 @@ class NovoExperimentoVideoActivity : AppCompatActivity() {
                     tString = "0$t"
                 }
 
-                val filename =  "${experimentoId}_${experimento?.label}_${experimento?.tempo}_Q${q}_${tString}"
+                val filename =  "${experimentoId}_${testeExperimento?.experimento?.label}_${testeExperimento?.tempo}_Q${q}_${tString}"
 
                 val frame = Frame(filename, t)
                 frames.add(frame)
@@ -146,24 +152,28 @@ class NovoExperimentoVideoActivity : AppCompatActivity() {
     data class Frame(var filename: String, var time: Long)
 
 
-    private fun saveFrames(frames: List<Frame>){
+    private fun salvarFrames(frames: List<Frame>){
         val mediaretriever = MediaMetadataRetriever()
         mediaretriever.setDataSource(this, videoUri)
 
         var countDown = frames.size
 
         frames.forEach { frame ->
-            val bmp: Bitmap = mediaretriever.getFrameAtTime( frame.time )
-            val file = saveFrameToInternalStorage(bmp, frame.filename)
+            try {
+                val bmp: Bitmap = mediaretriever.getFrameAtTime( (frame.time * 1000) )
+                val file = saveFrameToInternalStorage(bmp, frame.filename)
 
 
-            val image = ImagemExperimento()
-            image.frame = file.toString()
-            image.experimentoId = experimento!!.id
+                val image = ImagemExperimento()
+                image.frame = file.toString()
+                image.testeId = testeExperimento!!.id
 
 
-            lifecycleScope.launch {
-                dao.insertImage( image )
+                lifecycleScope.launch {
+                    dao.insertImage(image)
+                }
+            } catch (e : Exception) {
+                Log.e("Erro", "Não foi possível encontrar o frame no tempo " + timeToString( frame.time ) )
             }
 
             countDown--
@@ -171,7 +181,6 @@ class NovoExperimentoVideoActivity : AppCompatActivity() {
             runOnUiThread {
                 updateProgress(countDown.toString())
             }
-
         }
 
         mediaretriever.release()

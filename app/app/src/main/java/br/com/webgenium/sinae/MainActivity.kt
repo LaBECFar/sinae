@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_main.*
 import br.com.webgenium.sinae.room.AppDatabase
 import br.com.webgenium.sinae.room.Experimento
-import br.com.webgenium.sinae.room.ExperimentoDao
+import br.com.webgenium.sinae.room.AppDao
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import br.com.webgenium.sinae.adapter.ExperimentoAdapter
@@ -17,15 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 class MainActivity : AppCompatActivity() {
 
-    private var mAdapter: ExperimentoAdapter? = null
+    private var mAdapter = ExperimentoAdapter(listOf())
 
-    private val db: AppDatabase by lazy {
-        AppDatabase(this)
-    }
+    private val db: AppDatabase by lazy {  AppDatabase(this) }
+    private val dao: AppDao by lazy {  db.dao() }
 
-    private val dao: ExperimentoDao by lazy {
-        db.experimentoDao()
-    }
     private var experimentos : List<Experimento> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         setupRecycler()
 
         lifecycleScope.launch {
-            dao.all().collect { list ->
+            dao.getExperimentos().collect { list: List<Experimento> ->
                 experimentos = list
                 mAdapter?.changeExperimentos(experimentos)
             }
@@ -61,17 +57,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecycler() {
-        this.mAdapter = ExperimentoAdapter(listOf())
 
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        this.mAdapter?.onItemClick = { experimento ->
+        mAdapter?.onItemClick = { experimento ->
             verExperimento(experimento.id)
         }
 
         recyclerview.layoutManager = layoutManager
-        recyclerview.adapter = this.mAdapter
+        recyclerview.adapter = mAdapter
 
         // Configurando um dividr entre linhas, para uma melhor visualização.
         recyclerview.addItemDecoration(

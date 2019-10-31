@@ -12,11 +12,11 @@ class Experimento : Serializable{
 
     var codigo: String = ""
 
-    var tempo: String? = ""
+    //var tempo: String? = ""
 
     var label: String? = ""
 
-    var fps: Int = 1
+    //var fps: Int = 1
 
-    var quadrantes: List<String> = listOf()
+    //var quadrantes: List<String> = listOf()
 }

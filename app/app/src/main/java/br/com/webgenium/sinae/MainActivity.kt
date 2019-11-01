@@ -19,10 +19,10 @@ class MainActivity : AppCompatActivity() {
 
     private var mAdapter = ExperimentoAdapter(listOf())
 
-    private val db: AppDatabase by lazy {  AppDatabase(this) }
-    private val dao: AppDao by lazy {  db.dao() }
+    private val db: AppDatabase by lazy { AppDatabase(this) }
+    private val dao: AppDao by lazy { db.dao() }
 
-    private var experimentos : List<Experimento> = listOf()
+    private var experimentos: List<Experimento> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,16 +44,16 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun novoExperimento(){
+    private fun novoExperimento() {
         val intent = Intent(this, NovoExperimentoActivity::class.java)
-        startActivity( intent )
+        startActivity(intent)
     }
 
 
-    private fun verExperimento(id: Long){
+    private fun verExperimento(id: Long) {
         val intent = Intent(this, ExperimentoActivity::class.java)
         intent.putExtra("experimentoId", id)
-        startActivity( intent )
+        startActivity(intent)
     }
 
     private fun setupRecycler() {

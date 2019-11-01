@@ -52,6 +52,9 @@ interface AppDao {
     @Delete
     suspend fun deleteAnalise(analise: Analise)
 
+    @Query("SELECT * FROM Analise WHERE id = :analiseId LIMIT 1")
+    fun getAnaliseById(analiseId: Long): Flow<Analise>?
+
 
 
     /*

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class ExperimentoActivity : AppCompatActivity() {
 
-    private val db: AppDatabase by lazy {  AppDatabase(this) }
+    private val db: AppDatabase by lazy { AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
 
     private var experimento: Experimento? = null
@@ -29,9 +28,6 @@ class ExperimentoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_experimento)
         setupRecycler()
 
-        val id: Long = intent.getLongExtra("experimentoId", 0)
-        Log.d("Experimento", id.toString())
-
         btn_nova_analise.setOnClickListener {
             novaAnalise()
         }
@@ -41,7 +37,7 @@ class ExperimentoActivity : AppCompatActivity() {
         experimento?.let {
             val intent = Intent(this, NovaAnaliseActivity::class.java)
             intent.putExtra("experimentoId", it.id)
-            startActivity( intent )
+            startActivity(intent)
         }
     }
 
@@ -60,9 +56,9 @@ class ExperimentoActivity : AppCompatActivity() {
                 label.text = it.label
 
                 dao.getAnalises(id).collect { list: List<Analise> ->
-                    mAdapter.atualizar( list )
+                    mAdapter.atualizar(list)
 
-                    if(list.isNotEmpty()){
+                    if (list.isNotEmpty()) {
                         txt_analises.visibility = TextView.VISIBLE
                     }
                 }
@@ -71,10 +67,10 @@ class ExperimentoActivity : AppCompatActivity() {
         }
     }
 
-    private fun abrirAnaliseActivity(analiseId: Long){
+    private fun abrirAnaliseActivity(analiseId: Long) {
         val intent = Intent(this, AnaliseActivity::class.java)
         intent.putExtra("analiseId", analiseId)
-        startActivity( intent )
+        startActivity(intent)
     }
 
 

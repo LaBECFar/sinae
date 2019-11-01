@@ -10,7 +10,7 @@ import java.io.Serializable
         childColumns = ["experimentoId"]
     )]
 )
-class TesteExperimento : Serializable {
+class Analise : Serializable {
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
@@ -26,4 +26,7 @@ class TesteExperimento : Serializable {
 
     @Ignore
     var experimento: Experimento? = null
+
+    @Ignore
+    var frames: List<ImagemExperimento> = listOf()
 }

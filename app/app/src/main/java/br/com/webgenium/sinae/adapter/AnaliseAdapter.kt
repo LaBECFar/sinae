@@ -6,36 +6,36 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
-import br.com.webgenium.sinae.room.TesteExperimento
+import br.com.webgenium.sinae.room.Analise
 
 
-class TesteAdapter(testes: List<TesteExperimento>) : RecyclerView.Adapter<TesteAdapter.ViewHolder>() {
+class AnaliseAdapter(analises: List<Analise>) : RecyclerView.Adapter<AnaliseAdapter.ViewHolder>() {
 
-    private var mTestes: List<TesteExperimento> = testes
+    private var mAnalises: List<Analise> = analises
 
-    var onItemClick: ( (TesteExperimento) -> Unit )? = null
+    var onItemClick: ( (Analise) -> Unit )? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.teste_listitem, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.analise_listitem, parent, false)
         )
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val testeExperimento = mTestes[position]
-        holder.titulo.text = testeExperimento.tempo
+        val analise = mAnalises[position]
+        holder.titulo.text = analise.tempo
     }
 
 
     override fun getItemCount(): Int {
-        return mTestes.size
+        return mAnalises.size
     }
 
 
-    fun changeExperimentos(testes: List<TesteExperimento>){
-        this.mTestes = testes
+    fun atualizar(analises: List<Analise>){
+        this.mAnalises = analises
         notifyDataSetChanged()
     }
 
@@ -46,7 +46,7 @@ class TesteAdapter(testes: List<TesteExperimento>) : RecyclerView.Adapter<TesteA
 
         init {
             itemView.setOnClickListener {
-                onItemClick?.invoke(mTestes[adapterPosition])
+                onItemClick?.invoke(mAnalises[adapterPosition])
             }
         }
 

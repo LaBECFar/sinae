@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             dao.getExperimentos().collect { list: List<Experimento> ->
                 experimentos = list
-                mAdapter?.changeExperimentos(experimentos)
+                mAdapter.changeExperimentos(experimentos)
             }
         }
 
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        mAdapter?.onItemClick = { experimento ->
+        mAdapter.onItemClick = { experimento ->
             verExperimento(experimento.id)
         }
 

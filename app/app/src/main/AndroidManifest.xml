@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="br.com.webgenium.sinae">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -14,34 +14,34 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity
+            android:name=".AnaliseActivity"
+            android:label="Analise"
+            android:parentActivityName=".ExperimentoActivity"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".ExperimentoActivity"
             android:label="Experimento"
-            android:parentActivityName=".MainActivity" />
-
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTask"/>
         <activity
-            android:name=".NovoTesteVideoActivity"
-            android:label="Vídeo do Teste"
-            android:launchMode="singleTop"
-            android:parentActivityName=".NovoTesteActivity" />
-
+            android:name=".NovaAnaliseVideoActivity"
+            android:label="Vídeo da Análise"
+            android:parentActivityName=".NovaAnaliseActivity"
+            android:launchMode="singleTask"/>
         <activity
-            android:name=".NovoTesteActivity"
-            android:label="Novo Teste"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ExperimentoActivity" />
-
+            android:name=".NovaAnaliseActivity"
+            android:label="Nova Análise"
+            android:parentActivityName=".ExperimentoActivity"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".NovoExperimentoActivity"
             android:label="Novo Experimento"
-            android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
-
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".MainActivity"
-            android:label="Experimentos"
-            android:launchMode="singleTop">
+            android:label="Experimentos">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

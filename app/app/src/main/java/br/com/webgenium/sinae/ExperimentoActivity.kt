@@ -1,12 +1,14 @@
 package br.com.webgenium.sinae
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import br.com.webgenium.sinae.adapter.ExperimentoAdapter
+import br.com.webgenium.sinae.adapter.AnaliseAdapter
 import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_experimento.*
 import kotlinx.coroutines.flow.collect
@@ -18,20 +20,29 @@ class ExperimentoActivity : AppCompatActivity() {
     private val db: AppDatabase by lazy {  AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
 
-
     private var experimento: Experimento? = null
-
-
-    private var testes: List<TesteExperimento> = listOf()
-    private var experimentos : List<Experimento> = listOf()
-
-    private var mAdapter = ExperimentoAdapter(listOf())
+    private var mAdapter = AnaliseAdapter(listOf())
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_experimento)
         setupRecycler()
+
+        val id: Long = intent.getLongExtra("experimentoId", 0)
+        Log.d("Experimento", id.toString())
+
+        btn_nova_analise.setOnClickListener {
+            novaAnalise()
+        }
+    }
+
+    private fun novaAnalise() {
+        experimento?.let {
+            val intent = Intent(this, NovaAnaliseActivity::class.java)
+            intent.putExtra("experimentoId", it.id)
+            startActivity( intent )
+        }
     }
 
 
@@ -48,21 +59,23 @@ class ExperimentoActivity : AppCompatActivity() {
                 titulo.text = getString(R.string.experimento) + " " + it.codigo
                 label.text = it.label
 
-                dao.getExperimentos()?.collect { list: List<Experimento> ->
-                    experimentos = list
-                    mAdapter?.changeExperimentos(experimentos)
+                dao.getAnalises(id).collect { list: List<Analise> ->
+                    mAdapter.atualizar( list )
+
+                    if(list.isNotEmpty()){
+                        txt_analises.visibility = TextView.VISIBLE
+                    }
                 }
             }
-
 
         }
     }
 
-//    private fun abrirTesteActivity(){
-//        val intent = Intent(this, TesteActivity::class.java)
-//        intent.putExtra("experimentoId", experimento?.id)
-//        startActivity( intent )
-//    }
+    private fun abrirAnaliseActivity(analiseId: Long){
+        val intent = Intent(this, AnaliseActivity::class.java)
+        intent.putExtra("analiseId", analiseId)
+        startActivity( intent )
+    }
 
 
     private fun setupRecycler() {
@@ -70,17 +83,12 @@ class ExperimentoActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
-//        this.mAdapter?.onItemClick = { experimento ->
-//            abrirTesteActivity(experimento.id)
-//        }
+        this.mAdapter.onItemClick = { analise ->
+            abrirAnaliseActivity(analise.id)
+        }
 
         recyclerview.layoutManager = layoutManager
         recyclerview.adapter = mAdapter
-
-        // Configurando um dividr entre linhas, para uma melhor visualização.
-        recyclerview.addItemDecoration(
-            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        )
     }
 
 }

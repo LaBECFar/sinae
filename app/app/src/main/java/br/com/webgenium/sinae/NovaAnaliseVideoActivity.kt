@@ -16,7 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.room.*
-import kotlinx.android.synthetic.main.activity_novo_experimento_video.*
+import kotlinx.android.synthetic.main.activity_nova_analise_video.*
 import kotlinx.android.synthetic.main.include_progress_overlay.*
 import java.io.File
 import java.io.FileOutputStream
@@ -24,17 +24,21 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
 import java.lang.Exception
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.widget.MediaController
+import kotlinx.coroutines.newSingleThreadContext
 
 
-class NovoTesteVideoActivity : AppCompatActivity() {
+class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     private var videoUri : Uri? = null
     private var timerHandler: Handler = Handler()
     private var timerInterval: Long = 500
 
-    private var testeExperimento: TesteExperimento? = null
+    private var analise: Analise? = null
 
     private val db: AppDatabase by lazy { AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
@@ -42,9 +46,9 @@ class NovoTesteVideoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_novo_experimento_video)
+        setContentView(R.layout.activity_nova_analise_video)
 
-        testeExperimento = intent.getSerializableExtra("testeExperimento") as TesteExperimento
+        analise = intent.getSerializableExtra("analise") as Analise
 
         selecionarVideo()
 
@@ -61,12 +65,12 @@ class NovoTesteVideoActivity : AppCompatActivity() {
         }
 
         btn_iniciar_extracao.setOnClickListener {
-            clearFocus()
-            salvarTesteExperimento()
+            removerFocus()
+            salvarAnalise()
         }
     }
 
-    private fun clearFocus(){
+    private fun removerFocus(){
         q1_inicio.clearFocus()
         q1_fim.clearFocus()
 
@@ -81,49 +85,49 @@ class NovoTesteVideoActivity : AppCompatActivity() {
     }
 
     // Salva o experimento no banco de dados
-    private fun salvarTesteExperimento(){
+    private fun salvarAnalise(){
 
         // Se o experimento não for null, inserir no banco de dados
-        testeExperimento?.let {
+        analise?.let {
 
             progress_overlay.visibility = View.VISIBLE
 
             it.quadrantes = getQuadrantes()
 
-            /*lifecycleScope.launch(newSingleThreadContext("TESTE_SAVE")) {
-                val experimentoId = dao.insert(experimento)
+            lifecycleScope.launch(newSingleThreadContext("TESTE_SAVE")) {
+                val analiseId = dao.insertAnalise(it)
 
-                if (experimento.id <= 0) {
-                    experimento.id = experimentoId
+                if (it.id <= 0) {
+                    it.id = analiseId
                 }
 
+                val frames: List<Frame> = extrairFrames(analiseId)
 
-                val frames: List<Frame> = extractFrames(experimentoId)
+                atualizarProgresso(frames.size.toString())
 
-                updateProgress(frames.size.toString())
-
-                saveFrames(frames)
+                salvarFrames(frames, it.id)
 
                 runOnUiThread {
                     progress_overlay.visibility = View.INVISIBLE
 
-                    val intent = Intent(baseContext, MainActivity::class.java)
+                    val intent = Intent(baseContext, ExperimentoActivity::class.java)
+                    intent.putExtra("experimentoId", analise?.experimentoId)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(intent)
                 }
-            }*/
+            }
 
         }
     }
 
 
-    private fun extractFrames(experimentoId: Long): List<Frame> {
+    private fun extrairFrames(experimentoId: Long): List<Frame> {
 
         val frames = mutableListOf<Frame>()
-        val milisecondsToFrame: Long = (1000 / testeExperimento!!.fps).toLong()
+        val milisecondsToFrame: Long = (1000 / analise!!.fps).toLong()
 
         var q = 1
-        testeExperimento?.quadrantes?.forEach {
+        analise?.quadrantes?.forEach {
             val tempo = it.split("-")
 
             val inicioQuadrante = stringToTime(tempo[0])
@@ -136,7 +140,7 @@ class NovoTesteVideoActivity : AppCompatActivity() {
                     tString = "0$t"
                 }
 
-                val filename =  "${experimentoId}_${testeExperimento?.experimento?.label}_${testeExperimento?.tempo}_Q${q}_${tString}"
+                val filename =  "${experimentoId}_${analise?.tempo}_Q${q}_${tString}"
 
                 val frame = Frame(filename, t)
                 frames.add(frame)
@@ -152,7 +156,7 @@ class NovoTesteVideoActivity : AppCompatActivity() {
     data class Frame(var filename: String, var time: Long)
 
 
-    private fun salvarFrames(frames: List<Frame>){
+    private suspend fun salvarFrames(frames: List<Frame>, analiseId: Long){
         val mediaretriever = MediaMetadataRetriever()
         mediaretriever.setDataSource(this, videoUri)
 
@@ -160,26 +164,24 @@ class NovoTesteVideoActivity : AppCompatActivity() {
 
         frames.forEach { frame ->
             try {
-                val bmp: Bitmap = mediaretriever.getFrameAtTime( (frame.time * 1000) )
-                val file = saveFrameToInternalStorage(bmp, frame.filename)
+                val bmp: Bitmap = mediaretriever.getFrameAtTime( (frame.time * 1000), MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
 
+                val file = saveFrameToInternalStorage(bmp, frame.filename)
 
                 val image = ImagemExperimento()
                 image.frame = file.toString()
-                image.testeId = testeExperimento!!.id
+                image.analiseId = analiseId
+                dao.insertImage(image)
 
-
-                lifecycleScope.launch {
-                    dao.insertImage(image)
-                }
             } catch (e : Exception) {
                 Log.e("Erro", "Não foi possível encontrar o frame no tempo " + timeToString( frame.time ) )
+                Log.e("Erro", e.message)
             }
 
             countDown--
 
             runOnUiThread {
-                updateProgress(countDown.toString())
+                atualizarProgresso(countDown.toString())
             }
         }
 
@@ -188,7 +190,7 @@ class NovoTesteVideoActivity : AppCompatActivity() {
 
     }
 
-    private fun updateProgress(count: String){
+    private fun atualizarProgresso(count: String){
         progress_txt.text = count
     }
 
@@ -289,7 +291,7 @@ class NovoTesteVideoActivity : AppCompatActivity() {
     // Converte o tempo em milisegundos para string no formato 00:00
     private fun timeToString(time: Long) : String{
         var min = TimeUnit.MILLISECONDS.toMinutes( time ).toString()
-        var sec = (TimeUnit.MILLISECONDS.toSeconds( time ) - TimeUnit.MILLISECONDS.toMinutes( time )).toString()
+        var sec = TimeUnit.MILLISECONDS.toSeconds( time - TimeUnit.MILLISECONDS.toMinutes( time ) ).toString()
 
         if(min.count() == 1) {
             min = "0${min}"
@@ -337,7 +339,13 @@ class NovoTesteVideoActivity : AppCompatActivity() {
                 try {
                     if (data.data != null) {
                         videoUri = data.data
+                        //val mc = MediaController( this )
+                        videoview.setZOrderOnTop( true )
+                        //videoview.setMediaController(mc)
                         videoview.setVideoURI(videoUri)
+                        videoview.setOnPreparedListener {
+                            videoview.seekTo(1)
+                        }
                     }
                 } catch (e: IOException){
                     Toast.makeText(this, "Erro ao selecionar vídeo!", Toast.LENGTH_SHORT).show()

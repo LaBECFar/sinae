@@ -36,15 +36,21 @@ interface AppDao {
 
 
     /*
-        TesteExperimento
+        Analise
     */
 
-    @Query("SELECT * FROM TesteExperimento WHERE experimentoId = :experimentoId ORDER BY id")
-    fun getTestesExperimento(experimentoId: Long): Flow<List<TesteExperimento>>
+    @Query("SELECT * FROM Analise WHERE experimentoId = :experimentoId ORDER BY id")
+    fun getAnalises(experimentoId: Long): Flow<List<Analise>>
 
 
-    @Query("SELECT * FROM ImagemExperimento WHERE testeId = :testeId")
-    fun getFramesFromTeste(testeId: Long): Flow<List<ImagemExperimento>>
+    @Query("SELECT * FROM ImagemExperimento WHERE analiseId = :analiseId")
+    fun getFramesFromAnalise(analiseId: Long): Flow<List<ImagemExperimento>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAnalise(analise: Analise): Long
+
+    @Delete
+    suspend fun deleteAnalise(analise: Analise)
 
 
 
@@ -54,4 +60,6 @@ interface AppDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertImage(vararg image: ImagemExperimento)
+
+
 }

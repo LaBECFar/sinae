@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Experimento::class, ImagemExperimento::class, TesteExperimento::class],
-    version = 5
+    entities = [Experimento::class, ImagemExperimento::class, Analise::class],
+    version = 7
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){

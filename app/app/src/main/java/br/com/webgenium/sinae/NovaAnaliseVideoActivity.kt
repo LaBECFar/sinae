@@ -12,6 +12,7 @@ import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -25,16 +26,13 @@ import java.io.OutputStream
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.widget.MediaController
 import kotlinx.coroutines.newSingleThreadContext
+import kotlin.math.round
 
 
 class NovaAnaliseVideoActivity : AppCompatActivity() {
 
-    private var videoUri : Uri? = null
+    private var videoUri: Uri? = null
     private var timerHandler: Handler = Handler()
     private var timerInterval: Long = 500
 
@@ -65,12 +63,90 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         }
 
         btn_iniciar_extracao.setOnClickListener {
-            removerFocus()
-            salvarAnalise()
+            if (validacao()) {
+                removerFocus()
+                salvarAnalise()
+            }
         }
     }
 
-    private fun removerFocus(){
+    private fun validacao(): Boolean {
+
+        val duracaoVideo = videoview.duration
+        var q1isValid = true
+        var q2isValid = true
+        var q3isValid = true
+        var q4isValid = true
+
+
+        // Q1
+        run {
+            val inicioQ1 = stringToTime(q1_inicio.text.toString())
+            val fimQ1 = stringToTime(q1_fim.text.toString())
+            if (inicioQ1 > duracaoVideo) {
+                q1isValid = false
+                q1_inicio.error = "Momento inválido"
+            }
+            if (fimQ1 > duracaoVideo) {
+                q1isValid = false
+                q1_fim.error = "Momento inválido"
+            }
+            if (inicioQ1 > fimQ1) {
+                q1isValid = false
+                q1_fim.error = "O momento final deve ser maior que o inicial"
+            }
+        }
+
+
+        // Q2
+        run {
+            val inicioQ2 = stringToTime(q2_inicio.text.toString())
+            val fimQ2 = stringToTime(q2_fim.text.toString())
+            if (inicioQ2 > duracaoVideo) {
+                q2isValid = false
+                q2_inicio.error = "Momento inválido"
+            }
+            if (fimQ2 > duracaoVideo) {
+                q2isValid = false
+                q2_fim.error = "Momento inválido"
+            }
+            if (inicioQ2 > fimQ2) {
+                q2isValid = false
+                q2_fim.error = "O momento final deve ser maior que o inicial"
+            }
+        }
+
+
+        // Q2
+        validarQuadrante(q1_inicio, q1_fim, duracaoVideo)
+
+
+        return q1isValid && q2isValid && q3isValid && q4isValid
+    }
+
+    private fun validarQuadrante(inicio: EditText, fim: EditText, duracaoVideo: Int): Boolean {
+        val inicio = stringToTime(inicio.text.toString())
+        val fim = stringToTime(fim.text.toString())
+
+        var isValid = true
+
+        if (inicio > duracaoVideo) {
+            isValid = false
+            q3_inicio.error = "Momento inválido"
+        }
+        if (fim > duracaoVideo) {
+            isValid = false
+            q3_fim.error = "Momento inválido"
+        }
+        if (inicio > fim) {
+            isValid = false
+            q3_fim.error = "O momento final deve ser maior que o inicial"
+        }
+
+        return isValid
+    }
+
+    private fun removerFocus() {
         q1_inicio.clearFocus()
         q1_fim.clearFocus()
 
@@ -85,27 +161,25 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     // Salva o experimento no banco de dados
-    private fun salvarAnalise(){
+    private fun salvarAnalise() {
 
         // Se o experimento não for null, inserir no banco de dados
-        analise?.let {
+        analise?.let { analise ->
 
             progress_overlay.visibility = View.VISIBLE
 
-            it.quadrantes = getQuadrantes()
+            analise.quadrantes = getQuadrantes()
 
             lifecycleScope.launch(newSingleThreadContext("TESTE_SAVE")) {
-                val analiseId = dao.insertAnalise(it)
+                val analiseId = dao.insertAnalise(analise)
 
-                if (it.id <= 0) {
-                    it.id = analiseId
+                if (analiseId > 0) {
+                    analise.id = analiseId
                 }
 
                 val frames: List<Frame> = extrairFrames(analiseId)
 
-                atualizarProgresso(frames.size.toString())
-
-                salvarFrames(frames, it.id)
+                salvarFrames(frames, analiseId)
 
                 runOnUiThread {
                     progress_overlay.visibility = View.INVISIBLE
@@ -133,14 +207,14 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             val inicioQuadrante = stringToTime(tempo[0])
             val fimQuadrante = stringToTime(tempo[1])
 
-            for (t in inicioQuadrante until fimQuadrante step milisecondsToFrame){
+            for (t in inicioQuadrante until fimQuadrante step milisecondsToFrame) {
 
                 var tString = t.toString()
-                if(t < 1000){
+                if (t < 1000) {
                     tString = "0$t"
                 }
 
-                val filename =  "${experimentoId}_${analise?.tempo}_Q${q}_${tString}"
+                val filename = "${experimentoId}_${analise?.tempo}_Q${q}_${tString}"
 
                 val frame = Frame(filename, t)
                 frames.add(frame)
@@ -156,32 +230,38 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     data class Frame(var filename: String, var time: Long)
 
 
-    private suspend fun salvarFrames(frames: List<Frame>, analiseId: Long){
+    private suspend fun salvarFrames(frames: List<Frame>, analiseId: Long) {
         val mediaretriever = MediaMetadataRetriever()
         mediaretriever.setDataSource(this, videoUri)
 
-        var countDown = frames.size
+        var count = 0
 
         frames.forEach { frame ->
             try {
-                val bmp: Bitmap = mediaretriever.getFrameAtTime( (frame.time * 1000), MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                val microseconds = "${frame.time}000".toLong()
+                val bmp: Bitmap = mediaretriever.getFrameAtTime(
+                    microseconds,
+                    MediaMetadataRetriever.OPTION_CLOSEST_SYNC
+                )
 
                 val file = saveFrameToInternalStorage(bmp, frame.filename)
 
                 val image = ImagemExperimento()
                 image.frame = file.toString()
                 image.analiseId = analiseId
-                dao.insertImage(image)
+                dao.insertFrame(image)
 
-            } catch (e : Exception) {
-                Log.e("Erro", "Não foi possível encontrar o frame no tempo " + timeToString( frame.time ) )
-                Log.e("Erro", e.message)
+            } catch (e: Exception) {
+                Log.e("Erro", "${timeToString(frame.time)}: ${e.message}")
             }
 
-            countDown--
+            count++
+
+            val porcentagem: Double = count.toDouble() / frames.size * 100
+            val progresso = round(porcentagem).toInt().toString() + "%"
 
             runOnUiThread {
-                atualizarProgresso(countDown.toString())
+                atualizarProgresso(progresso)
             }
         }
 
@@ -190,12 +270,12 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     }
 
-    private fun atualizarProgresso(count: String){
-        progress_txt.text = count
+    private fun atualizarProgresso(progresso: String) {
+        progress_txt.text = progresso
     }
 
 
-    private fun saveFrameToInternalStorage(bmp: Bitmap, filename: String): Uri{
+    private fun saveFrameToInternalStorage(bmp: Bitmap, filename: String): Uri {
 
         val wrapper = ContextWrapper(applicationContext)
         var file = wrapper.getDir("frames", Context.MODE_PRIVATE)
@@ -208,7 +288,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             bmp.compress(Bitmap.CompressFormat.JPEG, 70, stream)
             stream.flush()
             stream.close()
-        } catch (e: IOException){ // Catch the exception
+        } catch (e: IOException) { // Catch the exception
             e.printStackTrace()
         }
 
@@ -229,7 +309,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
 
     // O valor do timer é inserido no próximo EditText vazio, nos quadrantes do vídeo (Q1, Q2, Q3 e Q4)
-    private fun selectTime(){
+    private fun selectTime() {
         val currentTime = timeToString(videoview.currentPosition.toLong())
 
         when {
@@ -246,8 +326,8 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
 
     // Pausar ou executar o vídeo da VideoView
-    private fun toggleVideo(){
-        if(videoview.isPlaying){
+    private fun toggleVideo() {
+        if (videoview.isPlaying) {
             videoview.pause()
             stopTimer()
         } else {
@@ -263,41 +343,42 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             try {
                 updateTimer()
             } finally {
-                timerHandler.postDelayed( this, timerInterval )
+                timerHandler.postDelayed(this, timerInterval)
             }
         }
     }
 
 
-    private fun startTimer(){
+    private fun startTimer() {
         timer.run()
     }
 
 
-    private fun stopTimer(){
+    private fun stopTimer() {
         timerHandler.removeCallbacks(timer)
         updateTimer()
     }
 
 
     @SuppressLint("SetTextI18n")
-    private fun updateTimer(){
+    private fun updateTimer() {
         val tempoAtual = videoview.currentPosition.toLong()
         val tempo = timeToString(tempoAtual)
-        txt_tempo.text = tempo+"s"
+        txt_tempo.text = tempo + "s"
     }
 
 
     // Converte o tempo em milisegundos para string no formato 00:00
-    private fun timeToString(time: Long) : String{
-        var min = TimeUnit.MILLISECONDS.toMinutes( time ).toString()
-        var sec = TimeUnit.MILLISECONDS.toSeconds( time - TimeUnit.MILLISECONDS.toMinutes( time ) ).toString()
+    private fun timeToString(time: Long): String {
+        var min = TimeUnit.MILLISECONDS.toMinutes(time).toString()
+        var sec =
+            TimeUnit.MILLISECONDS.toSeconds(time - TimeUnit.MILLISECONDS.toMinutes(time)).toString()
 
-        if(min.count() == 1) {
+        if (min.count() == 1) {
             min = "0${min}"
         }
 
-        if(sec.count() == 1) {
+        if (sec.count() == 1) {
             sec = "0${sec}"
         }
 
@@ -306,7 +387,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
 
     // Converte uma string em formato 00:00 para milisegundos
-    private fun stringToTime(time: String) : Long {
+    private fun stringToTime(time: String): Long {
         val t = time.split(":")
         val min = t[0].toLong()
         val sec = t[1].toLong()
@@ -322,7 +403,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
 
     // Abre uma tela para o usuário selecionar o video desejado
-    private fun selecionarVideo(){
+    private fun selecionarVideo() {
         val galleryIntent = Intent(
             Intent.ACTION_PICK,
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -337,17 +418,17 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         if (requestCode == SELECT_VIDEO_REQUEST && resultCode == RESULT_OK) {
             if (data != null) {
                 try {
-                    if (data.data != null) {
-                        videoUri = data.data
-                        //val mc = MediaController( this )
-                        videoview.setZOrderOnTop( true )
-                        //videoview.setMediaController(mc)
+                    data.data?.let {
+                        videoUri = it
+                        // val mc = MediaController( this )
+                        // videoview.setZOrderOnTop( true )
+                        // videoview.setMediaController(mc)
                         videoview.setVideoURI(videoUri)
                         videoview.setOnPreparedListener {
                             videoview.seekTo(1)
                         }
                     }
-                } catch (e: IOException){
+                } catch (e: IOException) {
                     Toast.makeText(this, "Erro ao selecionar vídeo!", Toast.LENGTH_SHORT).show()
                 }
             }

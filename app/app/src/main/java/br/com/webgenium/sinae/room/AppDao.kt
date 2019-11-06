@@ -62,7 +62,9 @@ interface AppDao {
     */
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertImage(vararg image: ImagemExperimento)
+    suspend fun insertFrame(vararg image: ImagemExperimento)
 
+    @Delete
+    suspend fun deleteFrame(imagem: ImagemExperimento)
 
 }

@@ -42,7 +42,7 @@
             android:drawableStart="@drawable/ic_search_black_24dp"
             android:drawablePadding="5dp"
             android:importantForAutofill="no"
-            android:inputType="number"
+            android:inputType="textVisiblePassword"
             android:padding="10dp" />
 
 

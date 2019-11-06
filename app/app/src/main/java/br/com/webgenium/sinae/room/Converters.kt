@@ -1,13 +1,14 @@
 package br.com.webgenium.sinae.room
 
 import androidx.room.TypeConverter
+import java.util.*
+
 
 class Converters {
 
     @TypeConverter
     fun fromArray(strings: List<String>): String {
         var string = ""
-
         for (s in strings) {
             string += "$s;"
         }
@@ -25,8 +26,18 @@ class Converters {
             myStrings += s.toString()
         }
 
-
         return myStrings
+    }
+
+
+    @TypeConverter
+    fun toDate(dateLong: Long?): Date? {
+        return if (dateLong == null) null else Date(dateLong)
+    }
+
+    @TypeConverter
+    fun fromDate(date: Date?): Long? {
+        return (if (date == null) null else date!!.time)?.toLong()
     }
 
 

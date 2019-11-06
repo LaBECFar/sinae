@@ -1,33 +1,32 @@
 package br.com.webgenium.sinae.adapter
 
-import android.net.Uri
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.room.ImagemExperimento
-import com.squareup.picasso.Picasso
-import java.io.File
 
 
 class FrameAdapter(frames: List<ImagemExperimento>) :
     RecyclerView.Adapter<FrameAdapter.ViewHolder>() {
 
     private var mFrames: List<ImagemExperimento> = frames
+    var onItemClick: ( (ImagemExperimento) -> Unit )? = null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.frame_griditem, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.frame_listitem, parent, false)
         )
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val frame = mFrames[position]
-        val f = File(frame.frame)
-        Picasso.get().load(f).resize(0, 100).into(holder.imagem)
-        // holder.imagem.setImageURI(Uri.parse(frame.frame))
+        holder.titulo.text = "Frame "+ (position + 1)
     }
 
 
@@ -43,6 +42,12 @@ class FrameAdapter(frames: List<ImagemExperimento>) :
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imagem: ImageView = itemView.findViewById(R.id.imagem)
+        var titulo: TextView = itemView.findViewById(R.id.titulo)
+
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(mFrames[adapterPosition])
+            }
+        }
     }
 }

@@ -24,9 +24,10 @@ class NovoExperimentoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_novo_experimento)
 
         btn_continuar.setOnClickListener {
-            salvarExperimento()
-
-            abrirExperimentoActivity()
+            if( validacao() ) {
+                salvarExperimento()
+                abrirExperimentoActivity()
+            }
         }
     }
 
@@ -78,6 +79,46 @@ class NovoExperimentoActivity : AppCompatActivity() {
 
         val label = savedInstanceState.getString("label") as String
         et_label.setText( label )
+    }
+
+
+    private fun validacao(): Boolean {
+        return validarCodigo() && validarLabel()
+    }
+
+
+    private fun validarCodigo(): Boolean{
+        var isValid = true
+
+        val codigo = et_codigo.text.toString()
+        var errorMsg = ""
+
+        if(codigo.trim() == ""){
+            errorMsg = "Digite o código do experimento"
+            isValid = false
+        }
+
+        if(!isValid){
+            et_codigo.requestFocus()
+            et_codigo.error = errorMsg
+        }
+
+        return isValid
+    }
+
+
+    private fun validarLabel(): Boolean {
+        var isValid = true
+
+        val label = et_label.text.toString()
+
+        if(label.trim() == ""){
+            et_label.error = "Digite o label do experimento"
+            et_label.requestFocus()
+            isValid = false
+        }
+
+        return isValid
     }
 
 }

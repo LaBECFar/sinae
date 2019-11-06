@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.ActionMode
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +14,11 @@ import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_experimento.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import android.view.MenuItem
+import android.view.Menu
+import android.view.MenuInflater
+import java.io.File
+import android.net.Uri
 
 
 class ExperimentoActivity : AppCompatActivity() {
@@ -20,13 +27,16 @@ class ExperimentoActivity : AppCompatActivity() {
     private val dao: AppDao by lazy { db.dao() }
 
     private var experimento: Experimento? = null
-    private var mAdapter = AnaliseAdapter(listOf())
+    private var mAdapter = AnaliseAdapter(mutableListOf())
+
+    private var actionMode: ActionMode? = null
+    private val actionModeCallback = ActionModeCallback()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_experimento)
-        setupRecycler()
+        iniciarRecycler()
 
         btn_nova_analise.setOnClickListener {
             novaAnalise()
@@ -52,11 +62,11 @@ class ExperimentoActivity : AppCompatActivity() {
 
             dao.getExperimentoById(id)?.collect {
                 experimento = it
-                titulo.text = getString(R.string.experimento) + " " + it.codigo
-                label.text = it.label
+                titulo.text = it.label
+                codigo.text = "Código: " + it.codigo
 
                 dao.getAnalises(id).collect { list: List<Analise> ->
-                    mAdapter.atualizar(list)
+                    mAdapter.atualizar(list.toMutableList())
 
                     if (list.isNotEmpty()) {
                         txt_analises.visibility = TextView.VISIBLE
@@ -74,17 +84,108 @@ class ExperimentoActivity : AppCompatActivity() {
     }
 
 
-    private fun setupRecycler() {
-
+    private fun iniciarRecycler() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
-        this.mAdapter.onItemClick = { analise ->
-            abrirAnaliseActivity(analise.id)
+        mAdapter.onItemClick = { analise, position ->
+            if (actionMode != null) {
+                toggleItemSelection(position)
+            } else {
+                abrirAnaliseActivity(analise.id)
+            }
         }
+
+        mAdapter.onItemLongClick = { _, position -> toggleItemSelection(position) }
 
         recyclerview.layoutManager = layoutManager
         recyclerview.adapter = mAdapter
+    }
+
+
+    private fun checkActionMode() {
+        val count = mAdapter.getSelectedItemCount()
+
+        if (count > 0) {
+            if (actionMode == null) {
+                actionMode = startActionMode(actionModeCallback)
+            }
+            actionMode?.title = "Analises"
+            actionMode?.subtitle = "$count selecionado(s)"
+        } else {
+            actionMode?.finish()
+        }
+    }
+
+
+    private fun toggleItemSelection(position: Int) {
+        mAdapter.toggleSelection(position)
+        checkActionMode()
+    }
+
+    private fun removerItensSelecionados() {
+
+        lifecycleScope.launch {
+
+            mAdapter.getSelectedItems().forEach { pos ->
+
+                val analise = mAdapter.getItem(pos)
+
+                dao.getFramesFromAnalise(analise.id).collect { imgList ->
+
+                    imgList.forEach {
+                        val filePath = Uri.parse(it.frame).path
+                        filePath?.let{ filePath ->
+                            val file = File(filePath)
+                            if(file.exists()){
+                                try {
+                                    file.delete()
+                                } catch (e: Exception){
+                                    Log.e("ExperimentoActivity", "Não foi possível excluir o arquivo: "+e.message)
+                                }
+                            }
+                        }
+                        //dao.deleteFrame(it)
+                    }
+                    dao.deleteAnalise(analise)
+                }
+
+                mAdapter.toggleSelection(pos)
+                mAdapter.removerItem(pos)
+                mAdapter.notifyItemRemoved(pos)
+            }
+
+        }
+    }
+
+
+    private inner class ActionModeCallback : ActionMode.Callback {
+
+        override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+            val inflater: MenuInflater = mode.menuInflater
+            inflater.inflate(R.menu.listagem_menu, menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+            return false // Return false if nothing is done
+        }
+
+        override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+            return when (item.itemId) {
+                R.id.remover_item -> {
+                    removerItensSelecionados()
+                    mode.finish()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode) {
+            mAdapter.clearSelection()
+            actionMode = null
+        }
     }
 
 }

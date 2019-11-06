@@ -5,18 +5,12 @@
     android:layout_marginBottom="5dp"
     android:background="#eee"
     android:orientation="horizontal"
-    android:padding="15dp"
-    android:id="@+id/listitem">
+    android:padding="15dp">
 
     <TextView
         android:id="@+id/titulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="textStart"
-        android:textSize="18sp"
-        android:drawablePadding="5dp"
-        android:textColor="@color/colorItemTitle"
-        android:drawableStart="@drawable/ic_access_time_black_24dp" />
-
+        android:text="@string/frame" />
 
 </LinearLayout>

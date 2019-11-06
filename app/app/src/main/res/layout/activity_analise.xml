@@ -23,7 +23,6 @@
             android:id="@+id/txt_fps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:drawablePadding="5dp"
             android:textSize="14sp" />
 
@@ -36,11 +35,11 @@
             android:textSize="14sp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/gridframes"
+            android:id="@+id/recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/frame_griditem"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="15dp"
+            tools:listitem="@layout/frame_listitem" />
 
     </LinearLayout>
 

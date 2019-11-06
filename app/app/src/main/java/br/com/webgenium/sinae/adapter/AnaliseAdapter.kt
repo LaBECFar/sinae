@@ -1,5 +1,6 @@
 package br.com.webgenium.sinae.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +10,12 @@ import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.room.Analise
 
 
-class AnaliseAdapter(analises: List<Analise>) : RecyclerView.Adapter<AnaliseAdapter.ViewHolder>() {
+class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<AnaliseAdapter.ViewHolder>() {
 
-    private var mAnalises: List<Analise> = analises
+    private var mAnalises: MutableList<Analise> = analises
 
-    var onItemClick: ( (Analise) -> Unit )? = null
-
+    var onItemClick: ( (Analise, Int) -> Unit )? = null
+    var onItemLongClick: ( (Analise, Int) -> Unit )? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -22,10 +23,16 @@ class AnaliseAdapter(analises: List<Analise>) : RecyclerView.Adapter<AnaliseAdap
         )
     }
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val analise = mAnalises[position]
         holder.titulo.text = analise.tempo
+
+        // Item selecionado?
+        if(isSelected(position)) {
+            holder.item.setBackgroundColor(Color.parseColor("#cccccc"))
+        } else {
+            holder.item.setBackgroundColor(Color.parseColor("#eeeeee"))
+        }
     }
 
 
@@ -34,21 +41,36 @@ class AnaliseAdapter(analises: List<Analise>) : RecyclerView.Adapter<AnaliseAdap
     }
 
 
-    fun atualizar(analises: List<Analise>){
+    fun atualizar(analises: MutableList<Analise>){
         this.mAnalises = analises
         notifyDataSetChanged()
+    }
+
+    fun getItem(position: Int): Analise {
+        return mAnalises[position]
+    }
+
+
+    fun removerItem(position: Int){
+        mAnalises.removeAt(position)
+        notifyItemRemoved(position)
     }
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var titulo: TextView = itemView.findViewById(R.id.titulo)
+        val titulo: TextView = itemView.findViewById(R.id.titulo)
+        val item: View = itemView.findViewById(R.id.listitem)
 
         init {
             itemView.setOnClickListener {
-                onItemClick?.invoke(mAnalises[adapterPosition])
+                onItemClick?.invoke(mAnalises[adapterPosition], adapterPosition)
+            }
+
+            itemView.setOnLongClickListener {
+                onItemLongClick?.invoke(mAnalises[adapterPosition], adapterPosition)
+                true
             }
         }
-
     }
 }

@@ -19,4 +19,7 @@
     <string name="tempo_experimento">Tempo do Experimento</string>
     <string name="rotulo">Rótulo</string>
     <string name="experimento">Experimento</string>
+    <string name="frame">Frame</string>
+    <string name="analises">Análises</string>
+    <string name="extraindo_frames">Extraindo Frames</string>
 </resources>

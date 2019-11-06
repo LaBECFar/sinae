@@ -12,9 +12,7 @@ import br.com.webgenium.sinae.room.Experimento
 class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter<ExperimentoAdapter.ViewHolder>() {
 
     private var mExperimentos: List<Experimento> = experimentos
-
     var onItemClick: ( (Experimento) -> Unit )? = null
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,10 +24,8 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val experimento = mExperimentos[position]
-
-        holder.titulo.text = "Experimento " + mExperimentos.get(position).codigo
-        holder.label.text = mExperimentos.get(position).label
-        //holder.tempo.text = mExperimentos.get(position).tempo
+        holder.titulo.text =  experimento.label
+        holder.codigo.text = experimento.codigo
     }
 
 
@@ -47,8 +43,7 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var titulo: TextView = itemView.findViewById(R.id.titulo)
-        var label: TextView = itemView.findViewById(R.id.label)
-        //var tempo: TextView = itemView.findViewById(R.id.tempo)
+        var codigo: TextView = itemView.findViewById(R.id.codigo)
 
         init {
             itemView.setOnClickListener {

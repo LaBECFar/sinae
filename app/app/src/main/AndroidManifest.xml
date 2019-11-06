@@ -15,35 +15,42 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
+            android:name=".FrameActivity"
+            android:label="Frames"
+            android:launchMode="singleTask"
+            android:parentActivityName=".AnaliseActivity"
+            android:theme="@style/NoActionBar" />
+        <activity
             android:name=".AnaliseActivity"
             android:label="Analise"
-            android:parentActivityName=".ExperimentoActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:parentActivityName=".ExperimentoActivity" />
         <activity
             android:name=".ExperimentoActivity"
             android:label="Experimento"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".NovaAnaliseVideoActivity"
             android:label="Vídeo da Análise"
-            android:parentActivityName=".NovaAnaliseActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:parentActivityName=".NovaAnaliseActivity" />
         <activity
             android:name=".NovaAnaliseActivity"
             android:label="Nova Análise"
-            android:parentActivityName=".ExperimentoActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:parentActivityName=".ExperimentoActivity" />
         <activity
             android:name=".NovoExperimentoActivity"
             android:label="Novo Experimento"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
             android:label="Experimentos">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

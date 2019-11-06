@@ -4,9 +4,10 @@ import androidx.room.*
 
 @Entity(foreignKeys = [
     ForeignKey(
-        entity = Experimento::class,
+        entity = Analise::class,
         parentColumns = ["id"],
-        childColumns = ["analiseId"]
+        childColumns = ["analiseId"],
+        onDelete = ForeignKey.CASCADE
     )]
 )
 class ImagemExperimento {

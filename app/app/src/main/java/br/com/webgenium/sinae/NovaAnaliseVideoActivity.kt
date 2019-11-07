@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
@@ -13,8 +14,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_nova_analise_video.*
@@ -28,13 +31,13 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import kotlinx.coroutines.newSingleThreadContext
 import kotlin.math.round
-
+import br.com.webgenium.sinae.adapter.CustomMediaController
 
 class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     private var videoUri: Uri? = null
-    private var timerHandler: Handler = Handler()
-    private var timerInterval: Long = 500
+    //private var timerHandler: Handler = Handler()
+    //private var timerInterval: Long = 500
 
     private var analise: Analise? = null
 
@@ -50,13 +53,13 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
         selecionarVideo()
 
-        videoview.setOnClickListener {
-            toggleVideo()
-        }
-
-        videoview.setOnCompletionListener {
-            stopTimer()
-        }
+//        videoview.setOnClickListener {
+//            toggleVideo()
+//        }
+//
+//        videoview.setOnCompletionListener {
+//            stopTimer()
+//        }
 
         btn_selecionar_tempo.setOnClickListener {
             selectTime()
@@ -71,76 +74,45 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     private fun validacao(): Boolean {
-
         val duracaoVideo = videoview.duration
-        var q1isValid = true
-        var q2isValid = true
-        var q3isValid = true
-        var q4isValid = true
 
-
-        // Q1
-        run {
-            val inicioQ1 = stringToTime(q1_inicio.text.toString())
-            val fimQ1 = stringToTime(q1_fim.text.toString())
-            if (inicioQ1 > duracaoVideo) {
-                q1isValid = false
-                q1_inicio.error = "Momento inválido"
-            }
-            if (fimQ1 > duracaoVideo) {
-                q1isValid = false
-                q1_fim.error = "Momento inválido"
-            }
-            if (inicioQ1 > fimQ1) {
-                q1isValid = false
-                q1_fim.error = "O momento final deve ser maior que o inicial"
-            }
-        }
-
-
-        // Q2
-        run {
-            val inicioQ2 = stringToTime(q2_inicio.text.toString())
-            val fimQ2 = stringToTime(q2_fim.text.toString())
-            if (inicioQ2 > duracaoVideo) {
-                q2isValid = false
-                q2_inicio.error = "Momento inválido"
-            }
-            if (fimQ2 > duracaoVideo) {
-                q2isValid = false
-                q2_fim.error = "Momento inválido"
-            }
-            if (inicioQ2 > fimQ2) {
-                q2isValid = false
-                q2_fim.error = "O momento final deve ser maior que o inicial"
-            }
-        }
-
-
-        // Q2
-        validarQuadrante(q1_inicio, q1_fim, duracaoVideo)
-
+        val q1isValid = validarQuadrante(q1_inicio, q1_fim, duracaoVideo)
+        val q2isValid = validarQuadrante(q2_inicio, q2_fim, duracaoVideo)
+        val q3isValid = validarQuadrante(q3_inicio, q3_fim, duracaoVideo)
+        val q4isValid = validarQuadrante(q4_inicio, q4_fim, duracaoVideo)
 
         return q1isValid && q2isValid && q3isValid && q4isValid
     }
 
-    private fun validarQuadrante(inicio: EditText, fim: EditText, duracaoVideo: Int): Boolean {
-        val inicio = stringToTime(inicio.text.toString())
-        val fim = stringToTime(fim.text.toString())
-
+    private fun validarQuadrante(inicioEdt: EditText, fimEdt: EditText, duracaoVideo: Int): Boolean {
         var isValid = true
 
-        if (inicio > duracaoVideo) {
+        if(inicioEdt.text.isEmpty()){
             isValid = false
-            q3_inicio.error = "Momento inválido"
+            inicioEdt.error = "Campo obrigatório"
         }
-        if (fim > duracaoVideo) {
+
+        if(fimEdt.text.isEmpty()) {
             isValid = false
-            q3_fim.error = "Momento inválido"
+            fimEdt.error = "Campo obrigatório"
         }
-        if (inicio > fim) {
-            isValid = false
-            q3_fim.error = "O momento final deve ser maior que o inicial"
+
+        if(isValid) {
+            val inicio = stringToTime(inicioEdt.text.toString())
+            val fim = stringToTime(fimEdt.text.toString())
+
+            if (inicio > duracaoVideo) {
+                isValid = false
+                inicioEdt.error = "Valor inválido"
+            }
+            if (fim > duracaoVideo) {
+                isValid = false
+                fimEdt.error = "Valor inválido"
+            }
+            if (inicio > fim) {
+                isValid = false
+                fimEdt.error = "O valor final deve ser maior que o inicial"
+            }
         }
 
         return isValid
@@ -185,7 +157,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     progress_overlay.visibility = View.INVISIBLE
 
                     val intent = Intent(baseContext, ExperimentoActivity::class.java)
-                    intent.putExtra("experimentoId", analise?.experimentoId)
+                    intent.putExtra("experimentoId", analise.experimentoId)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     startActivity(intent)
                 }
@@ -326,46 +298,46 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
 
     // Pausar ou executar o vídeo da VideoView
-    private fun toggleVideo() {
-        if (videoview.isPlaying) {
-            videoview.pause()
-            stopTimer()
-        } else {
-            videoview.start()
-            startTimer()
-        }
-    }
+//    private fun toggleVideo() {
+//        if (videoview.isPlaying) {
+//            videoview.pause()
+//            stopTimer()
+//        } else {
+//            videoview.start()
+//            startTimer()
+//        }
+//    }
 
 
     // Timer utilizado para atualizar a contagem de tempo em outra thread para não travar o app
-    private var timer: Runnable = object : Runnable {
-        override fun run() {
-            try {
-                updateTimer()
-            } finally {
-                timerHandler.postDelayed(this, timerInterval)
-            }
-        }
-    }
+//    private var timer: Runnable = object : Runnable {
+//        override fun run() {
+//            try {
+//                updateTimer()
+//            } finally {
+//                timerHandler.postDelayed(this, timerInterval)
+//            }
+//        }
+//    }
 
 
-    private fun startTimer() {
-        timer.run()
-    }
+//    private fun startTimer() {
+//        timer.run()
+//    }
+//
+//
+//    private fun stopTimer() {
+//        timerHandler.removeCallbacks(timer)
+//        updateTimer()
+//    }
 
-
-    private fun stopTimer() {
-        timerHandler.removeCallbacks(timer)
-        updateTimer()
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun updateTimer() {
-        val tempoAtual = videoview.currentPosition.toLong()
-        val tempo = timeToString(tempoAtual)
-        txt_tempo.text = tempo + "s"
-    }
+//
+//    @SuppressLint("SetTextI18n")
+//    private fun updateTimer() {
+//        val tempoAtual = videoview.currentPosition.toLong()
+//        val tempo = timeToString(tempoAtual)
+//        txt_tempo.text = tempo + "s"
+//    }
 
 
     // Converte o tempo em milisegundos para string no formato 00:00
@@ -420,11 +392,31 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 try {
                     data.data?.let {
                         videoUri = it
-                        // val mc = MediaController( this )
-                        // videoview.setZOrderOnTop( true )
-                        // videoview.setMediaController(mc)
+                        videoview.setZOrderOnTop( true )
                         videoview.setVideoURI(videoUri)
-                        videoview.setOnPreparedListener {
+
+
+
+                        videoview.setOnPreparedListener {mediaPlayer ->
+                            val mediaController = CustomMediaController(this)
+
+                            mediaPlayer.setOnVideoSizeChangedListener { mp, width, height ->
+                                videoview.setMediaController(mediaController)
+                                mediaController.setMediaPlayer(videoview)
+                                mediaController.setAnchorView(videoview)
+
+                                val viewGroupLevel1: LinearLayout = mediaController.getChildAt(0) as LinearLayout
+                                viewGroupLevel1.setBackgroundColor(ContextCompat.getColor(this, R.color.AlmostTransparent))
+                                mediaController.show(0)
+//                                try {
+//                                    val currentTime :Field = getClass().getDeclaredField("mCurrentTime");
+//                                    currentTime.setAccessible(true);
+//                                    TextView currentTimeTextView = (TextView) currentTime.get(this);
+//                                    currentTimeTextView.setTextColor(Color.RED);
+//                                } catch (Exception pokemon) {
+//                                }
+
+                            }
                             videoview.seekTo(1)
                         }
                     }

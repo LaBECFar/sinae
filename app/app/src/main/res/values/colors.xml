@@ -5,4 +5,8 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="colorItemTitle">#333333</color>
+
+
+    <color name="AlmostTransparent">#22000000</color>
+    <color name="FullTransparent">#00000000</color>
 </resources>

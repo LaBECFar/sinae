@@ -19,6 +19,11 @@ import android.view.Menu
 import android.view.MenuInflater
 import java.io.File
 import android.net.Uri
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import java.util.*
+import kotlin.Comparator
 
 
 class ExperimentoActivity : AppCompatActivity() {
@@ -125,14 +130,16 @@ class ExperimentoActivity : AppCompatActivity() {
 
     private fun removerItensSelecionados() {
 
-        lifecycleScope.launch {
+        val revertedSelectedPositions = mAdapter.getSelectedItems().asReversed()
 
-            mAdapter.getSelectedItems().forEach { pos ->
+        revertedSelectedPositions.forEach { pos ->
+            val analise = mAdapter.getItem(pos)
+            mAdapter.removerItem(analise)
 
-                val analise = mAdapter.getItem(pos)
-
+            lifecycleScope.launch {
                 dao.getFramesFromAnalise(analise.id).collect { imgList ->
 
+                    //
                     imgList.forEach {
                         val filePath = Uri.parse(it.frame).path
                         filePath?.let{ filePath ->
@@ -145,17 +152,13 @@ class ExperimentoActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                        //dao.deleteFrame(it)
                     }
+
                     dao.deleteAnalise(analise)
                 }
-
-                mAdapter.toggleSelection(pos)
-                mAdapter.removerItem(pos)
-                mAdapter.notifyItemRemoved(pos)
             }
-
         }
+        mAdapter.notifyDataSetChanged()
     }
 
 

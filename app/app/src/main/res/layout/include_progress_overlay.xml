@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@android:drawable/screen_background_dark_transparent"
+    android:background="@color/OverlayTransparent"
     android:clickable="true"
     android:visibility="gone">
 

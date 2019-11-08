@@ -6,6 +6,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_frame.*
 import java.io.File
 
+
 class FrameActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

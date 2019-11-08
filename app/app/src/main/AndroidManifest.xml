@@ -19,7 +19,7 @@
             android:label="Frames"
             android:launchMode="singleTask"
             android:parentActivityName=".AnaliseActivity"
-            android:theme="@style/NoActionBar" />
+            android:theme="@style/AlphaActionBar" />
         <activity
             android:name=".AnaliseActivity"
             android:label="Analise"

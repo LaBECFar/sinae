@@ -53,7 +53,12 @@ class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<Analise
 
     fun removerItem(position: Int){
         mAnalises.removeAt(position)
-        notifyItemRemoved(position)
+        //notifyItemRemoved(position)
+    }
+
+    fun removerItem(analise: Analise){
+        mAnalises.remove(analise)
+        //notifyItemRemoved(position)
     }
 
 

@@ -1,23 +1,18 @@
 package br.com.webgenium.sinae
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_nova_analise_video.*
@@ -31,18 +26,25 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import kotlinx.coroutines.newSingleThreadContext
 import kotlin.math.round
-import br.com.webgenium.sinae.adapter.CustomMediaController
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.util.Util
+
 
 class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     private var videoUri: Uri? = null
-    //private var timerHandler: Handler = Handler()
-    //private var timerInterval: Long = 500
 
     private var analise: Analise? = null
 
     private val db: AppDatabase by lazy { AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
+
+    private var player: SimpleExoPlayer? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,20 +55,17 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
         selecionarVideo()
 
-//        videoview.setOnClickListener {
-//            toggleVideo()
-//        }
-//
-//        videoview.setOnCompletionListener {
-//            stopTimer()
-//        }
-
         btn_selecionar_tempo.setOnClickListener {
             selectTime()
         }
 
         btn_iniciar_extracao.setOnClickListener {
+            playerview.player.stop()
+
             if (validacao()) {
+                playerview.player.stop()
+                playerview.player.release()
+
                 removerFocus()
                 salvarAnalise()
             }
@@ -74,7 +73,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     private fun validacao(): Boolean {
-        val duracaoVideo = videoview.duration
+        val duracaoVideo = playerview.player.duration
 
         val q1isValid = validarQuadrante(q1_inicio, q1_fim, duracaoVideo)
         val q2isValid = validarQuadrante(q2_inicio, q2_fim, duracaoVideo)
@@ -84,20 +83,24 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         return q1isValid && q2isValid && q3isValid && q4isValid
     }
 
-    private fun validarQuadrante(inicioEdt: EditText, fimEdt: EditText, duracaoVideo: Int): Boolean {
+    private fun validarQuadrante(
+        inicioEdt: EditText,
+        fimEdt: EditText,
+        duracaoVideo: Long
+    ): Boolean {
         var isValid = true
 
-        if(inicioEdt.text.isEmpty()){
+        if (inicioEdt.text.isEmpty()) {
             isValid = false
             inicioEdt.error = "Campo obrigatório"
         }
 
-        if(fimEdt.text.isEmpty()) {
+        if (fimEdt.text.isEmpty()) {
             isValid = false
             fimEdt.error = "Campo obrigatório"
         }
 
-        if(isValid) {
+        if (isValid) {
             val inicio = stringToTime(inicioEdt.text.toString())
             val fim = stringToTime(fimEdt.text.toString())
 
@@ -282,7 +285,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     // O valor do timer é inserido no próximo EditText vazio, nos quadrantes do vídeo (Q1, Q2, Q3 e Q4)
     private fun selectTime() {
-        val currentTime = timeToString(videoview.currentPosition.toLong())
+        val currentTime = timeToString(playerview.player.currentPosition)
 
         when {
             q1_inicio.text.isEmpty() -> q1_inicio.setText(currentTime)
@@ -295,49 +298,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             q4_fim.text.isEmpty() -> q4_fim.setText(currentTime)
         }
     }
-
-
-    // Pausar ou executar o vídeo da VideoView
-//    private fun toggleVideo() {
-//        if (videoview.isPlaying) {
-//            videoview.pause()
-//            stopTimer()
-//        } else {
-//            videoview.start()
-//            startTimer()
-//        }
-//    }
-
-
-    // Timer utilizado para atualizar a contagem de tempo em outra thread para não travar o app
-//    private var timer: Runnable = object : Runnable {
-//        override fun run() {
-//            try {
-//                updateTimer()
-//            } finally {
-//                timerHandler.postDelayed(this, timerInterval)
-//            }
-//        }
-//    }
-
-
-//    private fun startTimer() {
-//        timer.run()
-//    }
-//
-//
-//    private fun stopTimer() {
-//        timerHandler.removeCallbacks(timer)
-//        updateTimer()
-//    }
-
-//
-//    @SuppressLint("SetTextI18n")
-//    private fun updateTimer() {
-//        val tempoAtual = videoview.currentPosition.toLong()
-//        val tempo = timeToString(tempoAtual)
-//        txt_tempo.text = tempo + "s"
-//    }
 
 
     // Converte o tempo em milisegundos para string no formato 00:00
@@ -383,6 +343,34 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         startActivityForResult(galleryIntent, SELECT_VIDEO_REQUEST)
     }
 
+    override fun onPause() {
+        releasePlayer()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initializePlayer()
+    }
+
+    private fun initializePlayer() {
+        if (player == null) {
+            player = ExoPlayerFactory.newSimpleInstance(this)
+            playerview.player = player
+        }
+        val dataSourceFactory :DataSource.Factory =  DefaultDataSourceFactory(this, Util.getUserAgent(this, "SINAE"))
+        val videoSource : MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri)
+        player?.prepare(videoSource)
+    }
+
+    private fun releasePlayer() {
+        if (player != null) {
+            player?.release()
+            player = null
+        }
+    }
+
+
     // Retorno/callback dos Intents solicitados nessa activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -392,33 +380,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 try {
                     data.data?.let {
                         videoUri = it
-                        videoview.setZOrderOnTop( true )
-                        videoview.setVideoURI(videoUri)
-
-
-
-                        videoview.setOnPreparedListener {mediaPlayer ->
-                            val mediaController = CustomMediaController(this)
-
-                            mediaPlayer.setOnVideoSizeChangedListener { mp, width, height ->
-                                videoview.setMediaController(mediaController)
-                                mediaController.setMediaPlayer(videoview)
-                                mediaController.setAnchorView(videoview)
-
-                                val viewGroupLevel1: LinearLayout = mediaController.getChildAt(0) as LinearLayout
-                                viewGroupLevel1.setBackgroundColor(ContextCompat.getColor(this, R.color.AlmostTransparent))
-                                mediaController.show(0)
-//                                try {
-//                                    val currentTime :Field = getClass().getDeclaredField("mCurrentTime");
-//                                    currentTime.setAccessible(true);
-//                                    TextView currentTimeTextView = (TextView) currentTime.get(this);
-//                                    currentTimeTextView.setTextColor(Color.RED);
-//                                } catch (Exception pokemon) {
-//                                }
-
-                            }
-                            videoview.seekTo(1)
-                        }
                     }
                 } catch (e: IOException) {
                     Toast.makeText(this, "Erro ao selecionar vídeo!", Toast.LENGTH_SHORT).show()

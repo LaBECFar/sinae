@@ -1,5 +1,6 @@
 package br.com.webgenium.sinae.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +10,12 @@ import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.room.Experimento
 
 
-class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter<ExperimentoAdapter.ViewHolder>() {
+class ExperimentoAdapter(experimentos: MutableList<Experimento>) : SelectableAdapter<ExperimentoAdapter.ViewHolder>() {
 
-    private var mExperimentos: List<Experimento> = experimentos
-    var onItemClick: ( (Experimento) -> Unit )? = null
+    private var mExperimentos: MutableList<Experimento> = experimentos
+
+    var onItemClick: ( (Experimento, Int) -> Unit )? = null
+    var onItemLongClick: ( (Experimento, Int) -> Unit )? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,6 +29,12 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
         val experimento = mExperimentos[position]
         holder.titulo.text =  experimento.label
         holder.codigo.text = experimento.codigo
+
+        if(isSelected(position)) {
+            holder.item.setBackgroundColor(Color.parseColor("#cccccc"))
+        } else {
+            holder.item.setBackgroundColor(Color.parseColor("#eeeeee"))
+        }
     }
 
 
@@ -34,22 +43,36 @@ class ExperimentoAdapter(experimentos: List<Experimento>) : RecyclerView.Adapter
     }
 
 
-    fun changeExperimentos(experimentos: List<Experimento>){
-        this.mExperimentos = experimentos
+    fun atualizar(analises: MutableList<Experimento>){
+        this.mExperimentos = analises
         notifyDataSetChanged()
     }
 
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    fun getItem(position: Int): Experimento {
+        return mExperimentos[position]
+    }
 
+
+    fun removerItem(analise: Experimento){
+        mExperimentos.remove(analise)
+    }
+
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var titulo: TextView = itemView.findViewById(R.id.titulo)
         var codigo: TextView = itemView.findViewById(R.id.codigo)
+        val item: View = itemView.findViewById(R.id.listitem)
 
         init {
             itemView.setOnClickListener {
-                onItemClick?.invoke(mExperimentos[adapterPosition])
+                onItemClick?.invoke(mExperimentos[adapterPosition], adapterPosition)
+            }
+
+            itemView.setOnLongClickListener {
+                onItemLongClick?.invoke(mExperimentos[adapterPosition], adapterPosition)
+                true
             }
         }
-
     }
 }

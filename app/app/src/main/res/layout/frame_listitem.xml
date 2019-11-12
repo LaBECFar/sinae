@@ -5,7 +5,8 @@
     android:layout_marginBottom="5dp"
     android:background="#eee"
     android:orientation="horizontal"
-    android:padding="15dp">
+    android:padding="15dp"
+    android:id="@+id/listitem">
 
     <TextView
         android:id="@+id/titulo"

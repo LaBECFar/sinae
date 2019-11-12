@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.ActionMode
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -17,13 +16,7 @@ import kotlinx.coroutines.launch
 import android.view.MenuItem
 import android.view.Menu
 import android.view.MenuInflater
-import java.io.File
-import android.net.Uri
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import java.util.*
-import kotlin.Comparator
+import androidx.appcompat.app.AlertDialog
 
 
 class ExperimentoActivity : AppCompatActivity() {
@@ -41,7 +34,7 @@ class ExperimentoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_experimento)
-        iniciarRecycler()
+        setupRecycler()
 
         btn_nova_analise.setOnClickListener {
             novaAnalise()
@@ -89,7 +82,7 @@ class ExperimentoActivity : AppCompatActivity() {
     }
 
 
-    private fun iniciarRecycler() {
+    private fun setupRecycler() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
@@ -129,7 +122,6 @@ class ExperimentoActivity : AppCompatActivity() {
     }
 
     private fun removerItensSelecionados() {
-
         val revertedSelectedPositions = mAdapter.getSelectedItems().asReversed()
 
         revertedSelectedPositions.forEach { pos ->
@@ -137,28 +129,36 @@ class ExperimentoActivity : AppCompatActivity() {
             mAdapter.removerItem(analise)
 
             lifecycleScope.launch {
-                dao.getFramesFromAnalise(analise.id).collect { imgList ->
-
-                    //
-                    imgList.forEach {
-                        val filePath = Uri.parse(it.frame).path
-                        filePath?.let{ filePath ->
-                            val file = File(filePath)
-                            if(file.exists()){
-                                try {
-                                    file.delete()
-                                } catch (e: Exception){
-                                    Log.e("ExperimentoActivity", "Não foi possível excluir o arquivo: "+e.message)
-                                }
-                            }
-                        }
+                dao.getFramesFromAnalise(analise.id).collect { frames ->
+                    frames.forEach {
+                        it.removerArquivo()
                     }
-
                     dao.deleteAnalise(analise)
                 }
             }
         }
         mAdapter.notifyDataSetChanged()
+    }
+
+    private fun confirmarExclusao(){
+        val count = mAdapter.getSelectedItemCount()
+
+        var msg = "Deseja excluir $count análise"
+        if(count > 1){
+            msg += "s"
+        }
+        msg += "?"
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Excluir Análises")
+        builder.setMessage(msg)
+        builder.setPositiveButton("Sim") { dialog, which ->
+            removerItensSelecionados()
+            actionMode?.finish()
+        }
+        builder.setNegativeButton("Não") { dialog, which -> }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
 
@@ -171,14 +171,13 @@ class ExperimentoActivity : AppCompatActivity() {
         }
 
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-            return false // Return false if nothing is done
+            return false
         }
 
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
             return when (item.itemId) {
                 R.id.remover_item -> {
-                    removerItensSelecionados()
-                    mode.finish()
+                    confirmarExclusao()
                     true
                 }
                 else -> false

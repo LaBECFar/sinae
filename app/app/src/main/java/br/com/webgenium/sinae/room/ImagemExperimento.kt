@@ -1,6 +1,9 @@
 package br.com.webgenium.sinae.room
 
+import android.net.Uri
+import android.util.Log
 import androidx.room.*
+import java.io.File
 
 @Entity(foreignKeys = [
     ForeignKey(
@@ -20,4 +23,20 @@ class ImagemExperimento {
     var frame: String = ""
 
     var uploaded: Boolean = false
+
+    fun removerArquivo(): Boolean{
+        val filePath = Uri.parse(this.frame).path
+        filePath?.let{ filePath ->
+            val file = File(filePath)
+            if(file.exists()){
+                try {
+                    file.delete()
+                } catch (e: Exception){
+                    Log.e("ExperimentoActivity", "Não foi possível excluir o arquivo: "+e.message)
+                    return false
+                }
+            }
+        }
+        return true
+    }
 }

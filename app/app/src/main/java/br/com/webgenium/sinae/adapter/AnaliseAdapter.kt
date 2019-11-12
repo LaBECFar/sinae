@@ -27,7 +27,6 @@ class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<Analise
         val analise = mAnalises[position]
         holder.titulo.text = analise.tempo
 
-        // Item selecionado?
         if(isSelected(position)) {
             holder.item.setBackgroundColor(Color.parseColor("#cccccc"))
         } else {
@@ -50,20 +49,12 @@ class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<Analise
         return mAnalises[position]
     }
 
-
-    fun removerItem(position: Int){
-        mAnalises.removeAt(position)
-        //notifyItemRemoved(position)
-    }
-
     fun removerItem(analise: Analise){
         mAnalises.remove(analise)
-        //notifyItemRemoved(position)
     }
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         val titulo: TextView = itemView.findViewById(R.id.titulo)
         val item: View = itemView.findViewById(R.id.listitem)
 

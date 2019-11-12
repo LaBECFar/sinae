@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:background="#fff"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:padding="15dp"
+    android:id="@+id/listitem">
 
     <TextView
         android:id="@+id/titulo"

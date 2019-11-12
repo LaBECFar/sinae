@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_nova_analise_video.*
@@ -70,7 +71,21 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 salvarAnalise()
             }
         }
+
+        // Clicando em campos com tempo levara o video até o momento
+        q1_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+        q1_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+
+        q2_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+        q2_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+
+        q3_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+        q3_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+
+        q4_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+        q4_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
     }
+
 
     private fun validacao(): Boolean {
         val duracaoVideo = playerview.player.duration
@@ -282,6 +297,21 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         return listOf(q1, q2, q3, q4)
     }
 
+    private fun onEdtTextFocused(edt: EditText){
+        if(edt.text.isNotEmpty()){
+            player?.let {
+                val text = edt.text.toString()
+                val regex = Regex("(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]")
+                if(text.matches(regex)) {
+                    val time = stringToTime(edt.text.toString())
+                    it.seekTo(time)
+                } else {
+                    Log.d("Teste", "Não funcionou regex")
+                }
+            }
+        }
+    }
+
 
     // O valor do timer é inserido no próximo EditText vazio, nos quadrantes do vídeo (Q1, Q2, Q3 e Q4)
     private fun selectTime() {
@@ -350,7 +380,9 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        initializePlayer()
+        videoUri?.let {
+            initializePlayer()
+        }
     }
 
     private fun initializePlayer() {
@@ -358,8 +390,10 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             player = ExoPlayerFactory.newSimpleInstance(this)
             playerview.player = player
         }
-        val dataSourceFactory :DataSource.Factory =  DefaultDataSourceFactory(this, Util.getUserAgent(this, "SINAE"))
-        val videoSource : MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri)
+        val dataSourceFactory: DataSource.Factory =
+            DefaultDataSourceFactory(this, Util.getUserAgent(this, "SINAE"))
+        val videoSource: MediaSource =
+            ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri)
         player?.prepare(videoSource)
     }
 

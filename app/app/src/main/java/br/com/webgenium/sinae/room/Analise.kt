@@ -7,7 +7,8 @@ import java.io.Serializable
     ForeignKey(
         entity = Experimento::class,
         parentColumns = ["id"],
-        childColumns = ["experimentoId"]
+        childColumns = ["experimentoId"],
+        onDelete = ForeignKey.CASCADE
     )]
 )
 class Analise : Serializable {

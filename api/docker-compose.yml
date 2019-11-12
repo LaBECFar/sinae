@@ -8,11 +8,11 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./api/MongoDB:/data/db
+      - ./MongoDB:/data/db
     networks:
-      - express-mongo-network
-    logging:
-      driver: none
+      - express-mongo-network-sinae
+#    logging:
+#      driver: none
   rest-api-sinae:
     hostname: rest-api-sinae
     container_name: rest-api-sinae
@@ -24,7 +24,7 @@ services:
     volumes:
       - ./:/usr/app
     networks:
-      - express-mongo-network
+      - express-mongo-network-sinae
     healthcheck:
         test: ["CMD", "curl", "-f", "http://mongo:27017"]
         interval: 30s
@@ -42,5 +42,5 @@ services:
 #    networks:
 #      - express-mongo-network      
 networks: 
-    express-mongo-network:
+    express-mongo-network-sinae:
       driver: bridge

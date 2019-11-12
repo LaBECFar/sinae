@@ -4,8 +4,7 @@ const deviceController = {
 
     list: (req, res, next) => {
         deviceModel.find() 
-            .select('name type location connectionType dockerId')
-            .populate('location')
+            .select('name')
             .exec()
             .then(devices => {
                 return res.status(201).json(devices);
@@ -31,11 +30,6 @@ const deviceController = {
     post: (req, res, next) => {
         const device = new deviceModel({
             name: req.body.name,
-            connectionType: req.body.connectionType,
-            physicalPath: req.body.physicalPath,
-            connectionParameters: req.body.connectionParameters,
-            description: req.body.description,
-            location: req.body.location
         })
         
         device.save((err,device) => {
@@ -61,11 +55,6 @@ const deviceController = {
             }
 
             device.name = req.body.name
-            device.connectionType = req.body.connectionType
-            device.physicalPath = req.body.physicalPath
-            device.connectionParameters = req.body.connectionParameters
-            device.description = req.body.description
-            device.location = req.body.location
 
             device.save(function (err, device) {
                 /* istanbul ignore next */ 

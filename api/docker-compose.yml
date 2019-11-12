@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  mongo-sinae:
+    image: mongo
+    hostname: mongo-sinae
+    container_name: mongo-sinae
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./api/MongoDB:/data/db
+    networks:
+      - express-mongo-network
+    logging:
+      driver: none
+  rest-api-sinae:
+    hostname: rest-api-sinae
+    container_name: rest-api-sinae
+    depends_on: ["mongo-sinae"]
+    build: ./
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/usr/app
+    networks:
+      - express-mongo-network
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://mongo:27017"]
+        interval: 30s
+        timeout: 10s
+        retries: 5           
+#  web-app:
+#    hostname: web-app
+#    container_name: web-app
+#    depends_on: ["rest-api"]
+#    logging:
+#      driver: none
+#    build: ./web-app
+#    ports:
+#      - "8081:80"
+#    networks:
+#      - express-mongo-network      
+networks: 
+    express-mongo-network:
+      driver: bridge

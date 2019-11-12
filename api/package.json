@@ -4,10 +4,6 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "testAll": "env-cmd -f ./config/test.env jest --watchAll --colors --coverage --runInBand",
-    "testVms": "env-cmd -f ./config/test.env jest --watchAll --colors --runInBand -- vms.test.js",
-    "testDevice": "env-cmd -f ./config/test.env jest --watchAll --colors --runInBand -- device.test.js",
-    "testBattery": "env-cmd -f ./config/test.env jest --watchAll --colors --runInBand -- battery.test.js",
     "dev": "env-cmd -f ./config/dev.env nodemon server.js"
   },
   "jest": {
@@ -24,7 +20,7 @@
     "get-docker-host": "^1.0.3",
     "mongoose": "^5.6.10",
     "mqtt": "^3.0.0",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.4"
   },
   "devDependencies": {
     "jest": "^24.9.0",

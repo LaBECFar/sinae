@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var locationModel = require('./locationModel')
+// var locationModel = require('./locationModel')
 
 var Schema   = mongoose.Schema;
 
@@ -12,11 +12,11 @@ var devicesSchema = new Schema({
     type: String,
     required: true
   },
-  'location': {
-    type: Schema.Types.ObjectId,
-    ref: 'location',
-    required: true        
-  },
+  // 'location': {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'location',
+  //   required: true        
+  // },
   'dockerId' : { // define which container docker is access this device, if null it means that the device is stopped 
     type: String,
     default: ""

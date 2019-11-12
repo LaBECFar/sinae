@@ -117,10 +117,15 @@ class MainActivity : AppCompatActivity() {
             mAdapter.removerItem(experimento)
 
             lifecycleScope.launch {
-                dao.getAnalises(experimento.id).collect {
-                    //dao.getFramesFromAnalise()
+                dao.getAnalises(experimento.id).collect { list ->
+                    list.forEach { analise ->
+                        dao.getFramesFromAnalise(analise.id).collect { frames ->
+                            frames.forEach { frame ->
+                                frame.removerArquivo()
+                            }
+                        }
+                    }
                 }
-
                 dao.deleteExperimento(experimento)
             }
         }

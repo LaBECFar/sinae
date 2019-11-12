@@ -8,11 +8,11 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./MongoDB:/data/db
+      - mongodata:/data/db
     networks:
       - express-mongo-network-sinae
-    logging:
-      driver: none
+    #logging:
+    #  driver: none
   rest-api-sinae:
     hostname: rest-api-sinae
     container_name: rest-api-sinae
@@ -44,3 +44,5 @@ services:
 networks: 
     express-mongo-network-sinae:
       driver: bridge
+volumes:
+    mongodata:

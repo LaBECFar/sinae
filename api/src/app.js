@@ -8,6 +8,7 @@ const router = express.Router();
 //Rotas
 const index = require('./routes/index');
 const deviceRoutes   = require('./routes/deviceRoutes');
+const experimentoRoutes   = require('./routes/experimentoRoutes');
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -24,6 +25,8 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/device', deviceRoutes);
+
+app.use('/experimento', experimentoRoutes);
 
 app.use('/', index);
 

@@ -11,8 +11,8 @@ services:
       - ./MongoDB:/data/db
     networks:
       - express-mongo-network-sinae
-#    logging:
-#      driver: none
+    logging:
+      driver: none
   rest-api-sinae:
     hostname: rest-api-sinae
     container_name: rest-api-sinae

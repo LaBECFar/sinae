@@ -1,4 +1,4 @@
-package br.com.webgenium.sinae.room
+package br.com.webgenium.sinae.model
 
 import androidx.room.*
 import java.io.Serializable
@@ -29,5 +29,5 @@ class Analise : Serializable {
     var experimento: Experimento? = null
 
     @Ignore
-    var frames: List<ImagemExperimento> = listOf()
+    var frames: List<Frame> = listOf()
 }

@@ -15,7 +15,6 @@ import br.com.webgenium.sinae.adapter.FrameAdapter
 import br.com.webgenium.sinae.room.AppDao
 import br.com.webgenium.sinae.room.AppDatabase
 import kotlinx.android.synthetic.main.activity_analise.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class AnaliseActivity : AppCompatActivity() {
@@ -42,14 +41,15 @@ class AnaliseActivity : AppCompatActivity() {
         val id: Long = intent.getLongExtra("analiseId", 0)
 
         lifecycleScope.launch {
-            dao.getAnaliseById(id)?.collect {
-                txt_titulo.text = it.tempo
+            val analise = dao.getAnaliseById(id)
+
+            analise?.let{
+                txt_titulo.text = analise.tempo
                 txt_fps.text = "FPS: " + it.fps
 
-                dao.getFramesFromAnalise(id).collect { list ->
-                    txt_frames.text = "Frames Extraidos: " + list.size.toString()
-                    mAdapter.atualizar(list.toMutableList())
-                }
+                val frames = dao.getFramesFromAnalise(id)
+                txt_frames.text = "Frames: " + frames.size.toString()
+                mAdapter.atualizar(frames.toMutableList())
             }
         }
     }
@@ -64,7 +64,7 @@ class AnaliseActivity : AppCompatActivity() {
             if (actionMode != null) {
                 toggleItemSelection(pos)
             } else {
-                abrirFrameActivity(img.frame)
+                abrirFrameActivity(img.uri)
             }
         }
 
@@ -101,6 +101,7 @@ class AnaliseActivity : AppCompatActivity() {
         checkActionMode()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun removerItensSelecionados() {
         val revertedSelectedPositions = mAdapter.getSelectedItems().asReversed()
 
@@ -111,9 +112,10 @@ class AnaliseActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 analise.removerArquivo()
                 dao.deleteFrame(analise)
+                mAdapter.notifyItemRemoved(pos)
+                txt_frames.text = "Frames: " + mAdapter.itemCount
             }
         }
-        mAdapter.notifyDataSetChanged()
     }
 
     private fun confirmarExclusao(){
@@ -128,11 +130,11 @@ class AnaliseActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Excluir Frames")
         builder.setMessage(msg)
-        builder.setPositiveButton("Sim") { dialog, which ->
+        builder.setPositiveButton("Sim") { _, _ ->
             removerItensSelecionados()
             actionMode?.finish()
         }
-        builder.setNegativeButton("Não") { dialog, which -> }
+        builder.setNegativeButton("Não") { _, _ -> }
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }

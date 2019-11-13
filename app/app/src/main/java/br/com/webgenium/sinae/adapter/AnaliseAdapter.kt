@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
-import br.com.webgenium.sinae.room.Analise
+import br.com.webgenium.sinae.model.Analise
 
 
 class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<AnaliseAdapter.ViewHolder>() {

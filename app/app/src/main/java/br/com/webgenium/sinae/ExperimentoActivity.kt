@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.webgenium.sinae.adapter.AnaliseAdapter
 import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_experimento.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import android.view.MenuItem
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.appcompat.app.AlertDialog
+import br.com.webgenium.sinae.model.Experimento
 
 
 class ExperimentoActivity : AppCompatActivity() {
@@ -57,21 +57,19 @@ class ExperimentoActivity : AppCompatActivity() {
         val id: Long = intent.getLongExtra("experimentoId", 0)
 
         lifecycleScope.launch {
+            experimento = dao.getExperimentoById(id)
 
-            dao.getExperimentoById(id)?.collect {
-                experimento = it
+            experimento?.let {
                 titulo.text = it.label
                 codigo.text = "Código: " + it.codigo
 
-                dao.getAnalises(id).collect { list: List<Analise> ->
-                    mAdapter.atualizar(list.toMutableList())
+                val analises = dao.getAnalises(id)
+                mAdapter.atualizar(analises.toMutableList())
 
-                    if (list.isNotEmpty()) {
-                        txt_analises.visibility = TextView.VISIBLE
-                    }
+                if (analises.isNotEmpty()) {
+                    txt_analises.visibility = TextView.VISIBLE
                 }
             }
-
         }
     }
 
@@ -129,12 +127,13 @@ class ExperimentoActivity : AppCompatActivity() {
             mAdapter.removerItem(analise)
 
             lifecycleScope.launch {
-                dao.getFramesFromAnalise(analise.id).collect { frames ->
-                    frames.forEach {
-                        it.removerArquivo()
-                    }
-                    dao.deleteAnalise(analise)
+                val frames = dao.getFramesFromAnalise(analise.id)
+
+                frames.forEach {
+                    it.removerArquivo()
                 }
+
+                dao.deleteAnalise(analise)
             }
         }
         mAdapter.notifyDataSetChanged()

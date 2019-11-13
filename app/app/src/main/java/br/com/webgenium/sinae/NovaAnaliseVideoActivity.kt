@@ -13,8 +13,9 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
+import br.com.webgenium.sinae.model.Analise
+import br.com.webgenium.sinae.model.Frame
 import br.com.webgenium.sinae.room.*
 import kotlinx.android.synthetic.main.activity_nova_analise_video.*
 import kotlinx.android.synthetic.main.include_progress_overlay.*
@@ -160,7 +161,11 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
             analise.quadrantes = getQuadrantes()
 
-            lifecycleScope.launch(newSingleThreadContext("TESTE_SAVE")) {
+            Thread {
+
+            }.run()
+
+            lifecycleScope.launch(newSingleThreadContext("SAVE_ANALISE")) {
                 val analiseId = dao.insertAnalise(analise)
 
                 if (analiseId > 0) {
@@ -173,15 +178,18 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     progress_overlay.visibility = View.INVISIBLE
-
-                    val intent = Intent(baseContext, ExperimentoActivity::class.java)
-                    intent.putExtra("experimentoId", analise.experimentoId)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(intent)
+                    abrirExperimento(analise.experimentoId)
                 }
             }
 
         }
+    }
+
+    private fun abrirExperimento(experimentoId: Long){
+        val intent = Intent(baseContext, ExperimentoActivity::class.java)
+        intent.putExtra("experimentoId", experimentoId)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 
 
@@ -206,7 +214,9 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
                 val filename = "${experimentoId}_${analise?.tempo}_Q${q}_${tString}"
 
-                val frame = Frame(filename, t)
+                val frame = Frame()
+                frame.filename = filename
+                frame.time = t
                 frames.add(frame)
             }
 
@@ -215,10 +225,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
         return frames
     }
-
-
-    data class Frame(var filename: String, var time: Long)
-
 
     private suspend fun salvarFrames(frames: List<Frame>, analiseId: Long) {
         val mediaretriever = MediaMetadataRetriever()
@@ -236,10 +242,9 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
                 val file = saveFrameToInternalStorage(bmp, frame.filename)
 
-                val image = ImagemExperimento()
-                image.frame = file.toString()
-                image.analiseId = analiseId
-                dao.insertFrame(image)
+                frame.uri = file.toString()
+                frame.analiseId = analiseId
+                dao.insertFrame(frame)
 
             } catch (e: Exception) {
                 Log.e("Erro", "${timeToString(frame.time)}: ${e.message}")

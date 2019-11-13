@@ -10,14 +10,12 @@ import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_main.*
-import br.com.webgenium.sinae.room.AppDatabase
-import br.com.webgenium.sinae.room.Experimento
-import br.com.webgenium.sinae.room.AppDao
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import br.com.webgenium.sinae.adapter.ExperimentoAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.webgenium.sinae.model.Experimento
+import br.com.webgenium.sinae.room.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,12 +41,30 @@ class MainActivity : AppCompatActivity() {
         setupRecycler()
 
         lifecycleScope.launch {
-            dao.getExperimentos().collect { list: List<Experimento> ->
-                experimentos = list
-                mAdapter.atualizar(experimentos.toMutableList())
-            }
+            experimentos = dao.getExperimentos()
+            mAdapter.atualizar(experimentos.toMutableList())
         }
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_main_activity, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.configuracoes -> {
+                abrirConfiguracoes()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun abrirConfiguracoes(){
+        val intent = Intent(this, ConfiguracoesActivity::class.java)
+        startActivity(intent)
     }
 
 
@@ -114,22 +130,23 @@ class MainActivity : AppCompatActivity() {
         // removidos em ordem reversa para não dar erro indexoutofbounds pois após remover os itens abaixo mudam de posição
         revertedSelectedPositions.forEach { pos ->
             val experimento: Experimento = mAdapter.getItem(pos)
-            mAdapter.removerItem(experimento)
 
             lifecycleScope.launch {
-                dao.getAnalises(experimento.id).collect { list ->
-                    list.forEach { analise ->
-                        dao.getFramesFromAnalise(analise.id).collect { frames ->
-                            frames.forEach { frame ->
-                                frame.removerArquivo()
-                            }
-                        }
+                val analises = dao.getAnalises(experimento.id)
+
+                analises.forEach { analise ->
+                    val frames = dao.getFramesFromAnalise(analise.id)
+                    frames.forEach { frame ->
+                        frame.removerArquivo()
                     }
                 }
+
                 dao.deleteExperimento(experimento)
             }
+
+            mAdapter.removerItem(experimento)
+            mAdapter.notifyItemRemoved(pos)
         }
-        mAdapter.notifyDataSetChanged()
     }
 
     private fun confirmarExclusao(){

@@ -6,9 +6,8 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.room.AppDao
 import br.com.webgenium.sinae.room.AppDatabase
-import br.com.webgenium.sinae.room.Analise
+import br.com.webgenium.sinae.model.Analise
 import kotlinx.android.synthetic.main.activity_nova_analise.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class NovaAnaliseActivity : AppCompatActivity() {
@@ -27,8 +26,9 @@ class NovaAnaliseActivity : AppCompatActivity() {
         val experimentoId = intent.getLongExtra("experimentoId", 0)
 
         lifecycleScope.launch {
-            dao.getExperimentoById(experimentoId)?.collect {
-                analise.experimento = it
+            analise.experimento = dao.getExperimentoById(experimentoId)
+
+            analise.experimento?.let{
                 analise.experimentoId = it.id
             }
         }

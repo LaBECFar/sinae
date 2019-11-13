@@ -5,10 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import br.com.webgenium.sinae.model.Analise
+import br.com.webgenium.sinae.model.Experimento
+import br.com.webgenium.sinae.model.Frame
 
 @Database(
-    entities = [Experimento::class, ImagemExperimento::class, Analise::class],
-    version = 11
+    entities = [Experimento::class, Frame::class, Analise::class],
+    version = 13
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){

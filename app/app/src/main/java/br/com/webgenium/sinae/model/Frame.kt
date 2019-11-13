@@ -1,4 +1,4 @@
-package br.com.webgenium.sinae.room
+package br.com.webgenium.sinae.model
 
 import android.net.Uri
 import android.util.Log
@@ -13,19 +13,25 @@ import java.io.File
         onDelete = ForeignKey.CASCADE
     )]
 )
-class ImagemExperimento {
+class Frame {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 
     @ColumnInfo(index = true)
     var analiseId: Long = 0
 
-    var frame: String = ""
+    var uri: String = ""
 
     var uploaded: Boolean = false
 
+    @Ignore
+    var filename: String = ""
+
+    @Ignore
+    var time: Long = 0
+
     fun removerArquivo(): Boolean{
-        val filePath = Uri.parse(this.frame).path
+        val filePath = Uri.parse(this.uri).path
         filePath?.let{ filePath ->
             val file = File(filePath)
             if(file.exists()){

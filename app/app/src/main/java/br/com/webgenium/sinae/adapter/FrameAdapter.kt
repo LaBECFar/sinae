@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
-import br.com.webgenium.sinae.room.ImagemExperimento
+import br.com.webgenium.sinae.model.Frame
 
 
-class FrameAdapter(frames: MutableList<ImagemExperimento>) : SelectableAdapter<FrameAdapter.ViewHolder>() {
+class FrameAdapter(frames: MutableList<Frame>) : SelectableAdapter<FrameAdapter.ViewHolder>() {
 
-    private var mFrames: MutableList<ImagemExperimento> = frames
+    private var mFrames: MutableList<Frame> = frames
 
-    var onItemClick: ( (ImagemExperimento, Int) -> Unit )? = null
-    var onItemLongClick: ( (ImagemExperimento, Int) -> Unit )? = null
+    var onItemClick: ( (Frame, Int) -> Unit )? = null
+    var onItemLongClick: ( (Frame, Int) -> Unit )? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -43,16 +43,16 @@ class FrameAdapter(frames: MutableList<ImagemExperimento>) : SelectableAdapter<F
     }
 
 
-    fun atualizar(frames: MutableList<ImagemExperimento>){
+    fun atualizar(frames: MutableList<Frame>){
         this.mFrames = frames
         notifyDataSetChanged()
     }
 
-    fun getItem(position: Int): ImagemExperimento {
+    fun getItem(position: Int): Frame {
         return mFrames[position]
     }
 
-    fun removerItem(frame: ImagemExperimento){
+    fun removerItem(frame: Frame){
         mFrames.remove(frame)
     }
 

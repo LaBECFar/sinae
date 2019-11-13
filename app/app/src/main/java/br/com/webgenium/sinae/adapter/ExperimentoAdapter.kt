@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
-import br.com.webgenium.sinae.room.Experimento
+import br.com.webgenium.sinae.model.Experimento
 
 
 class ExperimentoAdapter(experimentos: MutableList<Experimento>) : SelectableAdapter<ExperimentoAdapter.ViewHolder>() {

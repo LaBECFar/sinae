@@ -1,17 +1,18 @@
 package br.com.webgenium.sinae.room
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
+import br.com.webgenium.sinae.model.Analise
+import br.com.webgenium.sinae.model.Experimento
+import br.com.webgenium.sinae.model.Frame
+
 
 @Dao
 interface AppDao {
 
-    /*
-        Experimento
-    */
+    /* Experimento */
 
     @Query("SELECT * FROM Experimento ORDER BY id DESC")
-    fun getExperimentos(): Flow<List<Experimento>>
+    suspend fun getExperimentos(): List<Experimento>
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,12 +28,11 @@ interface AppDao {
 
 
     @Query("SELECT * FROM Experimento WHERE id = :experimentoId LIMIT 1")
-    fun getExperimentoById(experimentoId: Long): Flow<Experimento>?
+    suspend fun getExperimentoById(experimentoId: Long): Experimento?
 
 
     @Query("SELECT * FROM Experimento WHERE codigo = :experimentoCodigo LIMIT 1")
-    fun getExperimentoByCodigo(experimentoCodigo: Long): Flow<Experimento>?
-
+    suspend fun getExperimentoByCodigo(experimentoCodigo: Long): Experimento?
 
 
     /*
@@ -40,11 +40,11 @@ interface AppDao {
     */
 
     @Query("SELECT * FROM Analise WHERE experimentoId = :experimentoId ORDER BY id")
-    fun getAnalises(experimentoId: Long): Flow<List<Analise>>
+    suspend fun getAnalises(experimentoId: Long): List<Analise>
 
 
-    @Query("SELECT * FROM ImagemExperimento WHERE analiseId = :analiseId")
-    fun getFramesFromAnalise(analiseId: Long): Flow<List<ImagemExperimento>>
+    @Query("SELECT * FROM Frame WHERE analiseId = :analiseId")
+    suspend fun getFramesFromAnalise(analiseId: Long): List<Frame>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAnalise(analise: Analise): Long
@@ -53,18 +53,16 @@ interface AppDao {
     suspend fun deleteAnalise(analise: Analise)
 
     @Query("SELECT * FROM Analise WHERE id = :analiseId LIMIT 1")
-    fun getAnaliseById(analiseId: Long): Flow<Analise>?
+    suspend fun getAnaliseById(analiseId: Long): Analise?
 
 
 
-    /*
-        ImagemExperimento
-    */
+    /* Frame */
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFrame(vararg image: ImagemExperimento)
+    suspend fun insertFrame(vararg image: Frame)
 
     @Delete
-    suspend fun deleteFrame(imagem: ImagemExperimento)
+    suspend fun deleteFrame(imagem: Frame)
 
 }

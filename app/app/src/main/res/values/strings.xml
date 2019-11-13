@@ -24,4 +24,6 @@
     <string name="extraindo_frames">Extraindo Frames</string>
     <string name="salvar_analise">Salvar Análise</string>
     <string name="selecionar_video">Selecionar Vídeo</string>
+    <string name="configuracoes">Configurações</string>
+    <string name="salvar">Salvar</string>
 </resources>

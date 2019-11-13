@@ -1,4 +1,4 @@
-package br.com.webgenium.sinae.room
+package br.com.webgenium.sinae.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

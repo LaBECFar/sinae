@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import br.com.webgenium.sinae.room.AppDao
 import br.com.webgenium.sinae.room.AppDatabase
-import br.com.webgenium.sinae.room.Experimento
+import br.com.webgenium.sinae.model.Experimento
 import kotlinx.android.synthetic.main.activity_novo_experimento.*
 import kotlinx.coroutines.runBlocking
 

@@ -46,6 +46,11 @@
             android:launchMode="singleTask"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".ConfiguracoesActivity"
+            android:label="Configurações"
+            android:launchMode="singleTask"
+            android:parentActivityName=".MainActivity" />
+        <activity
             android:name=".MainActivity"
             android:label="Experimentos">
             <intent-filter>

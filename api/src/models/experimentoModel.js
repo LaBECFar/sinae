@@ -1,18 +1,21 @@
 var mongoose = require('mongoose');
-// var locationModel = require('./locationModel')
+
+const analiseSchema = require('./analiseModel').schema;
 
 var Schema   = mongoose.Schema;
 
-var experimentosSchema = new Schema({
+const experimentosSchema = new Schema({
 	'codigo' : {
 		type: String,
 		required: true
 	},
+
 	'label' : {
 		type: String,
 		required: true
-	}
-	//'analises' : [Schema.Types.analise]
+	},
+
+	'analises' : [analiseSchema]
 },{
 	timestamps: true
 });

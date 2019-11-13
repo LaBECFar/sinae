@@ -3,21 +3,34 @@ const experimentoModel = require("../models/experimentoModel")
 const experimentoController = {
 
     list: (req, res, next) => {
-        experimentoModel.find() 
-            .select('codigo, label')
-            .exec()
+        experimentoModel.find({}, {
+                codigo: 1,
+                label: 1
+            }) 
             .then(experimentos => {
                 return res.status(201).json(experimentos);
             })
             .catch(err => {
-                /* istanbul ignore next */ 
                 return res.status(422).send(err.errors);
             });        
     },
-        
+    
     get: (req, res, next) => {
         let id = req.params.id;
+
         experimentoModel.findById(id)
+            .then(experimento => {
+                return res.status(201).json(experimento);
+            })
+            .catch(err => {
+                return res.status(422).send(err.errors);
+            });                    
+    },
+
+    getByCodigo: (req, res, next) => {
+        let codigo = req.params.codigo;
+
+        experimentoModel.findOne({ codigo: codigo })
             .then(experimento => {
                 return res.status(201).json(experimento);
             })

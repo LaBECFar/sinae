@@ -31,8 +31,9 @@ class NovoExperimentoActivity : AppCompatActivity() {
 
                 ExperimentoClient(this).getByCodigo( codigo, object: CallbackResponse<Experimento>{
                     override fun success(response: Experimento) {
+                        experimento.codigo = response.codigo
+                        experimento.label = response.label
                         et_codigo.setText(response.codigo)
-                        et_label.setText(response.label)
                         salvarExperimento()
                         abrirExperimentoActivity()
                     }
@@ -56,9 +57,6 @@ class NovoExperimentoActivity : AppCompatActivity() {
 
     private fun salvarExperimento(){
         if(experimento.id <= 0) {
-            experimento.codigo = et_codigo.text.toString()
-            experimento.label = et_label.text.toString()
-
             runBlocking {
                 val experimentoId = dao.insertExperimento( experimento )
                 if (experimento.id != experimentoId) {
@@ -74,7 +72,6 @@ class NovoExperimentoActivity : AppCompatActivity() {
         super.onSaveInstanceState(savedInstanceState)
 
         savedInstanceState.putString("codigo", et_codigo.text.toString())
-        savedInstanceState.putString("label", et_label.text.toString())
     }
 
 
@@ -84,14 +81,11 @@ class NovoExperimentoActivity : AppCompatActivity() {
 
         val codigo = savedInstanceState.getString("codigo") as String
         et_codigo.setText( codigo )
-
-        val label = savedInstanceState.getString("label") as String
-        et_label.setText( label )
     }
 
 
     private fun validacao(): Boolean {
-        return validarCodigo() && validarLabel()
+        return validarCodigo()
     }
 
 
@@ -109,21 +103,6 @@ class NovoExperimentoActivity : AppCompatActivity() {
         if(!isValid){
             et_codigo.requestFocus()
             et_codigo.error = errorMsg
-        }
-
-        return isValid
-    }
-
-
-    private fun validarLabel(): Boolean {
-        var isValid = true
-
-        val label = et_label.text.toString()
-
-        if(label.trim() == ""){
-            et_label.error = "Digite o label do experimento"
-            et_label.requestFocus()
-            isValid = false
         }
 
         return isValid

@@ -32,13 +32,17 @@ class ExperimentoClient(val context: Context) {
 
         call.enqueue(object : Callback<Experimento?> {
             override fun onResponse(call: Call<Experimento?>, response: Response<Experimento?>) {
-                response.body()?.let{
-                    experimentoResponse.success(it)
+                if(response.body() != null) {
+                    response.body()?.let {
+                        experimentoResponse.success(it)
+                    }
+                } else {
+                    Toast.makeText(context, "Experimento não encontrado", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<Experimento?>, t: Throwable) {
-                Toast.makeText(context, "Experimento não encontrado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Não foi possivel se comunicar", Toast.LENGTH_SHORT).show()
                 Log.e("onFailure error", t?.message)
 
             }

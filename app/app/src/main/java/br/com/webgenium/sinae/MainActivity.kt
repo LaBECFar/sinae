@@ -11,11 +11,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
-import br.com.webgenium.sinae.adapter.ExperimentoAdapter
+import br.com.webgenium.sinae.custom.adapter.ExperimentoAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.webgenium.sinae.model.Experimento
-import br.com.webgenium.sinae.room.*
+import br.com.webgenium.sinae.database.*
 
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package br.com.webgenium.sinae.room
+package br.com.webgenium.sinae.database
 
 import android.content.Context
 import androidx.room.Database
@@ -11,7 +11,7 @@ import br.com.webgenium.sinae.model.Frame
 
 @Database(
     entities = [Experimento::class, Frame::class, Analise::class],
-    version = 13
+    version = 14
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){

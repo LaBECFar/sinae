@@ -1,4 +1,4 @@
-package br.com.webgenium.sinae.room
+package br.com.webgenium.sinae.database
 
 import androidx.room.*
 import br.com.webgenium.sinae.model.Analise

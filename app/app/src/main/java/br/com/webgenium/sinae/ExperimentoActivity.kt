@@ -8,8 +8,8 @@ import android.view.ActionMode
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import br.com.webgenium.sinae.adapter.AnaliseAdapter
-import br.com.webgenium.sinae.room.*
+import br.com.webgenium.sinae.custom.adapter.AnaliseAdapter
+import br.com.webgenium.sinae.database.*
 import kotlinx.android.synthetic.main.activity_experimento.*
 import kotlinx.coroutines.launch
 import android.view.MenuItem

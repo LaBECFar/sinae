@@ -4,8 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import br.com.webgenium.sinae.room.AppDao
-import br.com.webgenium.sinae.room.AppDatabase
+import br.com.webgenium.sinae.database.AppDao
+import br.com.webgenium.sinae.database.AppDatabase
 import br.com.webgenium.sinae.model.Analise
 import kotlinx.android.synthetic.main.activity_nova_analise.*
 import kotlinx.coroutines.launch

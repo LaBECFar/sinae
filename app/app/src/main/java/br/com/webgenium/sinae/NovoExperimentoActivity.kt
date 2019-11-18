@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import br.com.webgenium.sinae.room.AppDao
-import br.com.webgenium.sinae.room.AppDatabase
+import br.com.webgenium.sinae.api.CallbackResponse
+import br.com.webgenium.sinae.api.ExperimentoClient
+import br.com.webgenium.sinae.database.AppDao
+import br.com.webgenium.sinae.database.AppDatabase
 import br.com.webgenium.sinae.model.Experimento
 import kotlinx.android.synthetic.main.activity_novo_experimento.*
 import kotlinx.coroutines.runBlocking
@@ -25,8 +27,17 @@ class NovoExperimentoActivity : AppCompatActivity() {
 
         btn_continuar.setOnClickListener {
             if( validacao() ) {
-                salvarExperimento()
-                abrirExperimentoActivity()
+                val codigo = et_codigo.text.toString()
+
+                ExperimentoClient(this).getByCodigo( codigo, object: CallbackResponse<Experimento>{
+                    override fun success(response: Experimento) {
+                        et_codigo.setText(response.codigo)
+                        et_label.setText(response.label)
+                        salvarExperimento()
+                        abrirExperimentoActivity()
+                    }
+                })
+
             }
         }
     }
@@ -50,9 +61,6 @@ class NovoExperimentoActivity : AppCompatActivity() {
 
             runBlocking {
                 val experimentoId = dao.insertExperimento( experimento )
-
-                Log.d("NovoExperimentoActivity", "Experimento.ID: ${experimento.id} - $experimentoId")
-
                 if (experimento.id != experimentoId) {
                     experimento.id = experimentoId
                 }

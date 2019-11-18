@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.model.Analise
 import br.com.webgenium.sinae.model.Frame
-import br.com.webgenium.sinae.room.*
+import br.com.webgenium.sinae.database.*
 import kotlinx.android.synthetic.main.activity_nova_analise_video.*
 import kotlinx.android.synthetic.main.include_progress_overlay.*
 import java.io.File

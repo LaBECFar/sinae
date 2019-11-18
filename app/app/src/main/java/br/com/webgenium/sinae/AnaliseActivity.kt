@@ -11,9 +11,9 @@ import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import br.com.webgenium.sinae.adapter.FrameAdapter
-import br.com.webgenium.sinae.room.AppDao
-import br.com.webgenium.sinae.room.AppDatabase
+import br.com.webgenium.sinae.custom.adapter.FrameAdapter
+import br.com.webgenium.sinae.database.AppDao
+import br.com.webgenium.sinae.database.AppDatabase
 import kotlinx.android.synthetic.main.activity_analise.*
 import kotlinx.coroutines.launch
 
@@ -112,9 +112,11 @@ class AnaliseActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 analise.removerArquivo()
                 dao.deleteFrame(analise)
-                mAdapter.notifyItemRemoved(pos)
+                //mAdapter.notifyItemRemoved(pos)
                 txt_frames.text = "Frames: " + mAdapter.itemCount
             }
+
+            mAdapter.notifyDataSetChanged()
         }
     }
 

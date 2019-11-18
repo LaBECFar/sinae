@@ -1,4 +1,4 @@
-package br.com.webgenium.sinae.adapter
+package br.com.webgenium.sinae.custom.adapter
 
 import android.util.SparseBooleanArray
 import androidx.recyclerview.widget.RecyclerView

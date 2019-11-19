@@ -2,8 +2,8 @@ package br.com.webgenium.sinae
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import br.com.webgenium.sinae.custom.SharedPreference
+import br.com.webgenium.sinae.custom.toast
 import kotlinx.android.synthetic.main.activity_configuracoes.*
 
 class ConfiguracoesActivity : AppCompatActivity() {
@@ -48,7 +48,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
             sharedPreference.save("api_port", port)
         }
 
-        Toast.makeText(this,"Configurações Salvas", Toast.LENGTH_SHORT).show()
+        toast("Configurações Salvas")
 
     }
 }

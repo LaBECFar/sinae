@@ -44,7 +44,7 @@ class ExperimentoActivity : AppCompatActivity() {
     private fun novaAnalise() {
         experimento?.let {
             val intent = Intent(this, NovaAnaliseActivity::class.java)
-            intent.putExtra("experimentoId", it.id)
+            intent.putExtra("experimentoCodigo", it.codigo)
             startActivity(intent)
         }
     }
@@ -54,16 +54,16 @@ class ExperimentoActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        val id: Long = intent.getLongExtra("experimentoId", 0)
+        val cod: String = intent.getStringExtra("experimentoCodigo") ?: ""
 
         lifecycleScope.launch {
-            experimento = dao.getExperimentoById(id)
+            experimento = dao.getExperimentoByCodigo(cod)
 
             experimento?.let {
                 titulo.text = it.label
                 codigo.text = "Código: " + it.codigo
 
-                val analises = dao.getAnalises(id)
+                val analises = dao.getAnalises(cod)
                 mAdapter.atualizar(analises.toMutableList())
 
                 if (analises.isNotEmpty()) {
@@ -151,11 +151,11 @@ class ExperimentoActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Excluir Análises")
         builder.setMessage(msg)
-        builder.setPositiveButton("Sim") { dialog, which ->
+        builder.setPositiveButton("Sim") { _, _ ->
             removerItensSelecionados()
             actionMode?.finish()
         }
-        builder.setNegativeButton("Não") { dialog, which -> }
+        builder.setNegativeButton("Não") { _, _ -> }
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }

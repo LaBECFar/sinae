@@ -6,8 +6,8 @@ import java.io.Serializable
 @Entity(foreignKeys = [
     ForeignKey(
         entity = Experimento::class,
-        parentColumns = ["id"],
-        childColumns = ["experimentoId"],
+        parentColumns = ["codigo"],
+        childColumns = ["experimentoCodigo"],
         onDelete = ForeignKey.CASCADE
     )]
 )
@@ -17,7 +17,7 @@ class Analise : Serializable {
     var id: Long = 0
 
     @ColumnInfo(index = true)
-    var experimentoId: Long = 0
+    var experimentoCodigo: String = ""
 
     var tempo: String? = ""
 

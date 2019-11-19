@@ -10,38 +10,25 @@ import br.com.webgenium.sinae.model.Frame
 interface AppDao {
 
     /* Experimento */
-
-    @Query("SELECT * FROM Experimento ORDER BY id DESC")
+    @Query("SELECT * FROM Experimento ORDER BY dataCriacao DESC")
     suspend fun getExperimentos(): List<Experimento>
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExperimento(experimento: Experimento): Long
 
-
     @Update
     suspend fun updateExperimento(experimento: Experimento)
-
 
     @Delete
     suspend fun deleteExperimento(experimento: Experimento)
 
-
-    @Query("SELECT * FROM Experimento WHERE id = :experimentoId LIMIT 1")
-    suspend fun getExperimentoById(experimentoId: Long): Experimento?
-
-
     @Query("SELECT * FROM Experimento WHERE codigo = :experimentoCodigo LIMIT 1")
-    suspend fun getExperimentoByCodigo(experimentoCodigo: Long): Experimento?
+    suspend fun getExperimentoByCodigo(experimentoCodigo: String): Experimento?
 
 
-    /*
-        Analise
-    */
-
-    @Query("SELECT * FROM Analise WHERE experimentoId = :experimentoId ORDER BY id")
-    suspend fun getAnalises(experimentoId: Long): List<Analise>
-
+    /* Analise */
+    @Query("SELECT * FROM Analise WHERE experimentoCodigo = :experimentoCodigo ORDER BY id")
+    suspend fun getAnalises(experimentoCodigo: String): List<Analise>
 
     @Query("SELECT * FROM Frame WHERE analiseId = :analiseId")
     suspend fun getFramesFromAnalise(analiseId: Long): List<Frame>
@@ -58,11 +45,9 @@ interface AppDao {
 
 
     /* Frame */
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFrame(vararg image: Frame)
 
     @Delete
     suspend fun deleteFrame(imagem: Frame)
-
 }

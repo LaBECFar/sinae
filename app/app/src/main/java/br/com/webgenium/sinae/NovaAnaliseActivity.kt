@@ -15,7 +15,6 @@ class NovaAnaliseActivity : AppCompatActivity() {
 
     private val db: AppDatabase by lazy {  AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
-
     private var analise = Analise()
 
 
@@ -23,13 +22,13 @@ class NovaAnaliseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nova_analise)
 
-        val experimentoId = intent.getLongExtra("experimentoId", 0)
+        val experimentoCodigo = intent.getStringExtra("experimentoCodigo") ?: ""
 
         lifecycleScope.launch {
-            analise.experimento = dao.getExperimentoById(experimentoId)
+            analise.experimento = dao.getExperimentoByCodigo(experimentoCodigo)
 
             analise.experimento?.let{
-                analise.experimentoId = it.id
+                analise.experimentoCodigo = it.codigo
             }
         }
 

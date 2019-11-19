@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun abrirConfiguracoes(){
+    private fun abrirConfiguracoes() {
         val intent = Intent(this, ConfiguracoesActivity::class.java)
         startActivity(intent)
     }
@@ -74,9 +74,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun verExperimento(id: Long) {
+    private fun verExperimento(codigo: String) {
         val intent = Intent(this, ExperimentoActivity::class.java)
-        intent.putExtra("experimentoId", id)
+        intent.putExtra("experimentoCodigo", codigo)
         startActivity(intent)
     }
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             if (actionMode != null) {
                 toggleItemSelection(position)
             } else {
-                verExperimento(experimento.id)
+                verExperimento(experimento.codigo)
             }
         }
 
@@ -132,7 +132,7 @@ class MainActivity : AppCompatActivity() {
             val experimento: Experimento = mAdapter.getItem(pos)
 
             lifecycleScope.launch {
-                val analises = dao.getAnalises(experimento.id)
+                val analises = dao.getAnalises(experimento.codigo)
 
                 analises.forEach { analise ->
                     val frames = dao.getFramesFromAnalise(analise.id)
@@ -149,11 +149,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun confirmarExclusao(){
+    private fun confirmarExclusao() {
         val count = mAdapter.getSelectedItemCount()
 
         var msg = "Deseja excluir $count experimento"
-        if(count > 1){
+        if (count > 1) {
             msg += "s"
         }
         msg += "?"
@@ -161,11 +161,11 @@ class MainActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Excluir Experimentos")
         builder.setMessage(msg)
-        builder.setPositiveButton("Sim") { dialog, which ->
+        builder.setPositiveButton("Sim") { _, _ ->
             removerItensSelecionados()
             actionMode?.finish()
         }
-        builder.setNegativeButton("Não") { dialog, which -> }
+        builder.setNegativeButton("Não") { _, _ -> }
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }

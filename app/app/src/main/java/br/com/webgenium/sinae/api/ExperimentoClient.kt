@@ -1,12 +1,8 @@
 package br.com.webgenium.sinae.api
 
 import android.content.Context
-import android.util.Log
-import android.widget.Toast
+import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Experimento
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class ExperimentoClient(val context: Context) {
 
@@ -26,25 +22,19 @@ class ExperimentoClient(val context: Context) {
 //        })
 //    }
 
-
-    fun getByCodigo(codigo: String, experimentoResponse: CallbackResponse<Experimento>){
+    fun getByCodigo(codigo: String, successo: (experimento: Experimento) -> Unit){
         val call = RetrofitInitializer().experimentoService().getByCodigo(codigo)
 
-        call.enqueue(object : Callback<Experimento?> {
-            override fun onResponse(call: Call<Experimento?>, response: Response<Experimento?>) {
-                if(response.body() != null) {
-                    response.body()?.let {
-                        experimentoResponse.success(it)
-                    }
-                } else {
-                    Toast.makeText(context, "Experimento não encontrado", Toast.LENGTH_SHORT).show()
-                }
+        call.enqueue(callback { response, thorwable ->
+
+            response?.body()?.let {
+                successo(it)
+            } ?: run {
+                context.toast("Experimento não encontrado")
             }
 
-            override fun onFailure(call: Call<Experimento?>, t: Throwable) {
-                Toast.makeText(context, "Não foi possivel se comunicar", Toast.LENGTH_SHORT).show()
-                Log.e("onFailure error", t?.message)
-
+            thorwable?.let {
+                context.toast("Não foi possivel se comunicar")
             }
         })
     }

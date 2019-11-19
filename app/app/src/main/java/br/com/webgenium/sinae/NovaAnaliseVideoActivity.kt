@@ -11,9 +11,9 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Analise
 import br.com.webgenium.sinae.model.Frame
 import br.com.webgenium.sinae.database.*
@@ -172,28 +172,28 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     analise.id = analiseId
                 }
 
-                val frames: List<Frame> = extrairFrames(analiseId)
+                val frames: List<Frame> = extrairFrames()
 
                 salvarFrames(frames, analiseId)
 
                 runOnUiThread {
                     progress_overlay.visibility = View.INVISIBLE
-                    abrirExperimento(analise.experimentoId)
+                    abrirExperimento(analise.experimentoCodigo)
                 }
             }
 
         }
     }
 
-    private fun abrirExperimento(experimentoId: Long){
+    private fun abrirExperimento(experimentoCodigo: String){
         val intent = Intent(baseContext, ExperimentoActivity::class.java)
-        intent.putExtra("experimentoId", experimentoId)
+        intent.putExtra("experimentoCodigo", experimentoCodigo)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
 
 
-    private fun extrairFrames(experimentoId: Long): List<Frame> {
+    private fun extrairFrames(): List<Frame> {
 
         val frames = mutableListOf<Frame>()
         val milisecondsToFrame: Long = (1000 / analise!!.fps).toLong()
@@ -212,7 +212,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     tString = "0$t"
                 }
 
-                val filename = "${experimentoId}_${analise?.tempo}_Q${q}_${tString}"
+                val filename = "${analise?.experimentoCodigo}_${analise?.tempo}_Q${q}_${tString}"
 
                 val frame = Frame()
                 frame.filename = filename
@@ -421,7 +421,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                         videoUri = it
                     }
                 } catch (e: IOException) {
-                    Toast.makeText(this, "Erro ao selecionar vídeo!", Toast.LENGTH_SHORT).show()
+                    toast("Erro ao selecionar vídeo!")
                 }
             }
         } else {

@@ -35,7 +35,6 @@ const experimentoController = {
                 return res.status(201).json(experimento);
             })
             .catch(err => {
-                /* istanbul ignore next */ 
                 return res.status(422).send(err.errors);
             });                    
     },
@@ -49,7 +48,7 @@ const experimentoController = {
         experimento.save((err, experimento) => {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when creating experimento',
+                    message: 'Erro ao criar experimento',
                     error: err
                 });
             }
@@ -75,7 +74,7 @@ const experimentoController = {
                     /* istanbul ignore next */ 
                     if (err) {
                         return res.status(500).json({
-                            message: 'Error when updating experimento.',
+                            message: 'Erro ao atualizar experimento.',
                             error: err
                         });
                     }
@@ -89,7 +88,7 @@ const experimentoController = {
         experimentoModel.deleteOne({_id: id},function(err, experimento){
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when deleting experimento.',
+                    message: 'Erro ao deletar experimento.',
                     error: err
                 });
             }

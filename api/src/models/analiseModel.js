@@ -12,7 +12,12 @@ const analisesSchema = new Schema({
     'tempo': {
         type: String,
         required: true
-    }
+    },
+
+    'codigoExperimento' : {
+		type: String,
+		required: true
+	},
 },{
     timestamps: true
 });

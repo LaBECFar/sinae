@@ -6,10 +6,12 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ExperimentoService {
+
     @GET("experimento")
     fun list() : Call<List<Experimento>>
 
 
     @GET("experimento/codigo/{cod}")
     fun getByCodigo(@Path("cod") codigo: String) : Call<Experimento>
+
 }

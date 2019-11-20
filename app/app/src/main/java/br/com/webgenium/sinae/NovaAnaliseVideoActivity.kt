@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import br.com.webgenium.sinae.api.AnaliseClient
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Analise
 import br.com.webgenium.sinae.model.Frame
@@ -161,10 +162,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
             analise.quadrantes = getQuadrantes()
 
-            Thread {
-
-            }.run()
-
             lifecycleScope.launch(newSingleThreadContext("SAVE_ANALISE")) {
                 val analiseId = dao.insertAnalise(analise)
 
@@ -176,12 +173,22 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
                 salvarFrames(frames, analiseId)
 
+                cadastrarAnaliseServer()
+
                 runOnUiThread {
                     progress_overlay.visibility = View.INVISIBLE
                     abrirExperimento(analise.experimentoCodigo)
                 }
             }
 
+        }
+    }
+
+    private fun cadastrarAnaliseServer(){
+        analise?.let { analise ->
+            AnaliseClient(this).insert( analise ) {
+                toast("Analise (${it.tempo}) cadastrada com sucesso!")
+            }
         }
     }
 

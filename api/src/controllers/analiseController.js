@@ -5,14 +5,14 @@ const analiseController = {
     list: (req, res, next) => {
         let search = {}
         
-        if(req.params.codigoExperimento){
-            search.codigoExperimento = req.params.codigoExperimento
+        if(req.params.experimentoCodigo){
+            search.experimentoCodigo = req.params.experimentoCodigo
         }
 
         analiseModel.find( search, {
                 fps: 1,
                 tempo: 1,
-                codigoExperimento: 1
+                experimentoCodigo: 1
             }) 
             .then(analises => {
                 return res.status(201).json(analises);
@@ -38,7 +38,7 @@ const analiseController = {
         const analise = new analiseModel({
             tempo: req.body.tempo,
             fps: req.body.fps,
-            codigoExperimento: req.body.codigoExperimento
+            experimentoCodigo: req.body.experimentoCodigo
         })
         
         analise.save((err, analise) => {
@@ -65,7 +65,7 @@ const analiseController = {
 
                 analise.tempo = req.body.tempo
                 analise.fps = req.body.fps
-                analise.codigoExperimento = req.body.codigoExperimento
+                analise.experimentoCodigo = req.body.experimentoCodigo
 
                 analise.save(function (err, analise) {
                     if (err) {

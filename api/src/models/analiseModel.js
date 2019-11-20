@@ -14,7 +14,7 @@ const analisesSchema = new Schema({
         required: true
     },
 
-    'codigoExperimento' : {
+    'experimentoCodigo' : {
 		type: String,
 		required: true
 	},

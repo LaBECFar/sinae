@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
 const analisesSchema = new Schema({
+    
     'fps' : {
         type: Number,
         required: true,
@@ -17,7 +18,7 @@ const analisesSchema = new Schema({
     'experimentoCodigo' : {
 		type: String,
 		required: true
-	},
+	}
 },{
     timestamps: true
 });

@@ -7,9 +7,9 @@ const router = express.Router();
 
 //Rotas
 const index = require('./routes/index');
-const deviceRoutes   = require('./routes/deviceRoutes');
 const experimentoRoutes   = require('./routes/experimentoRoutes');
 const analiseRoutes   = require('./routes/analiseRoutes');
+const frameRoutes   = require('./routes/frameRoutes');
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -25,9 +25,9 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use('/device', deviceRoutes);
 app.use('/experimento', experimentoRoutes);
 app.use('/analise', analiseRoutes);
+app.use('/frame', frameRoutes);
 app.use('/', index);
 
 module.exports = app;

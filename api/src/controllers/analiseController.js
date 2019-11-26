@@ -27,7 +27,9 @@ const analiseController = {
 
         analiseModel.findById(id)
             .then(analise => {
-                return res.status(201).json(analise);
+                let obj = analise.toObject()
+                obj.idserver = analise._id
+                return res.status(201).json(obj);
             })
             .catch(err => {
                 return res.status(422).send(err.errors);
@@ -40,7 +42,7 @@ const analiseController = {
             fps: req.body.fps,
             experimentoCodigo: req.body.experimentoCodigo
         })
-        
+
         analise.save((err, analise) => {
             if (err) {
                 return res.status(500).json({
@@ -48,7 +50,11 @@ const analiseController = {
                     error: err
                 });
             }
-            return res.status(201).json(analise);
+
+            let obj = analise.toObject()
+            obj.idserver = analise._id
+            
+            return res.status(201).json(obj);
         })
     },
     

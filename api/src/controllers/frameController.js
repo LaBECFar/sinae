@@ -45,7 +45,8 @@ const frameController = {
 
         form.parse(req, function(err, fields, files) {
             if (err) return res.status(422).send(err.errors);
-            saveFrame(fields, files.frame)
+            let frameFile = files.frame || files.file
+            saveFrame(fields, frameFile)
         })
 
 
@@ -54,41 +55,49 @@ const frameController = {
             let analiseId = fields.analiseId
             let tempoMilis = fields.tempoMilis
 
+            //console.log(JSON.stringify(fields))
+            //console.log(JSON.stringify(file))
+
             if(!experimentoCodigo){
-                return res.status(500).json({ error: true, message: 'Código do experimento não informado' });
+                let errorMsg = 'Código do experimento não informado'
+                return res.status(500).json({ error: true, message: errorMsg });
             }
 
             if(!analiseId){
-                return res.status(500).json({ error: true, message: 'ID da análise não informado' });
+                let errorMsg = 'ID da análise não informado'
+                return res.status(500).json({ error: true, message: errorMsg });
             }
 
             if(!tempoMilis){
-                return res.status(500).json({ error: true, message: 'Tempo em milisegundos não informado' });
+                let errorMsg = 'Tempo em milisegundos não informado'
+                return res.status(500).json({ error: true, message: errorMsg });
             }
 
             if(!file){
-                return res.status(500).json({ error: true,message: 'Arquivo do frame não transferido' });
+                let errorMsg = 'Arquivo do frame não transferido'
+                return res.status(500).json({ error: true,message: errorMsg });
             }
 
             if(file.type !== 'image/jpeg' && file.type !== 'image/png'){
-                return res.status(500).json({ error: true, message: 'Tipo de arquivo não permitido' });
+                let errorMsg = 'Tipo de arquivo não permitido'
+                return res.status(500).json({ error: true, message: errorMsg });
             }
-
             
             let filename = file.name
             let oldpath = file.path
             let targetpath = path.join(__dirname, `../uploads/experimentos/${experimentoCodigo}/${analiseId}`)
+
 
             if(!fs.existsSync(targetpath)){
                 fs.mkdirSync(targetpath, { recursive: true })
             }
             targetpath += '/' + filename
 
-            if(fs.existsSync(oldpath)){
-                console.log("Existe o old path")
+            if(!fs.existsSync(oldpath)){
+                console.log("frameController.js: Não existe o oldpath")
             }
-            if(fs.existsSync(targetpath)){
-                console.log("Existe o novo path")
+            if(!fs.existsSync(targetpath)){
+                console.log("frameController.js: Não existe o targetpath")
             }
 
             fs.rename(oldpath, targetpath, (err) => {

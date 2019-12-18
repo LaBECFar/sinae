@@ -26,5 +26,7 @@ class RetrofitInitializer(val context: Context) {
 
     fun analiseService(): AnaliseService = retrofit.create(AnaliseService::class.java)
 
+    fun frameService(): FrameService = retrofit.create(FrameService::class.java)
+
 
 }

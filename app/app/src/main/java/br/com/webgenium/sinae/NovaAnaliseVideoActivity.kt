@@ -177,7 +177,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     progress_overlay.visibility = View.INVISIBLE
-                    abrirExperimento(analise.experimentoCodigo)
                 }
             }
 
@@ -185,16 +184,31 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     private fun cadastrarAnaliseServer(){
-        analise?.let { analise ->
-            AnaliseClient(this).insert( analise ) {
-                toast("Analise (${it.tempo}) cadastrada com sucesso!")
+        analise?.let { analiseLocal ->
+            AnaliseClient(this).insert( analiseLocal ) { analiseServer ->
+                analiseLocal.idserver = analiseServer.idserver
+
+                lifecycleScope.launch {
+                    dao.updateAnalise(analiseLocal)
+                }
+
+                //abrirExperimento()
+                abrirAnalise()
+                toast("Analise (${analiseLocal.tempo}) cadastrada com sucesso!")
             }
         }
     }
 
-    private fun abrirExperimento(experimentoCodigo: String){
+    private fun abrirExperimento(){
         val intent = Intent(baseContext, ExperimentoActivity::class.java)
-        intent.putExtra("experimentoCodigo", experimentoCodigo)
+        intent.putExtra("experimentoCodigo", analise?.experimentoCodigo)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+    }
+
+    private fun abrirAnalise(){
+        val intent = Intent(baseContext, AnaliseActivity::class.java)
+        intent.putExtra("analiseId", analise?.id)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
@@ -223,7 +237,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
                 val frame = Frame()
                 frame.filename = filename
-                frame.time = t
+                frame.tempoMilis = t
                 frames.add(frame)
             }
 
@@ -241,7 +255,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
         frames.forEach { frame ->
             try {
-                val microseconds = "${frame.time}000".toLong()
+                val microseconds = "${frame.tempoMilis}000".toLong()
                 val bmp: Bitmap = mediaretriever.getFrameAtTime(
                     microseconds,
                     MediaMetadataRetriever.OPTION_CLOSEST_SYNC
@@ -254,7 +268,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 dao.insertFrame(frame)
 
             } catch (e: Exception) {
-                Log.e("Erro", "${timeToString(frame.time)}: ${e.message}")
+                Log.e("Erro", "${timeToString(frame.tempoMilis)}: ${e.message}")
             }
 
             count++
@@ -344,19 +358,10 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     // Converte o tempo em milisegundos para string no formato 00:00
     private fun timeToString(time: Long): String {
-        var min = TimeUnit.MILLISECONDS.toMinutes(time).toString()
-        var sec =
-            TimeUnit.MILLISECONDS.toSeconds(time - TimeUnit.MILLISECONDS.toMinutes(time)).toString()
-
-        if (min.count() == 1) {
-            min = "0${min}"
-        }
-
-        if (sec.count() == 1) {
-            sec = "0${sec}"
-        }
-
-        return "${min}:${sec}"
+        return String.format("%02d:%02d",
+            TimeUnit.MILLISECONDS.toMinutes(time),
+            TimeUnit.MILLISECONDS.toSeconds(time) -  TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time))
+        )
     }
 
 

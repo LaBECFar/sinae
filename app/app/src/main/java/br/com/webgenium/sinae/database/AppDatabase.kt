@@ -11,7 +11,7 @@ import br.com.webgenium.sinae.model.Frame
 
 @Database(
     entities = [Experimento::class, Frame::class, Analise::class],
-    version = 18
+    version = 23
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){

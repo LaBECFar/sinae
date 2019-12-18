@@ -30,6 +30,11 @@ class FrameAdapter(frames: MutableList<Frame>) : SelectableAdapter<FrameAdapter.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.titulo.text = "Frame "+ (position + 1)
 
+        if(mFrames[position].uploaded){
+            holder.titulo.setCompoundDrawablesWithIntrinsicBounds(0,0, R.drawable.ic_check_green_24dp, 0)
+            holder.titulo.setTextColor(Color.parseColor("#48a868"))
+        }
+
         if(isSelected(position)) {
             holder.item.setBackgroundColor(Color.parseColor("#cccccc"))
         } else {

@@ -33,6 +33,9 @@ interface AppDao {
     @Query("SELECT * FROM Frame WHERE analiseId = :analiseId")
     suspend fun getFramesFromAnalise(analiseId: Long): List<Frame>
 
+    @Query("SELECT * FROM Frame WHERE analiseId = :analiseId AND uploaded = 0 LIMIT 1")
+    suspend fun getFrameFromAnaliseToUpload(analiseId: Long): Frame?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAnalise(analise: Analise): Long
 
@@ -42,11 +45,19 @@ interface AppDao {
     @Query("SELECT * FROM Analise WHERE id = :analiseId LIMIT 1")
     suspend fun getAnaliseById(analiseId: Long): Analise?
 
+    @Query("SELECT * FROM Analise ORDER BY id DESC LIMIT 1")
+    suspend fun getLastAnalise(): Analise?
+
+    @Update
+    suspend fun updateAnalise(analise: Analise)
 
 
     /* Frame */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFrame(vararg image: Frame)
+
+    @Update
+    suspend fun updateFrame(frame: Frame)
 
     @Delete
     suspend fun deleteFrame(imagem: Frame)

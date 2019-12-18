@@ -25,9 +25,21 @@ class Analise : Serializable {
 
     var quadrantes: List<String> = listOf()
 
+    var idserver: String = ""
+
     @Ignore
     var experimento: Experimento? = null
 
     @Ignore
     var frames: List<Frame> = listOf()
+
+    fun getFrameById(id: Long) : Frame? {
+        frames.forEach {
+            if(it.id == id){
+                return it
+            }
+        }
+        return null
+    }
+
 }

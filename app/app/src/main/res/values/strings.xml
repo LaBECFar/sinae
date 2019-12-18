@@ -20,10 +20,13 @@
     <string name="rotulo">Rótulo</string>
     <string name="experimento">Experimento</string>
     <string name="frame">Frame</string>
+    <string name="frames">Frames</string>
+    <string name="contador_frames">Frames: %s</string>
     <string name="analises">Análises</string>
     <string name="extraindo_frames">Extraindo Frames</string>
     <string name="salvar_analise">Salvar Análise</string>
     <string name="selecionar_video">Selecionar Vídeo</string>
     <string name="configuracoes">Configurações</string>
     <string name="salvar">Salvar</string>
+    <string name="upload">Upload</string>
 </resources>

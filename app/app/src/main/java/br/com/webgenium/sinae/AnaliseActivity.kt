@@ -2,30 +2,43 @@ package br.com.webgenium.sinae
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.webgenium.sinae.api.FrameClient
 import br.com.webgenium.sinae.custom.adapter.FrameAdapter
 import br.com.webgenium.sinae.database.AppDao
 import br.com.webgenium.sinae.database.AppDatabase
+import br.com.webgenium.sinae.model.Analise
+import br.com.webgenium.sinae.model.Frame
 import kotlinx.android.synthetic.main.activity_analise.*
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.concurrent.schedule
+
 
 class AnaliseActivity : AppCompatActivity() {
 
     private val db: AppDatabase by lazy { AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
 
+    private var analise: Analise? = null
+
     private var mAdapter = FrameAdapter(mutableListOf())
+    private var menu : Menu? = null
 
     private var actionMode: ActionMode? = null
     private val actionModeCallback = ActionModeCallback()
+
+    private var isUploading = false
+    private var countUploaded: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,16 +54,45 @@ class AnaliseActivity : AppCompatActivity() {
         val id: Long = intent.getLongExtra("analiseId", 0)
 
         lifecycleScope.launch {
-            val analise = dao.getAnaliseById(id)
+            analise = dao.getAnaliseById(id)
 
             analise?.let{
-                txt_titulo.text = analise.tempo
+                txt_titulo.text = it.tempo
                 txt_fps.text = "FPS: " + it.fps
 
-                val frames = dao.getFramesFromAnalise(id)
-                txt_frames.text = "Frames: " + frames.size.toString()
-                mAdapter.atualizar(frames.toMutableList())
+                it.frames = dao.getFramesFromAnalise(id)
+                mAdapter.atualizar(it.frames.toMutableList())
+                txt_frames.text = "Frames: ${framesValue()}"
             }
+
+            checkUploadMenu()
+        }
+    }
+
+    private fun framesValue() : String {
+        analise?.let {
+            countUploadedFrames()
+
+            if (countUploaded < it.frames.size) {
+                return "$countUploaded / ${it.frames.size}"
+            } else {
+                return "$countUploaded / ${it.frames.size} (Upload Completo)"
+            }
+
+        }
+        return "?"
+    }
+
+    private fun countUploadedFrames(){
+        countUploaded = 0
+
+        analise?.let{
+            it.frames.forEach {
+                if(it.uploaded){
+                    countUploaded++
+                }
+            }
+
         }
     }
 
@@ -80,6 +122,132 @@ class AnaliseActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    private fun pauseUpload(){
+        if(!isUploading) {
+            val item: MenuItem? = menu?.findItem(R.id.upload_frames)
+            item?.let {
+                item.setIcon(R.drawable.ic_cloud_upload_black_24dp)
+            }
+
+            isUploading = false
+        }
+    }
+
+    // Método para iniciar o upload dos frames dessa analise
+    private fun uploadFrames(){
+        if(!isUploading) {
+            isUploading = true
+
+            val item: MenuItem? = menu?.findItem(R.id.upload_frames)
+            item?.let {
+                item.setIcon(R.drawable.ic_pause_white_24dp)
+            }
+
+            analise?.let {
+                if (it.id > 0 && it.idserver.isNotEmpty()) {
+                    uploadNextFrame()
+                }
+            }
+        } else {
+            pauseUpload()
+        }
+    }
+
+
+    private fun uploadNextFrame(){
+        if(isUploading){
+
+            analise?.let { analise ->
+                val context = this
+
+                lifecycleScope.launch {
+                    val frame = dao.getFrameFromAnaliseToUpload(analise.id)
+
+                    if(frame != null) {
+                        FrameClient(context).uploadFrame(
+                            frame = frame,
+                            experimentoCodigo = analise.experimentoCodigo,
+                            analiseId = analise.idserver,
+                            tempoMilis = frame.tempoMilis
+                        ) {
+                            if(it.uploaded) {
+                                val frameLocal: Frame? = analise.getFrameById(frame.id)
+
+                                frameLocal?.let { frameLocal ->
+                                    frameLocal.uploaded = true
+
+                                    lifecycleScope.launch {
+                                        dao.updateFrame(frameLocal)
+                                    }
+
+                                    mAdapter.notifyDataSetChanged()
+                                    txt_frames.text = getString(R.string.contador_frames, framesValue())
+
+
+                                    Timer("SettingUp", false).schedule(500) {
+                                        uploadNextFrame()
+                                    }
+
+                                }
+                            }
+                        }
+                    } else {
+                        onFramesUploadComplete()
+                    }
+                }
+            }
+
+        }
+    }
+
+
+    private fun onFramesUploadComplete(){
+        hideUploadMenu()
+        Log.d("SINAE", "Nenhum frame para upload foi encontrado")
+    }
+
+    private fun hideUploadMenu(){
+        val item: MenuItem? = menu?.findItem(R.id.upload_frames)
+        item?.let {
+            item.setVisible(false)
+        }
+    }
+
+
+    private fun checkUploadMenu(){
+        analise?.let{
+            lifecycleScope.launch {
+                val uploadableFrame = dao.getFrameFromAnaliseToUpload(it.id)
+                if (uploadableFrame == null) {
+                    hideUploadMenu()
+                }
+            }
+
+        }
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        this.menu = menu
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_analise, menu)
+
+        checkUploadMenu()
+
+        return true
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.upload_frames -> {
+                uploadFrames()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
     private fun checkActionMode() {
         val count = mAdapter.getSelectedItemCount()
@@ -106,17 +274,16 @@ class AnaliseActivity : AppCompatActivity() {
         val revertedSelectedPositions = mAdapter.getSelectedItems().asReversed()
 
         revertedSelectedPositions.forEach { pos ->
-            val analise = mAdapter.getItem(pos)
-            mAdapter.removerItem(analise)
+            val frame = mAdapter.getItem(pos)
+            mAdapter.removerItem(frame)
 
             lifecycleScope.launch {
-                analise.removerArquivo()
-                dao.deleteFrame(analise)
-                //mAdapter.notifyItemRemoved(pos)
-                txt_frames.text = "Frames: " + mAdapter.itemCount
+                frame.removerArquivo()
+                dao.deleteFrame(frame)
             }
 
             mAdapter.notifyDataSetChanged()
+            txt_frames.text = getString(R.string.contador_frames, framesValue())
         }
     }
 
@@ -127,7 +294,7 @@ class AnaliseActivity : AppCompatActivity() {
         if(count > 1){
             msg += "s"
         }
-        msg += "?"
+        msg += " localmente?"
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Excluir Frames")

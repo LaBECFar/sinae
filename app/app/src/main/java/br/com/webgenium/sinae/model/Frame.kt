@@ -28,7 +28,7 @@ class Frame {
     var filename: String = ""
 
     @Ignore
-    var time: Long = 0
+    var tempoMilis: Long = 0
 
     fun removerArquivo(): Boolean{
         val filePath = Uri.parse(this.uri).path

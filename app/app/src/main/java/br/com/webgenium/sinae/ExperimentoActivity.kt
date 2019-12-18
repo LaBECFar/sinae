@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.ActionMode
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,8 @@ import android.view.MenuItem
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.appcompat.app.AlertDialog
+import br.com.webgenium.sinae.api.FrameClient
+import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Experimento
 
 
@@ -72,6 +75,7 @@ class ExperimentoActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun abrirAnaliseActivity(analiseId: Long) {
         val intent = Intent(this, AnaliseActivity::class.java)

@@ -60,8 +60,8 @@ class AnaliseActivity : AppCompatActivity() {
                 txt_titulo.text = it.tempo
                 txt_fps.text = "FPS: " + it.fps
 
-                it.frames = dao.getFramesFromAnalise(id)
-                mAdapter.atualizar(it.frames.toMutableList())
+                it.frames = dao.getFramesFromAnalise(id).toMutableList()
+                mAdapter.atualizar(it.frames)
                 txt_frames.text = "Frames: ${framesValue()}"
             }
 
@@ -73,12 +73,15 @@ class AnaliseActivity : AppCompatActivity() {
         analise?.let {
             countUploadedFrames()
 
-            if (countUploaded < it.frames.size) {
-                return "$countUploaded / ${it.frames.size}"
-            } else {
+            if (countUploaded >= it.frames.size) {
                 return "$countUploaded / ${it.frames.size} (Upload Completo)"
             }
 
+            if(isUploading) {
+                return "$countUploaded / ${it.frames.size} (Enviando...)"
+            }
+
+            return "$countUploaded / ${it.frames.size}"
         }
         return "?"
     }
@@ -123,13 +126,14 @@ class AnaliseActivity : AppCompatActivity() {
     }
 
     private fun pauseUpload(){
-        if(!isUploading) {
+        if(isUploading) {
             val item: MenuItem? = menu?.findItem(R.id.upload_frames)
             item?.let {
                 item.setIcon(R.drawable.ic_cloud_upload_black_24dp)
             }
 
             isUploading = false
+            txt_frames.text = getString(R.string.contador_frames, framesValue())
         }
     }
 

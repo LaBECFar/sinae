@@ -25,14 +25,24 @@ class FrameAdapter(frames: MutableList<Frame>) : SelectableAdapter<FrameAdapter.
         )
     }
 
+    private fun frameTitle(frame: Frame) : String{
+        var title : String = frame.filename.split("_Q")[1]
+        title = "Q" + title.replace("_", " ") +"ms"
+        return title
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.titulo.text = "Frame "+ (position + 1)
+        val frame = mFrames[position]
 
-        if(mFrames[position].uploaded){
+        holder.titulo.text = "Frame " + frameTitle(frame)
+
+        if(frame.uploaded){
             holder.titulo.setCompoundDrawablesWithIntrinsicBounds(0,0, R.drawable.ic_check_green_24dp, 0)
             holder.titulo.setTextColor(Color.parseColor("#48a868"))
+        } else {
+            holder.titulo.setCompoundDrawablesWithIntrinsicBounds(0,0, 0, 0)
+            holder.titulo.setTextColor(Color.parseColor("#333333"))
         }
 
         if(isSelected(position)) {

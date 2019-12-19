@@ -36,6 +36,7 @@ class NovaAnaliseActivity : AppCompatActivity() {
         btn_continuar.setOnClickListener {
             analise.tempo = et_tempo.text.toString()
             analise.fps = et_fps.text.toString().toInt()
+            analise.placa = et_placa.text.toString()
 
             val intent = Intent(this, NovaAnaliseVideoActivity::class.java)
             intent.putExtra("analise", analise)

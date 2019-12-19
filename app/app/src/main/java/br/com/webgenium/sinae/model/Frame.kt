@@ -24,10 +24,8 @@ class Frame {
 
     var uploaded: Boolean = false
 
-    @Ignore
     var filename: String = ""
 
-    @Ignore
     var tempoMilis: Long = 0
 
     fun removerArquivo(): Boolean{

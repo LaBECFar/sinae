@@ -27,11 +27,13 @@ class Analise : Serializable {
 
     var idserver: String = ""
 
+    var placa: String = ""
+
     @Ignore
     var experimento: Experimento? = null
 
     @Ignore
-    var frames: List<Frame> = listOf()
+    var frames: MutableList<Frame> = mutableListOf()
 
     fun getFrameById(id: Long) : Frame? {
         frames.forEach {

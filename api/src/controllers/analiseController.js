@@ -12,7 +12,8 @@ const analiseController = {
         analiseModel.find( search, {
                 fps: 1,
                 tempo: 1,
-                experimentoCodigo: 1
+                experimentoCodigo: 1,
+                placa: 1
             }) 
             .then(analises => {
                 return res.status(201).json(analises);
@@ -40,7 +41,8 @@ const analiseController = {
         const analise = new analiseModel({
             tempo: req.body.tempo,
             fps: req.body.fps,
-            experimentoCodigo: req.body.experimentoCodigo
+            experimentoCodigo: req.body.experimentoCodigo,
+            placa: req.body.placa
         })
 
         analise.save((err, analise) => {
@@ -69,6 +71,7 @@ const analiseController = {
                     return res.status(404).send()
                 }
 
+                analise.placa = req.body.placa
                 analise.tempo = req.body.tempo
                 analise.fps = req.body.fps
                 analise.experimentoCodigo = req.body.experimentoCodigo

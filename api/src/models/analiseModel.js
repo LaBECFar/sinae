@@ -3,7 +3,11 @@ var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
 const analisesSchema = new Schema({
-    
+    'placa': {
+        type: String,
+        required: true
+    },
+
     'fps' : {
         type: Number,
         required: true,

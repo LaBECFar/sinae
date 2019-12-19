@@ -133,8 +133,8 @@ const frameController = {
                     return res.status(404).send()
                 }
 
-                frame.tempo = req.body.tempo
-                frame.fps = req.body.fps
+                frame.analiseId = req.body.analiseId
+                frame.tempoMilis = req.body.tempoMilis
                 frame.experimentoCodigo = req.body.experimentoCodigo
 
                 frame.save(function (err, frame) {

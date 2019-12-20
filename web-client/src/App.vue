@@ -3,7 +3,7 @@
     <b-container fluid class="h-100">
       <b-row id="head">
         <div>
-          <img style="float:left;" src="prism.png"> 
+          <!-- <img style="float:left;" src="prism.png">  -->
           <div style="font-size: 40px; float:left; margin-top:7px;"><em>&nbsp;SINAE</em></div>
         </div>
       </b-row>

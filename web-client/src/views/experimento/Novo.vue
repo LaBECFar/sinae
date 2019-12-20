@@ -7,36 +7,19 @@
         </b-alert>
 
         <b-form @submit="onSubmit">
-            <b-form-group id="input-group-1" label="Name:" label-for="name">
-                <b-form-input id="name" v-model="form.name" type="text" required/>
+            <b-form-group id="input-group-1" label="Código:" label-for="codigo">
+                <b-form-input id="codigo" v-model="form.codigo" type="text" required/>
             </b-form-group>
 
-            <b-form-group id="input-group-1" label="Physical Path:" label-for="physicalPath">
-                <b-form-input id="physicalPath" v-model="form.physicalPath" type="text"/>
+            <b-form-group id="input-group-1" label="Label:" label-for="label">
+                <b-form-input id="label" v-model="form.label" type="text" required/>
             </b-form-group>
-
-            <b-form-group id="input-group-3" label="Connection Type:" label-for="connectionType">
-                <b-form-select style="margin-top:0px!important" id="connectionType" v-model="form.connectionType" :options="connectionTypes" size="sm" class="mt-3"></b-form-select>
-            </b-form-group>
-
-            <b-form-group id="input-group-2" label="Connection Parameters:" label-for="parameters">
-                <b-textarea id="connectionParameters" v-model="form.connectionParameters"/>
-            </b-form-group>
-
-            <b-form-group id="input-group-3" label="Location:" label-for="location">
-                <b-form-select required style="margin-top:0px!important" id="location" v-model="form.location" :options="locations" size="sm" class="mt-3"></b-form-select>
-            </b-form-group>
-
-            <b-form-group id="input-group-2" label="Description:" label-for="description">
-                <b-form-textarea id="description" v-model="form.description" type="text"/>
-            </b-form-group>
-
             <b-row>
                 <b-col>
                     <b-button type="submit" variant="primary">Save</b-button>
                 </b-col>
                 <b-col class="text-right">
-                    <b-button to="/device" variant="secondary">Back</b-button>        
+                    <b-button to="/experimento" variant="secondary">Back</b-button>        
                 </b-col>
             </b-row>
         </b-form>
@@ -44,20 +27,15 @@
 </template>
 
 <script>
-import {apiDevice} from './api'
+import {apiExperimento} from './api'
 
 export default {
-    name: 'deviceNew',
+    name: 'novoExperimento',
     data() {
         return {
-            locations: [],
-            connectionTypes: [],
             form: {
-                name: '',
-                physicalPath: '',
-                connectionType: "",
-                connectionParameters: "",                
-                description: ''
+                codigo: '',
+                label: ''
             },
             msg: {
                 text: false,
@@ -68,22 +46,18 @@ export default {
     methods: {
         onSubmit(evt) {
             evt.preventDefault()
-            apiDevice.newDevice(this.form)
+            apiExperimento.novoExperimento(this.form)
                 .then(() => {
-                    this.msg.text = "Device saved"
+                    this.msg.text = "Experimento salvo"
                     this.msg.type = "success"
                 })
                 .catch((e) => {
-                    this.msg.text = `Error when saving device ${e}`
+                    this.msg.text = `Erro ao salvar o experimento ${e}`
                     this.msg.type = "danger"
                 })
         }
     },
     created() {
-        apiDevice.getConnectionTypes()
-            .then((ret) => {
-                this.connectionTypes = ret
-            })
     }
 }
 </script>

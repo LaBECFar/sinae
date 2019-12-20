@@ -34,12 +34,12 @@
       </template>
 
       <template v-slot:cell(actions)="row">    
-        <b-button variant="primary" size="sm" @click="editExperimento(row.item)" class="mr-2">
+        <b-button variant="primary" size="sm" @click="editarExperimento(row.item)" class="mr-2">
             <v-icon name="edit-2"></v-icon>
             Edit
         </b-button>
 
-        <b-button variant="danger" size="sm" @click="removeExperimento(row.item)" class="mr-2">
+        <b-button variant="danger" size="sm" @click="removerExperimento(row.item)" class="mr-2">
             <v-icon name="trash"></v-icon>
             Remove
         </b-button>
@@ -80,14 +80,14 @@ export default {
             isBusy: true,
             isLoading: false,
             fields: [{
+                key:'data',
+                label: 'Data Experimento'
+            },{
                 key: 'codigo',
                 label: 'Código'
             },{
                 key: 'label',
                 label: 'Identificador'
-            },{
-                key:'data',
-                label: 'Data Experimento'
             },{
                 key:'actions',
                 label: 'Ações',

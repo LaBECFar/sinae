@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2>Novo Experimento</h2>
+        <h2>Editar Experimento</h2>
 
         <b-alert :show="msg.text" :v-show="msg.text" :variant=msg.type>
             {{ msg.text }}
@@ -16,13 +16,14 @@
             </b-form-group>
             <b-row>
                 <b-col>
-                    <b-button type="submit" variant="primary">Save</b-button>
+                    <b-button type="submit" variant="primary">Salvar</b-button>
                 </b-col>
                 <b-col class="text-right">
-                    <b-button to="/experimento" variant="secondary">Back</b-button>        
+                    <b-button to="/experimento" variant="secondary">Voltar</b-button>        
                 </b-col>
             </b-row>
         </b-form>
+
   </div>
 </template>
 
@@ -34,7 +35,7 @@ export default {
     data() {
         return {
             form: {
-                id: '',
+                _id: '',
                 codigo: '',
                 label: ''                
             },

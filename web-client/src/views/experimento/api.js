@@ -22,7 +22,7 @@ export const apiExperimento = {
       return Promise.reject(new Error('Dados não informados.'))
     }
     return new Promise((resolve, reject) => {
-      config.api.put(`/experimento/${experimento.id}`,experimento)
+      config.api.put(`/experimento/${experimento._id}`,experimento)
         .then(resp => {
           resolve(resp.data)
         })

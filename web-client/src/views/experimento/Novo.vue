@@ -16,10 +16,10 @@
             </b-form-group>
             <b-row>
                 <b-col>
-                    <b-button type="submit" variant="primary">Save</b-button>
+                    <b-button type="submit" variant="primary">Salvar</b-button>
                 </b-col>
                 <b-col class="text-right">
-                    <b-button to="/experimento" variant="secondary">Back</b-button>        
+                    <b-button to="/experimento" variant="secondary">Voltar</b-button>        
                 </b-col>
             </b-row>
         </b-form>

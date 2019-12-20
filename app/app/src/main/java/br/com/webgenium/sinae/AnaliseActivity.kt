@@ -8,6 +8,7 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -32,7 +33,7 @@ class AnaliseActivity : AppCompatActivity() {
     private var analise: Analise? = null
 
     private var mAdapter = FrameAdapter(mutableListOf())
-    private var menu : Menu? = null
+    private var menu: Menu? = null
 
     private var actionMode: ActionMode? = null
     private val actionModeCallback = ActionModeCallback()
@@ -56,7 +57,7 @@ class AnaliseActivity : AppCompatActivity() {
         lifecycleScope.launch {
             analise = dao.getAnaliseById(id)
 
-            analise?.let{
+            analise?.let {
                 txt_titulo.text = it.tempo
                 txt_fps.text = "FPS: " + it.fps
                 txt_placa.text = "Placa: " + it.placa
@@ -64,21 +65,37 @@ class AnaliseActivity : AppCompatActivity() {
                 it.frames = dao.getFramesFromAnalise(id).toMutableList()
                 mAdapter.atualizar(it.frames)
                 txt_frames.text = "Frames: ${framesValue()}"
+
+                toggleRecyclerVisibility(it.frames.isEmpty())
             }
 
             checkUploadMenu()
         }
     }
 
-    private fun framesValue() : String {
+    private fun toggleRecyclerVisibility(isVisible: Boolean) {
+        if (!isVisible) {
+            empty_view.visibility = TextView.GONE
+            recyclerview.visibility = TextView.VISIBLE
+        } else {
+            recyclerview.visibility = TextView.GONE
+            empty_view.visibility = TextView.VISIBLE
+        }
+    }
+
+    private fun framesValue(): String {
         analise?.let {
+            if(it.frames.isEmpty()){
+                return "0"
+            }
+
             countUploadedFrames()
 
             if (countUploaded >= it.frames.size) {
                 return "$countUploaded / ${it.frames.size} (Upload Completo)"
             }
 
-            if(isUploading) {
+            if (isUploading) {
                 return "$countUploaded / ${it.frames.size} (Enviando...)"
             }
 
@@ -87,12 +104,12 @@ class AnaliseActivity : AppCompatActivity() {
         return "?"
     }
 
-    private fun countUploadedFrames(){
+    private fun countUploadedFrames() {
         countUploaded = 0
 
-        analise?.let{
-            it.frames.forEach {
-                if(it.uploaded){
+        analise?.let { analise ->
+            analise.frames.forEach {
+                if (it.uploaded) {
                     countUploaded++
                 }
             }
@@ -126,8 +143,8 @@ class AnaliseActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun pauseUpload(){
-        if(isUploading) {
+    private fun pauseUpload() {
+        if (isUploading) {
             val item: MenuItem? = menu?.findItem(R.id.upload_frames)
             item?.let {
                 item.setIcon(R.drawable.ic_cloud_upload_black_24dp)
@@ -139,8 +156,8 @@ class AnaliseActivity : AppCompatActivity() {
     }
 
     // Método para iniciar o upload dos frames dessa analise
-    private fun uploadFrames(){
-        if(!isUploading) {
+    private fun uploadFrames() {
+        if (!isUploading) {
             isUploading = true
 
             val item: MenuItem? = menu?.findItem(R.id.upload_frames)
@@ -159,8 +176,8 @@ class AnaliseActivity : AppCompatActivity() {
     }
 
 
-    private fun uploadNextFrame(){
-        if(isUploading){
+    private fun uploadNextFrame() {
+        if (isUploading) {
 
             analise?.let { analise ->
                 val context = this
@@ -168,14 +185,14 @@ class AnaliseActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     val frame = dao.getFrameFromAnaliseToUpload(analise.id)
 
-                    if(frame != null) {
+                    if (frame != null) {
                         FrameClient(context).uploadFrame(
                             frame = frame,
                             experimentoCodigo = analise.experimentoCodigo,
                             analiseId = analise.idserver,
                             tempoMilis = frame.tempoMilis
                         ) {
-                            if(it.uploaded) {
+                            if (it.uploaded) {
                                 val frameLocal: Frame? = analise.getFrameById(frame.id)
 
                                 frameLocal?.let { frameLocal ->
@@ -186,7 +203,8 @@ class AnaliseActivity : AppCompatActivity() {
                                     }
 
                                     mAdapter.notifyDataSetChanged()
-                                    txt_frames.text = getString(R.string.contador_frames, framesValue())
+                                    txt_frames.text =
+                                        getString(R.string.contador_frames, framesValue())
 
 
                                     Timer("SettingUp", false).schedule(500) {
@@ -206,12 +224,12 @@ class AnaliseActivity : AppCompatActivity() {
     }
 
 
-    private fun onFramesUploadComplete(){
+    private fun onFramesUploadComplete() {
         hideUploadMenu()
         Log.d("SINAE", "Nenhum frame para upload foi encontrado")
     }
 
-    private fun hideUploadMenu(){
+    private fun hideUploadMenu() {
         val item: MenuItem? = menu?.findItem(R.id.upload_frames)
         item?.let {
             item.setVisible(false)
@@ -219,8 +237,8 @@ class AnaliseActivity : AppCompatActivity() {
     }
 
 
-    private fun checkUploadMenu(){
-        analise?.let{
+    private fun checkUploadMenu() {
+        analise?.let {
             lifecycleScope.launch {
                 val uploadableFrame = dao.getFrameFromAnaliseToUpload(it.id)
                 if (uploadableFrame == null) {
@@ -292,11 +310,11 @@ class AnaliseActivity : AppCompatActivity() {
         }
     }
 
-    private fun confirmarExclusao(){
+    private fun confirmarExclusao() {
         val count = mAdapter.getSelectedItemCount()
 
         var msg = "Deseja excluir $count frame"
-        if(count > 1){
+        if (count > 1) {
             msg += "s"
         }
         msg += " localmente?"

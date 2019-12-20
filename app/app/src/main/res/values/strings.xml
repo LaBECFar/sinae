@@ -13,7 +13,7 @@
     <string name="codigo_experimento">Código do Experimento</string>
     <string name="label">Label</string>
     <string name="btn_iniciar">INICIAR</string>
-    <string name="cadastre_no_sistema">Cadastrar o experimento no sistema antes de iniciar</string>
+    <string name="cadastre_no_sistema">Cadastre o experimento no sistema antes de iniciar</string>
     <string name="continue_video_analise">Continue para selecionar o vídeo da analise</string>
     <string name="fps">Frames por Segundo</string>
     <string name="tempo_experimento">Tempo do Experimento</string>
@@ -30,4 +30,8 @@
     <string name="salvar">Salvar</string>
     <string name="upload">Upload</string>
     <string name="placa">Placa</string>
+    <string name="nenhuma_analise">Nenhuma análise cadastrada nesse experimento</string>
+    <string name="nenhum_frame">Nenhum frame vinculado a essa análise</string>
+    <string name="porta_api">Porta da API</string>
+    <string name="endereco_api">Endereço da API</string>
 </resources>

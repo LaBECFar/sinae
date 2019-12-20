@@ -40,5 +40,16 @@
         android:layout_marginTop="15dp"
         tools:listitem="@layout/frame_listitem" />
 
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/backgroundItemsNotFound"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="@string/nenhum_frame"
+        android:visibility="gone" />
+
 
 </LinearLayout>

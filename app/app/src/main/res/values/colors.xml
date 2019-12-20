@@ -3,8 +3,16 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="colorItemTitle">#333333</color>
-
+    <color name="white">#ffffff</color>
+    <color name="colorItemTitle">#444444</color>
+    <color name="colorItemText">#666666</color>
+    <color name="colorItemTitleUploaded">#48a868</color>
+    <color name="backgroundFullScreenRecycler">#dddddd</color>
+    <color name="backgroundItem">#eeeeee</color>
+    <color name="backgroundItemSelected">#cccccc</color>
+    <color name="backgroundItemsNotFound">#f1f1f1</color>
+    <color name="backgroundInput">#eeeeee</color>
+    <color name="backgroundFrame">#222222</color>
     <color name="OverlayTransparent">#99000000</color>
     <color name="AlmostTransparent">#22000000</color>
     <color name="FullTransparent">#00000000</color>

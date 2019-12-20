@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="15dp"
     tools:context=".ConfiguracoesActivity">
 
@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Endereço da API"
+            android:text="@string/endereco_api"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -27,18 +27,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:background="#EEE"
+            android:layout_marginBottom="10dp"
+            android:background="@color/backgroundInput"
             android:importantForAutofill="no"
             android:inputType="textUri"
             android:padding="10dp"
-            android:text="http://localhost"
-            android:layout_marginBottom="10dp"/>
+            android:text="http://localhost" />
 
         <!-- API PORT -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Porta da API"
+            android:text="@string/porta_api"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
-            android:background="#EEE"
+            android:background="@color/backgroundInput"
             android:importantForAutofill="no"
             android:inputType="textUri"
             android:padding="10dp"
@@ -57,13 +57,13 @@
     </LinearLayout>
 
     <Button
-        app:layout_constraintBottom_toBottomOf="parent"
         android:id="@+id/btn_save"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:text="@string/salvar"
         android:textAllCaps="true"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

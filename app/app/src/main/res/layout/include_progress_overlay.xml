@@ -15,7 +15,7 @@
         android:layout_marginTop="-70dp"
         android:text="@string/extraindo_frames"
         android:textAlignment="center"
-        android:textColor="#fff"
+        android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -26,7 +26,7 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:indeterminate="true"
-        android:indeterminateTint="#fff" />
+        android:indeterminateTint="@color/white" />
 
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_gravity="center"
         android:text="0%"
         android:textAlignment="center"
-        android:textColor="#fff"
+        android:textColor="@color/white"
         android:textSize="17sp"
         android:textStyle="bold" />
 

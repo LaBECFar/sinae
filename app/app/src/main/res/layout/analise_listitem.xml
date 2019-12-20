@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:background="#eee"
+    android:background="@color/backgroundItem"
     android:padding="10dp"
     android:orientation="horizontal"
     android:id="@+id/listitem">
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:text="@string/placa"
-            android:textColor="#777"
+            android:textColor="@color/colorItemText"
             android:textSize="10sp"/>
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/placa"
-            android:textColor="#444444"
+            android:textColor="@color/colorItemTitle"
             android:textStyle="bold"
             android:textSize="14sp"/>
 

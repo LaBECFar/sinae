@@ -1,10 +1,10 @@
 package br.com.webgenium.sinae.custom.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.model.Analise
@@ -29,9 +29,9 @@ class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<Analise
         holder.placa.text = analise.placa
 
         if(isSelected(position)) {
-            holder.item.setBackgroundColor(Color.parseColor("#cccccc"))
+            holder.item.setBackgroundColor(ContextCompat.getColor(holder.item.context, R.color.backgroundItemSelected))
         } else {
-            holder.item.setBackgroundColor(Color.parseColor("#eeeeee"))
+            holder.item.setBackgroundColor(ContextCompat.getColor(holder.item.context, R.color.backgroundItem))
         }
     }
 

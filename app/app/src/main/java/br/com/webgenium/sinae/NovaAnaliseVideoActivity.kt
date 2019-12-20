@@ -192,21 +192,14 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     dao.updateAnalise(analiseLocal)
                 }
 
-                //abrirExperimento()
-                abrirAnalise()
+                startAnaliseActivity()
                 toast("Analise (${analiseLocal.tempo}) cadastrada com sucesso!")
             }
         }
     }
 
-    private fun abrirExperimento(){
-        val intent = Intent(baseContext, ExperimentoActivity::class.java)
-        intent.putExtra("experimentoCodigo", analise?.experimentoCodigo)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
-    }
 
-    private fun abrirAnalise(){
+    private fun startAnaliseActivity(){
         val intent = Intent(baseContext, AnaliseActivity::class.java)
         intent.putExtra("analiseId", analise?.id)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

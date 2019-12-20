@@ -3,13 +3,14 @@ package br.com.webgenium.sinae.model
 import androidx.room.*
 import java.io.Serializable
 
-@Entity(foreignKeys = [
-    ForeignKey(
-        entity = Experimento::class,
-        parentColumns = ["codigo"],
-        childColumns = ["experimentoCodigo"],
-        onDelete = ForeignKey.CASCADE
-    )]
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Experimento::class,
+            parentColumns = ["codigo"],
+            childColumns = ["experimentoCodigo"],
+            onDelete = ForeignKey.CASCADE
+        )]
 )
 class Analise : Serializable {
 
@@ -35,9 +36,9 @@ class Analise : Serializable {
     @Ignore
     var frames: MutableList<Frame> = mutableListOf()
 
-    fun getFrameById(id: Long) : Frame? {
+    fun getFrameById(id: Long): Frame? {
         frames.forEach {
-            if(it.id == id){
+            if (it.id == id) {
                 return it
             }
         }

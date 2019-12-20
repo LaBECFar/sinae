@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FrameActivity"
-    android:background="#222222">
+    android:background="@color/backgroundFrame">
 
     <ImageView
         android:layout_width="match_parent"

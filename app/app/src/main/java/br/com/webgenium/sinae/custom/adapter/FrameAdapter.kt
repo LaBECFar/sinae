@@ -1,11 +1,11 @@
 package br.com.webgenium.sinae.custom.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.model.Frame
@@ -39,16 +39,16 @@ class FrameAdapter(frames: MutableList<Frame>) : SelectableAdapter<FrameAdapter.
 
         if(frame.uploaded){
             holder.titulo.setCompoundDrawablesWithIntrinsicBounds(0,0, R.drawable.ic_check_green_24dp, 0)
-            holder.titulo.setTextColor(Color.parseColor("#48a868"))
+            holder.titulo.setTextColor(ContextCompat.getColor(holder.titulo.context, R.color.colorItemTitleUploaded))
         } else {
             holder.titulo.setCompoundDrawablesWithIntrinsicBounds(0,0, 0, 0)
-            holder.titulo.setTextColor(Color.parseColor("#333333"))
+            holder.titulo.setTextColor(ContextCompat.getColor(holder.titulo.context, R.color.colorItemTitle))
         }
 
         if(isSelected(position)) {
-            holder.item.setBackgroundColor(Color.parseColor("#cccccc"))
+            holder.item.setBackgroundColor(ContextCompat.getColor(holder.item.context, R.color.backgroundItemSelected))
         } else {
-            holder.item.setBackgroundColor(Color.parseColor("#eeeeee"))
+            holder.item.setBackgroundColor(ContextCompat.getColor(holder.item.context, R.color.backgroundItem))
         }
     }
 

@@ -1,27 +1,27 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Base  -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
         <item name="android:actionModeBackground">@color/colorPrimary</item>
     </style>
 
+
+    <!-- Video Player  -->
     <style name="AppPlayer">
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
 
+    <!-- ActionBar  -->
     <style name="AlphaActionBar" parent="AppTheme">
         <item name="android:actionBarStyle">@style/TransparentActionBar</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="actionBarStyle">@style/TransparentActionBar</item>
         <item name="windowActionBarOverlay">true</item>
     </style>
-
 
     <style name="TransparentActionBar" parent="Widget.AppCompat.ActionBar.Solid">
         <item name="android:background">@color/AlmostTransparent</item>

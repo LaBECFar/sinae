@@ -40,16 +40,23 @@ class ExperimentoActivity : AppCompatActivity() {
         setupRecycler()
 
         btn_nova_analise.setOnClickListener {
-            novaAnalise()
+            startNovaAnaliseActivity()
         }
     }
 
-    private fun novaAnalise() {
+    private fun startNovaAnaliseActivity() {
         experimento?.let {
             val intent = Intent(this, NovaAnaliseActivity::class.java)
             intent.putExtra("experimentoCodigo", it.codigo)
             startActivity(intent)
         }
+    }
+
+
+    private fun startAnaliseActivity(analiseId: Long) {
+        val intent = Intent(this, AnaliseActivity::class.java)
+        intent.putExtra("analiseId", analiseId)
+        startActivity(intent)
     }
 
 
@@ -69,18 +76,22 @@ class ExperimentoActivity : AppCompatActivity() {
                 val analises = dao.getAnalises(cod)
                 mAdapter.atualizar(analises.toMutableList())
 
-                if (analises.isNotEmpty()) {
-                    txt_analises.visibility = TextView.VISIBLE
-                }
+                toggleRecyclerVisibility(analises.isEmpty())
             }
         }
     }
 
 
-    private fun abrirAnaliseActivity(analiseId: Long) {
-        val intent = Intent(this, AnaliseActivity::class.java)
-        intent.putExtra("analiseId", analiseId)
-        startActivity(intent)
+    private fun toggleRecyclerVisibility(isVisible: Boolean) {
+        if (!isVisible) {
+            empty_view.visibility = TextView.GONE
+            txt_analises.visibility = TextView.VISIBLE
+            recyclerview.visibility = TextView.VISIBLE
+        } else {
+            txt_analises.visibility = TextView.GONE
+            recyclerview.visibility = TextView.GONE
+            empty_view.visibility = TextView.VISIBLE
+        }
     }
 
 
@@ -92,7 +103,7 @@ class ExperimentoActivity : AppCompatActivity() {
             if (actionMode != null) {
                 toggleItemSelection(position)
             } else {
-                abrirAnaliseActivity(analise.id)
+                startAnaliseActivity(analise.id)
             }
         }
 
@@ -143,11 +154,11 @@ class ExperimentoActivity : AppCompatActivity() {
         mAdapter.notifyDataSetChanged()
     }
 
-    private fun confirmarExclusao(){
+    private fun confirmarExclusao() {
         val count = mAdapter.getSelectedItemCount()
 
         var msg = "Deseja excluir $count análise"
-        if(count > 1){
+        if (count > 1) {
             msg += "s"
         }
         msg += "?"

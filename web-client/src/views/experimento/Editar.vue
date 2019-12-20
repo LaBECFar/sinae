@@ -44,23 +44,24 @@ export default {
             }
         }
     },
+
     methods: {
         onSubmit(evt) {
             evt.preventDefault()
-            apiDevice.updateDevice(this.form)
+            apiExperimento.atualizarExperimento(this.form)
                 .then(() => {
-                    this.msg.text = "Device saved"
+                    this.msg.text = "Experimendo atualizado"
                     this.msg.type = "success"
                 })
                 .catch((e) => {
-                    this.msg.text = `Error when saving device ${e}`
+                    this.msg.text = `Erro ao atualizar o experimento ${e}`
                     this.msg.type = "danger"
                 })
         },
         refresh() {
-            apiDevice.getConnectionTypes()
+            apiExperimento.getExperimento(this.$route.params.id)
                 .then((ret) => {
-                    this.connectionTypes = ret
+                    this.form = ret
                 })
         }
     },

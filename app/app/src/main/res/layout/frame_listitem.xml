@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
     android:background="#eee"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="15dp"
     android:id="@+id/listitem">
 

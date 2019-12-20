@@ -1,4 +1,6 @@
 const frameModel = require("../models/frameModel")
+const analiseModel = require("../models/analiseModel")
+
 const fs = require("fs")
 const path = require('path');
 const formidable = require('formidable')
@@ -55,8 +57,8 @@ const frameController = {
             let analiseId = fields.analiseId
             let tempoMilis = fields.tempoMilis
 
-            //console.log(JSON.stringify(fields))
-            //console.log(JSON.stringify(file))
+            let filename = file.name
+            let oldpath = file.path
 
             if(!experimentoCodigo){
                 let errorMsg = 'Código do experimento não informado'
@@ -82,40 +84,47 @@ const frameController = {
                 let errorMsg = 'Tipo de arquivo não permitido'
                 return res.status(500).json({ error: true, message: errorMsg });
             }
-            
-            let filename = file.name
-            let oldpath = file.path
-            let targetpath = path.join(__dirname, `../uploads/experimentos/${experimentoCodigo}/${analiseId}`)
-
-
-            if(!fs.existsSync(targetpath)){
-                fs.mkdirSync(targetpath, { recursive: true })
-            }
-            targetpath += '/' + filename
 
             if(!fs.existsSync(oldpath)){
                 console.log("frameController.js: Não existe o oldpath")
             }
-            if(!fs.existsSync(targetpath)){
-                console.log("frameController.js: Não existe o targetpath")
-            }
 
-            fs.rename(oldpath, targetpath, (err) => {
-                if (err) throw err;
-
-                const frame = new frameModel({
-                    tempoMilis: tempoMilis,
-                    url: targetpath,
-                    analiseId: analiseId
-                })
-                
-                frame.save((err, frame) => {
-                    if (err) {
-                        return res.status(500).json({  message: 'Erro ao criar frame', error: err });
+            analiseModel.findById(analiseId)
+                .then(analise => {
+                    let targetpath = path.join(__dirname, `../uploads/experimentos/${experimentoCodigo}/${analise.placa}/${analise.tempo}`)
+        
+                    if(!fs.existsSync(targetpath)){
+                        fs.mkdirSync(targetpath, { recursive: true })
                     }
-                    return res.status(201).json(frame);
+
+                    targetpath += '/' + filename
+        
+                    if(!fs.existsSync(targetpath)){
+                        console.log("frameController.js: Não existe o targetpath")
+                    }
+        
+                    fs.rename(oldpath, targetpath, (err) => {
+                        if (err) throw err;
+        
+                        const frame = new frameModel({
+                            tempoMilis: tempoMilis,
+                            url: targetpath,
+                            analiseId: analiseId
+                        })
+                        
+                        frame.save((err, frame) => {
+                            if (err) {
+                                return res.status(500).json({  message: 'Erro ao criar frame', error: err });
+                            }
+                            return res.status(201).json(frame);
+                        })
+                    })
+
                 })
-            })
+                .catch(err => {
+                    return res.status(422).send(err.errors);
+                });  
+            
             
         }
 

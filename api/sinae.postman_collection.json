@@ -14,14 +14,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/experimento",
+							"raw": "http://localhost:3000/experimento/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"experimento"
+								"experimento",
+								""
 							]
 						}
 					},
@@ -59,12 +60,12 @@
 							"urlencoded": [
 								{
 									"key": "codigo",
-									"value": "SF6SF",
+									"value": "AS69A5",
 									"type": "text"
 								},
 								{
 									"key": "label",
-									"value": "Teste 1",
+									"value": "Teste 2",
 									"type": "text"
 								}
 							]
@@ -85,6 +86,68 @@
 									"value": "",
 									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-experimento-by-codigo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/experimento/codigo/SF6SF",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"experimento",
+								"codigo",
+								"SF6SF"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-experimento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/experimento/codigo/AS69A5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"experimento",
+								"codigo",
+								"AS69A5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-experimento",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/experimento/5dcad44353f1be0030b0df9c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"experimento",
+								"5dcad44353f1be0030b0df9c"
 							]
 						}
 					},
@@ -164,27 +227,320 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/device",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"device"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "index",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:3000/device",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"device"
-					]
+			"name": "analise",
+			"item": [
+				{
+					"name": "list-analise",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/analise/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"analise",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list-analise-by-codigo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/analise/?codigoExperimento=SF6SF",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"analise",
+								""
+							],
+							"query": [
+								{
+									"key": "codigoExperimento",
+									"value": "SF6SF"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-analise",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/analise/5dcad44353f1be0030b0df9c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"analise",
+								"5dcad44353f1be0030b0df9c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new-analise",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "bar",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "foo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "fps",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "codigoExperimento",
+									"value": "SF6SF",
+									"type": "text"
+								},
+								{
+									"key": "tempo",
+									"value": "0h",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/analise",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"analise"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-analise",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/analise/5dd5263a25f0c70030344527",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"analise",
+								"5dd5263a25f0c70030344527"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "frame",
+			"item": [
+				{
+					"name": "list-frame",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/frame/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"frame",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-frame",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/frame/5dcad44353f1be0030b0df9c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"frame",
+								"5dcad44353f1be0030b0df9c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new-frame",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "bar",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "foo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "multipart/form-data",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "experimentoCodigo",
+									"value": "SF6SF",
+									"type": "text"
+								},
+								{
+									"key": "analiseId",
+									"value": "5dd5387ac12ed10030b87df0",
+									"description": "\n",
+									"type": "text"
+								},
+								{
+									"key": "frame",
+									"type": "file",
+									"src": "/C:/Users/Lucas/Downloads/teste.jpg"
+								},
+								{
+									"key": "tempoMilis",
+									"value": "15051051",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/frame",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"frame"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "SF6SF",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-frame",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/analise/5dd5263a25f0c70030344527",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"analise",
+								"5dd5263a25f0c70030344527"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}

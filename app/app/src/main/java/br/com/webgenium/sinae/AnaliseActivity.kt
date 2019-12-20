@@ -59,6 +59,7 @@ class AnaliseActivity : AppCompatActivity() {
             analise?.let{
                 txt_titulo.text = it.tempo
                 txt_fps.text = "FPS: " + it.fps
+                txt_placa.text = "Placa: " + it.placa
 
                 it.frames = dao.getFramesFromAnalise(id).toMutableList()
                 mAdapter.atualizar(it.frames)

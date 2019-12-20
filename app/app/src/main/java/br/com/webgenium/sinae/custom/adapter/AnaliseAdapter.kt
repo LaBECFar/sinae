@@ -26,6 +26,7 @@ class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<Analise
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val analise = mAnalises[position]
         holder.titulo.text = analise.tempo
+        holder.placa.text = analise.placa
 
         if(isSelected(position)) {
             holder.item.setBackgroundColor(Color.parseColor("#cccccc"))
@@ -56,6 +57,7 @@ class AnaliseAdapter(analises: MutableList<Analise>) : SelectableAdapter<Analise
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titulo: TextView = itemView.findViewById(R.id.titulo)
+        val placa: TextView = itemView.findViewById(R.id.placa)
         val item: View = itemView.findViewById(R.id.listitem)
 
         init {

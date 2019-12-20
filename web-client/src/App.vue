@@ -21,13 +21,12 @@
               Experimentos
               <ul>
                 <li class="subMenu">
-                  <router-link to="/vms">
-                    -
-                    Running
+                  <router-link to="/experimento">
+                    - Listar
                   </router-link>
                 </li>
                 <li class="subMenu">
-                  <router-link to="/vms/allvms">- VMS</router-link>
+                  <router-link to="/experimento/Novo">- Novo</router-link>
                 </li>
               </ul>
             </li>

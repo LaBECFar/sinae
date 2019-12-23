@@ -65,12 +65,12 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         btn_iniciar_extracao.setOnClickListener {
             playerview.player.stop()
 
-            if (validacao()) {
+            if (validation()) {
                 playerview.player.stop()
                 playerview.player.release()
 
-                removerFocus()
-                salvarAnalise()
+                removeFocus()
+                save()
             }
         }
 
@@ -89,18 +89,18 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
 
-    private fun validacao(): Boolean {
+    private fun validation(): Boolean {
         val duracaoVideo = playerview.player.duration
 
-        val q1isValid = validarQuadrante(q1_inicio, q1_fim, duracaoVideo)
-        val q2isValid = validarQuadrante(q2_inicio, q2_fim, duracaoVideo)
-        val q3isValid = validarQuadrante(q3_inicio, q3_fim, duracaoVideo)
-        val q4isValid = validarQuadrante(q4_inicio, q4_fim, duracaoVideo)
+        val q1isValid = validateQuadrante(q1_inicio, q1_fim, duracaoVideo)
+        val q2isValid = validateQuadrante(q2_inicio, q2_fim, duracaoVideo)
+        val q3isValid = validateQuadrante(q3_inicio, q3_fim, duracaoVideo)
+        val q4isValid = validateQuadrante(q4_inicio, q4_fim, duracaoVideo)
 
         return q1isValid && q2isValid && q3isValid && q4isValid
     }
 
-    private fun validarQuadrante(
+    private fun validateQuadrante(
         inicioEdt: EditText,
         fimEdt: EditText,
         duracaoVideo: Long
@@ -138,7 +138,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         return isValid
     }
 
-    private fun removerFocus() {
+    private fun removeFocus() {
         q1_inicio.clearFocus()
         q1_fim.clearFocus()
 
@@ -153,37 +153,46 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     // Salva o experimento no banco de dados
-    private fun salvarAnalise() {
-
-        // Se o experimento não for null, inserir no banco de dados
+    private fun save() {
         analise?.let { analise ->
 
-            progress_overlay.visibility = View.VISIBLE
+            saveLocal(analise) {
 
-            analise.quadrantes = getQuadrantes()
-
-            lifecycleScope.launch(newSingleThreadContext("SAVE_ANALISE")) {
-                val analiseId = dao.insertAnalise(analise)
-
-                if (analiseId > 0) {
-                    analise.id = analiseId
+                saveServer {
+                    toast("Analise (${analise.tempo}) cadastrada com sucesso!")
                 }
 
-                val frames: List<Frame> = extrairFrames()
-
-                salvarFrames(frames, analiseId)
-
-                cadastrarAnaliseServer()
-
-                runOnUiThread {
-                    progress_overlay.visibility = View.INVISIBLE
-                }
+                startAnaliseActivity()
             }
-
         }
     }
 
-    private fun cadastrarAnaliseServer(){
+    // Salva a analise localmente / client-side
+    private fun saveLocal(analise: Analise, callback: (analise: Analise) -> Unit){
+        progress_overlay.visibility = View.VISIBLE
+        analise.quadrantes = getQuadrantes()
+
+        // extrair frames em uma thread separada para não travar a UI
+        lifecycleScope.launch(newSingleThreadContext("SAVE_ANALISE")) {
+            val analiseId = dao.insertAnalise(analise)
+
+            if (analiseId > 0) {
+                analise.id = analiseId
+            }
+
+            val frames: List<Frame> = extractFrames()
+            salvarFrames(frames, analiseId)
+
+            runOnUiThread {
+                progress_overlay.visibility = View.INVISIBLE
+            }
+
+            callback(analise)
+        }
+    }
+
+    // Salva a analise no servidor / server-side
+    private fun saveServer(callback: (analise: Analise) -> Unit){
         analise?.let { analiseLocal ->
             AnaliseClient(this).insert( analiseLocal ) { analiseServer ->
                 analiseLocal.idserver = analiseServer.idserver
@@ -192,8 +201,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     dao.updateAnalise(analiseLocal)
                 }
 
-                startAnaliseActivity()
-                toast("Analise (${analiseLocal.tempo}) cadastrada com sucesso!")
+                callback(analiseLocal)
             }
         }
     }
@@ -207,7 +215,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
 
-    private fun extrairFrames(): List<Frame> {
+    private fun extractFrames(): List<Frame> {
 
         val frames = mutableListOf<Frame>()
         val milisecondsToFrame: Long = (1000 / analise!!.fps).toLong()

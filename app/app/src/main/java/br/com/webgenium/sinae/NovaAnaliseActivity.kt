@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import br.com.webgenium.sinae.custom.SharedPreference
 import br.com.webgenium.sinae.database.AppDao
 import br.com.webgenium.sinae.database.AppDatabase
 import br.com.webgenium.sinae.model.Analise
@@ -34,9 +35,17 @@ class NovaAnaliseActivity : AppCompatActivity() {
 
 
         btn_continuar.setOnClickListener {
+            val sharedPreference = SharedPreference( this )
+            var fps = sharedPreference.getValueString("fps")?.toInt()
+            fps?.let {
+                if(it > 0) {
+                    analise.fps = fps
+                }
+            }
+
             analise.tempo = et_tempo.text.toString()
-            analise.fps = et_fps.text.toString().toInt()
             analise.placa = et_placa.text.toString()
+
 
             val intent = Intent(this, NovaAnaliseVideoActivity::class.java)
             intent.putExtra("analise", analise)

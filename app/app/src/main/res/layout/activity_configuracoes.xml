@@ -48,11 +48,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/backgroundInput"
             android:importantForAutofill="no"
             android:inputType="textUri"
             android:padding="10dp"
             android:text="3000" />
+
+
+        <!-- Frames por segundo (FPS) -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/frames_por_segundo"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/et_fps"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@color/backgroundInput"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:padding="10dp"
+            android:text="1" />
 
     </LinearLayout>
 

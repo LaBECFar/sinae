@@ -14,34 +14,11 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Placa -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/placa"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/et_placa"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:background="@color/backgroundInput"
-            android:drawableStart="@drawable/ic_grid_on_black_24dp"
-            android:drawablePadding="5dp"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:padding="10dp" />
-
-
 
         <!-- Tempo do Experimento -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:text="@string/tempo_experimento"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -60,26 +37,27 @@
             android:padding="10dp" />
 
 
-        <!-- Frames por segundo -->
+
+        <!-- Placa -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/fps"
+            android:text="@string/placa"
             android:textSize="12sp"
+            android:layout_marginTop="10dp"
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/et_fps"
+            android:id="@+id/et_placa"
             style="@style/Widget.AppCompat.EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:background="@color/backgroundInput"
-            android:drawableStart="@drawable/ic_local_movies_black_24dp"
+            android:drawableStart="@drawable/ic_grid_on_black_24dp"
             android:drawablePadding="5dp"
             android:importantForAutofill="no"
-            android:inputType="number"
+            android:inputType="text"
             android:padding="10dp" />
 
 

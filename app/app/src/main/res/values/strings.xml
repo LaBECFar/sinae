@@ -34,4 +34,5 @@
     <string name="nenhum_frame">Nenhum frame vinculado a essa análise</string>
     <string name="porta_api">Porta da API</string>
     <string name="endereco_api">Endereço da API</string>
+    <string name="frames_por_segundo">Extração de frames por segundo (FPS)</string>
 </resources>

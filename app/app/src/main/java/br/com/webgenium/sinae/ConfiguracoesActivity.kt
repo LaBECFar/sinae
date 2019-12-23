@@ -24,6 +24,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
         val url = sharedPreference.getValueString("api_url")
         val port = sharedPreference.getValueString("api_port")
+        val fps = sharedPreference.getValueString("fps")?.toInt() ?: 0
 
         if (url != null) {
             et_url.setText(url)
@@ -32,6 +33,12 @@ class ConfiguracoesActivity : AppCompatActivity() {
         if (port != null) {
             et_port.setText(port)
         }
+
+        if (fps > 0) {
+            et_fps.setText(fps.toString())
+        } else {
+            et_fps.setText("1")
+        }
     }
 
     private fun salvarConfiguracoes() {
@@ -39,6 +46,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
         val url = et_url.text.toString()
         val port = et_port.text.toString()
+        val fps : Int = et_fps.text.toString().toInt()
 
         if (url.isNotEmpty()) {
             sharedPreference.save("api_url", url)
@@ -46,6 +54,10 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
         if (port.isNotEmpty()) {
             sharedPreference.save("api_port", port)
+        }
+
+        if (fps > 0) {
+            sharedPreference.save("fps", fps)
         }
 
         toast("Configurações Salvas")

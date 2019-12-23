@@ -1,0 +1,5 @@
+# Diretorio vazio
+# ignorar todos
+*
+# exceto o .gitignore
+!.gitignore

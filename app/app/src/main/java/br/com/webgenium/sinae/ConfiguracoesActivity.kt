@@ -24,7 +24,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
         val url = sharedPreference.getValueString("api_url")
         val port = sharedPreference.getValueString("api_port")
-        val fps = sharedPreference.getValueString("fps")?.toInt() ?: 0
+        val fps = sharedPreference.getValueInt("fps")
 
         if (url != null) {
             et_url.setText(url)
@@ -46,7 +46,13 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
         val url = et_url.text.toString()
         val port = et_port.text.toString()
-        val fps : Int = et_fps.text.toString().toInt()
+        var fps = 1
+
+        if(et_fps.text.toString().isNotEmpty()){
+            fps = et_fps.text.toString().toInt()
+        } else {
+            et_fps.setText("1")
+        }
 
         if (url.isNotEmpty()) {
             sharedPreference.save("api_url", url)

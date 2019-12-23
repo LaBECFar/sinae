@@ -36,13 +36,9 @@ class NovaAnaliseActivity : AppCompatActivity() {
 
         btn_continuar.setOnClickListener {
             val sharedPreference = SharedPreference( this )
-            var fps = sharedPreference.getValueString("fps")?.toInt()
-            fps?.let {
-                if(it > 0) {
-                    analise.fps = fps
-                }
-            }
+            val fps = sharedPreference.getValueInt("fps")
 
+            analise.fps = fps
             analise.tempo = et_tempo.text.toString()
             analise.placa = et_placa.text.toString()
 

@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.webgenium.sinae.api.FrameClient
 import br.com.webgenium.sinae.custom.adapter.FrameAdapter
+import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.database.AppDao
 import br.com.webgenium.sinae.database.AppDatabase
 import br.com.webgenium.sinae.model.Analise
@@ -157,21 +158,26 @@ class AnaliseActivity : AppCompatActivity() {
 
     // Método para iniciar o upload dos frames dessa analise
     private fun uploadFrames() {
-        if (!isUploading) {
-            isUploading = true
+        analise?.let { analise ->
+            if (analise.idserver.isNotEmpty()) {
+                if (!isUploading) {
+                    isUploading = true
 
-            val item: MenuItem? = menu?.findItem(R.id.upload_frames)
-            item?.let {
-                item.setIcon(R.drawable.ic_pause_white_24dp)
-            }
+                    val item: MenuItem? = menu?.findItem(R.id.upload_frames)
+                    item?.let {
+                        item.setIcon(R.drawable.ic_pause_white_24dp)
+                    }
 
-            analise?.let {
-                if (it.id > 0 && it.idserver.isNotEmpty()) {
-                    uploadNextFrame()
+                    if (analise.id > 0) {
+                        uploadNextFrame()
+                    }
+
+                } else {
+                    pauseUpload()
                 }
+            } else {
+                toast("Análise não cadastrada no servidor", "error")
             }
-        } else {
-            pauseUpload()
         }
     }
 

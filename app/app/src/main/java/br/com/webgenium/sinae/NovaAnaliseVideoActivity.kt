@@ -158,8 +158,12 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
             saveLocal(analise) {
 
-                saveServer()
-                startAnaliseActivity()
+                saveServer(sucesso = {
+                    startAnaliseActivity()
+                }, erro = {
+                    startAnaliseActivity()
+                })
+
             }
         }
     }

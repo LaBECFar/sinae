@@ -1,11 +1,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/progress_overlay"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/OverlayTransparent"
     android:clickable="true"
-    android:visibility="gone">
+    android:visibility="gone"
+    android:focusable="true">
 
 
     <TextView
@@ -38,7 +40,8 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="17sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
 
 </FrameLayout>

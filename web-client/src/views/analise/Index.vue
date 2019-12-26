@@ -5,7 +5,7 @@
         <b-col>            
             <h2>
                 <v-icon style="width: 32px;" name="cast"></v-icon>
-                Experimentos
+                Analises do Experimento {{experimentoCodigo}}
             </h2>
         </b-col>
         <b-col class="text-right">
@@ -34,18 +34,14 @@
       </template>
 
       <template v-slot:cell(actions)="row">    
-
-        <b-button variant="success" size="sm" @click="listarAnalises(row.item)" class="mr-2">
-            <v-icon name="archive"></v-icon>
-            Análises
-        </b-button>
-
         <b-button variant="primary" size="sm" @click="editarExperimento(row.item)" class="mr-2">
             <v-icon name="edit-2"></v-icon>
+            Edit
         </b-button>
 
         <b-button variant="danger" size="sm" @click="removerExperimento(row.item)" class="mr-2">
-            <v-icon name="trash"></v-icon>            
+            <v-icon name="trash"></v-icon>
+            Remove
         </b-button>
       </template>        
 
@@ -72,30 +68,28 @@
 </template>
 
 <script>
-import {apiExperimento} from './api'
+import {apiAnalise} from './api'
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
-    name: 'ExperimentoIndex',
+    name: 'AnaliseIndex',
     components: {Loading},
     data() {
         return {
             isBusy: true,
             isLoading: false,
+            experimentoCodigo: 'abx',
             fields: [{
-                key:'data',
-                label: 'Data Experimento'
+                key:'tempo',
+                label: 'Tempo'
             },{
-                key: 'codigo',
-                label: 'Código'
-            },{
-                key: 'label',
-                label: 'Identificador'
-            },{
+                key: 'place',
+                label: 'Placa'
+            }, {
                 key:'actions',
                 label: 'Ações',
-                class: 'experimentoIndexActions'
+                class: 'analiseIndexActions'
             }],
             items: [],
             msg: {
@@ -106,10 +100,6 @@ export default {
     },
     methods: {
      
-        listarAnalises (experimento) {
-            this.$router.push(`/experimento/${experimento.codigo}/analises`)
-        },
-
         editarExperimento (experimento) {
             this.$router.push(`/experimento/${experimento._id}/editar`)
         },
@@ -123,7 +113,7 @@ export default {
                 confirmButtonText: 'Sim, REMOVER o experimento!'
             }).then((result) => {
                 if (result.value) {
-                    apiExperimento.removeExperimento(experimento._id)
+                    apiAnalise.removerExperimento(experimento._id)
                         .then(() => {
                             this.refresh()
                         })
@@ -137,7 +127,7 @@ export default {
         refresh() {
             this.isBusy = true
             this.isLoading = false
-            apiExperimento.lisatrExperimentos()
+            apiAnalise.listarAnalises(this.experimentoCodigo)
                 .then((data) => {
                     this.items = data
                     this.isBusy = false
@@ -149,14 +139,17 @@ export default {
         }
     },
     created() {
+        
+        this.experimentoCodigo = this.$route.params.experimentoCodigo
+
         this.refresh()
     }
 }
 </script>
 
 <style>
-    .experimentoIndexActions {
-        width: 450px;
+    .analiseIndexActions {
+        width: 350px;
         text-align: center;
     }
 </style>

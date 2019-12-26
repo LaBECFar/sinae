@@ -27,6 +27,11 @@ export default new Router({
       path: '/experimento/:id/editar',
       name: 'experimentoEditar',
       component: () => import(/* webpackChunkName: "locationEdit" */ './views/experimento/Editar.vue')
+    },
+    {
+      path: '/experimento/:experimentoCodigo/analises',
+      name: 'analiseIndex',
+      component: () => import(/* webpackChunkName: "analiseIndex" */ './views/analise/Index.vue')
     }
   ]
 })

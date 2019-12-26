@@ -4,10 +4,15 @@ const analiseController = {
 
     list: (req, res, next) => {
         let search = {}
-        
+
         if(req.params.experimentoCodigo){
             search.experimentoCodigo = req.params.experimentoCodigo
+        } else {
+            if(req.query.experimentoCodigo){
+                search.experimentoCodigo = req.query.experimentoCodigo
+            }
         }
+
 
         analiseModel.find( search, {
                 fps: 1,

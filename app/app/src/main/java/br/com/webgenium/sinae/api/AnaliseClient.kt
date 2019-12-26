@@ -21,16 +21,18 @@ class AnaliseClient(val context: Context) {
         })
     }
 
-    fun insert(analise: Analise, successo: (analise: Analise) -> Unit) {
+    fun insert(analise: Analise, sucesso: (analise: Analise) -> Unit, erro: (msg: String) -> Unit) {
         val call = RetrofitInitializer(context).analiseService().insert(analise)
 
         call.enqueue(callback { response, thorwable ->
             response?.body()?.let {
-                successo(it)
+                context.toast("Analise (${analise.tempo}) cadastrada com sucesso!", "success")
+                sucesso(it)
             }
 
             thorwable?.let {
                 context.toast("Não foi possivel comunicar-se com o servidor", "error")
+                erro(it.message.toString())
             }
         })
     }

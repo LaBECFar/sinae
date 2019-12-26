@@ -11,6 +11,8 @@
     <color name="backgroundItem">#eeeeee</color>
     <color name="backgroundItemSelected">#cccccc</color>
     <color name="backgroundItemsNotFound">#f1f1f1</color>
+    <color name="syncBackground">#e2efff</color>
+    <color name="syncTextColor">#4570a4</color>
     <color name="backgroundInput">#eeeeee</color>
     <color name="backgroundFrame">#222222</color>
     <color name="toastBackground">#99000000</color>

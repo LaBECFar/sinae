@@ -35,4 +35,8 @@
     <string name="porta_api">Porta da API</string>
     <string name="endereco_api">Endereço da API</string>
     <string name="frames_por_segundo">Extração de frames por segundo (FPS)</string>
+    <string name="titulo">Título</string>
+    <string name="sync_warning_analise">Essa análise não foi salva no servidor, \nclique para sincronizar</string>
+    <string name="syncing_warning_analise">Sincronizando ...</string>
+    <string name="sincronizar">Sincronizar</string>
 </resources>

@@ -158,10 +158,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
             saveLocal(analise) {
 
-                saveServer {
-                    toast("Analise (${analise.tempo}) cadastrada com sucesso!", "success")
-                }
-
+                saveServer()
                 startAnaliseActivity()
             }
         }
@@ -192,17 +189,22 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     // Salva a analise no servidor / server-side
-    private fun saveServer(callback: (analise: Analise) -> Unit){
+    private fun saveServer(sucesso: (analise: Analise) -> Unit = {}, erro: (msg: String) -> Unit = {}){
         analise?.let { analiseLocal ->
-            AnaliseClient(this).insert( analiseLocal ) { analiseServer ->
-                analiseLocal.idserver = analiseServer.idserver
+            AnaliseClient(this).insert( analiseLocal,
+                sucesso = {analiseServer ->
+                    analiseLocal.idserver = analiseServer.idserver
 
-                lifecycleScope.launch {
-                    dao.updateAnalise(analiseLocal)
+                    lifecycleScope.launch {
+                        dao.updateAnalise(analiseLocal)
+                    }
+
+                    sucesso(analiseLocal)
+
+                }, erro = {
+                    erro(it)
                 }
-
-                callback(analiseLocal)
-            }
+            )
         }
     }
 

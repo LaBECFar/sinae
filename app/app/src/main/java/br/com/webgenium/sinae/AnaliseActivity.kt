@@ -8,11 +8,13 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import br.com.webgenium.sinae.api.AnaliseClient
 import br.com.webgenium.sinae.api.FrameClient
 import br.com.webgenium.sinae.custom.adapter.FrameAdapter
 import br.com.webgenium.sinae.custom.toast
@@ -47,6 +49,24 @@ class AnaliseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analise)
         setupRecycler()
+
+
+        sync_warning.setOnClickListener {
+            val rotation = AnimationUtils.loadAnimation(this, R.anim.rotate)
+            rotation.fillAfter = true
+            sync_warning_drawable.startAnimation(rotation)
+            sync_warning_txt.text = getString(R.string.syncing_warning_analise)
+
+            saveServer({
+                sync_warning_drawable.clearAnimation()
+                sync_warning.visibility = TextView.GONE
+                showUploadMenu()
+            }, {
+                sync_warning_drawable.clearAnimation()
+                sync_warning_txt.text = getString(R.string.sync_warning_analise)
+                sync_warning.visibility = TextView.VISIBLE
+            })
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -68,9 +88,33 @@ class AnaliseActivity : AppCompatActivity() {
                 txt_frames.text = "Frames: ${framesValue()}"
 
                 toggleRecyclerVisibility(it.frames.isEmpty())
+
+                if(it.idserver.isEmpty()){
+                    sync_warning.visibility = TextView.VISIBLE
+                }
             }
 
             checkUploadMenu()
+        }
+    }
+
+    // Salva a analise no servidor / server-side
+    private fun saveServer(sucesso: (analise: Analise) -> Unit = {}, erro: (msg: String) -> Unit = {}){
+        analise?.let { analiseLocal ->
+            AnaliseClient(this).insert( analiseLocal,
+                sucesso = {analiseServer ->
+                    analiseLocal.idserver = analiseServer.idserver
+
+                    lifecycleScope.launch {
+                        dao.updateAnalise(analiseLocal)
+                    }
+
+                    sucesso(analiseLocal)
+
+                }, erro = {
+                    erro(it)
+                }
+            )
         }
     }
 
@@ -242,13 +286,24 @@ class AnaliseActivity : AppCompatActivity() {
         }
     }
 
+    private fun showUploadMenu() {
+        val item: MenuItem? = menu?.findItem(R.id.upload_frames)
+        item?.let {
+            item.setVisible(true)
+        }
+    }
+
 
     private fun checkUploadMenu() {
         analise?.let {
-            lifecycleScope.launch {
-                val uploadableFrame = dao.getFrameFromAnaliseToUpload(it.id)
-                if (uploadableFrame == null) {
-                    hideUploadMenu()
+            if(it.idserver.isEmpty()){
+                hideUploadMenu()
+            } else {
+                lifecycleScope.launch {
+                    val uploadableFrame = dao.getFrameFromAnaliseToUpload(it.id)
+                    if (uploadableFrame == null) {
+                        hideUploadMenu()
+                    }
                 }
             }
 

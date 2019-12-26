@@ -4,52 +4,94 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="15dp"
     tools:context=".AnaliseActivity">
 
-    <TextView
-        android:id="@+id/txt_titulo"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:orientation="horizontal"
+        android:id="@+id/sync_warning"
+        android:background="@color/syncBackground"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:visibility="gone">
 
-    <TextView
-        android:id="@+id/txt_placa"
+        <TextView android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/syncTextColor"
+            android:text="@string/sync_warning_analise"
+            android:layout_weight="1"
+            android:id="@+id/sync_warning_txt" />
+
+        <ImageView
+            android:id="@+id/sync_warning_drawable"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_sync_blue_24dp"
+            android:contentDescription="@string/sincronizar" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp" />
+        android:orientation="vertical"
+        android:padding="15dp">
 
-    <TextView
-        android:id="@+id/txt_fps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/txt_titulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:hint="@string/titulo"/>
 
-    <TextView
-        android:id="@+id/txt_frames"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/txt_placa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:hint="@string/placa"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        tools:listitem="@layout/frame_listitem" />
+        <TextView
+            android:id="@+id/txt_fps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:hint="@string/fps"/>
 
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@color/backgroundItemsNotFound"
-        android:gravity="center"
-        android:padding="15dp"
-        android:text="@string/nenhum_frame"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/txt_frames"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:hint="@string/frames"/>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            tools:listitem="@layout/frame_listitem" />
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/backgroundItemsNotFound"
+            android:gravity="center"
+            android:padding="15dp"
+            android:text="@string/nenhum_frame"
+            android:visibility="gone" />
+
+
+    </LinearLayout>
 
 </LinearLayout>

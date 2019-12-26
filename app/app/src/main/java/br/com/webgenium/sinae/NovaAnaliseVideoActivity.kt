@@ -156,11 +156,16 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     private fun save() {
         analise?.let { analise ->
 
+            progress_overlay.visibility = View.VISIBLE
+
             saveLocal(analise) {
 
                 saveServer(sucesso = {
+                    progress_overlay.visibility = View.INVISIBLE
                     startAnaliseActivity()
+
                 }, erro = {
+                    progress_overlay.visibility = View.INVISIBLE
                     startAnaliseActivity()
                 })
 
@@ -170,7 +175,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     // Salva a analise localmente / client-side
     private fun saveLocal(analise: Analise, callback: (analise: Analise) -> Unit){
-        progress_overlay.visibility = View.VISIBLE
         analise.quadrantes = getQuadrantes()
 
         // extrair frames em uma thread separada para não travar a UI
@@ -183,10 +187,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
             val frames: List<Frame> = extractFrames()
             salvarFrames(frames, analiseId)
-
-            runOnUiThread {
-                progress_overlay.visibility = View.INVISIBLE
-            }
 
             callback(analise)
         }
@@ -295,6 +295,11 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     private fun atualizarProgresso(progresso: String) {
         progress_txt.text = progresso
+
+        if(progresso == "100%"){
+            progress_title.text = "Salvando"
+            progress_txt.text = ""
+        }
     }
 
 

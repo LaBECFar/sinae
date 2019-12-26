@@ -13,12 +13,10 @@ class AnaliseClient(val context: Context) {
 
             response?.body()?.let {
                 successo(it)
-            } ?: run {
-                context.toast("Analise não encontrada no servidor")
             }
 
             thorwable?.let {
-                context.toast("Não foi possivel se comunicar")
+                context.toast("Não foi possivel se comunicar", "error")
             }
         })
     }
@@ -29,12 +27,10 @@ class AnaliseClient(val context: Context) {
         call.enqueue(callback { response, thorwable ->
             response?.body()?.let {
                 successo(it)
-            } ?: run {
-                context.toast("Erro ao cadastrar analise no servidor")
             }
 
             thorwable?.let {
-                context.toast("Não foi possivel comunicar-se com o servidor")
+                context.toast("Não foi possivel comunicar-se com o servidor", "error")
             }
         })
     }

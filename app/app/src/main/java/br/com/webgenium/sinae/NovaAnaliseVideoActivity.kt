@@ -159,7 +159,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             saveLocal(analise) {
 
                 saveServer {
-                    toast("Analise (${analise.tempo}) cadastrada com sucesso!")
+                    toast("Analise (${analise.tempo}) cadastrada com sucesso!", "success")
                 }
 
                 startAnaliseActivity()
@@ -434,7 +434,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                         videoUri = it
                     }
                 } catch (e: IOException) {
-                    toast("Erro ao selecionar vídeo!")
+                    toast("Erro ao selecionar vídeo!", "error")
                 }
             }
         } else {

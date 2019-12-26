@@ -50,7 +50,7 @@ class FrameClient(val context: Context)  {
                 }
 
                 thorwable?.let {
-                    context.toast("Não foi possivel se comunicar: $it")
+                    context.toast("Não foi possivel se comunicar com o servidor", "error")
                 }
             })
         }

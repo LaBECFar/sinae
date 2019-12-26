@@ -14,11 +14,11 @@ class ExperimentoClient(val context: Context) {
             response?.body()?.let {
                 successo(it)
             } ?: run {
-                context.toast("Experimento não encontrado")
+                context.toast("Experimento não encontrado", "error")
             }
 
             thorwable?.let {
-                context.toast("Não foi possivel se comunicar")
+                context.toast("Não foi possivel se comunicar", "error")
             }
         })
     }

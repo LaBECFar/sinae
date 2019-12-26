@@ -13,6 +13,9 @@
     <color name="backgroundItemsNotFound">#f1f1f1</color>
     <color name="backgroundInput">#eeeeee</color>
     <color name="backgroundFrame">#222222</color>
+    <color name="toastBackground">#99000000</color>
+    <color name="toastBackgroundSuccess">#48a868</color>
+    <color name="toastBackgroundError">#bb4141</color>
     <color name="OverlayTransparent">#99000000</color>
     <color name="AlmostTransparent">#22000000</color>
     <color name="FullTransparent">#00000000</color>

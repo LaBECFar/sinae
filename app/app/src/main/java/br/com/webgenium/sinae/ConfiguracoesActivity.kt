@@ -2,6 +2,7 @@ package br.com.webgenium.sinae
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.URLUtil
 import br.com.webgenium.sinae.custom.SharedPreference
 import br.com.webgenium.sinae.custom.toast
 import kotlinx.android.synthetic.main.activity_configuracoes.*
@@ -48,25 +49,39 @@ class ConfiguracoesActivity : AppCompatActivity() {
         val port = et_port.text.toString()
         var fps = 1
 
+
+        if (url.isEmpty()) {
+            et_url.error = "Campo obrigatório"
+        } else if( !URLUtil.isValidUrl(url) ) {
+            et_url.error = "URL Inválida"
+        }
+
+
+        if (port.isEmpty()) {
+            et_port.error = "Campo obrigatório"
+        }
+
         if(et_fps.text.toString().isNotEmpty()){
             fps = et_fps.text.toString().toInt()
         } else {
-            et_fps.setText("1")
+            et_fps.setText(fps)
         }
 
-        if (url.isNotEmpty()) {
+        if (fps <= 0) {
+            et_fps.error = "Deve ser maior que 0"
+        }
+
+
+        if(et_port.error == null && et_fps.error == null && et_url.error == null){
             sharedPreference.save("api_url", url)
-        }
-
-        if (port.isNotEmpty()) {
             sharedPreference.save("api_port", port)
-        }
-
-        if (fps > 0) {
             sharedPreference.save("fps", fps)
+
+            toast("Configurações Salvas", "success")
+        } else {
+            toast("Configurações inválidas", "error")
         }
 
-        toast("Configurações Salvas")
 
     }
 }

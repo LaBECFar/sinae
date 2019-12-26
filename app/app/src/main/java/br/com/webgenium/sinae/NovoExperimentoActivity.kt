@@ -49,7 +49,7 @@ class NovoExperimentoActivity : AppCompatActivity() {
             intent.putExtra("experimentoCodigo", experimento.codigo)
             startActivity(intent)
         } else {
-            toast("Experimento não encontrado")
+            toast("Experimento não encontrado", "error")
         }
     }
 

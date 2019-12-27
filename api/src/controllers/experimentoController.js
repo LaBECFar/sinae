@@ -3,10 +3,7 @@ const experimentoModel = require("../models/experimentoModel")
 const experimentoController = {
 
     list: (req, res, next) => {
-        experimentoModel.find({}, {
-                codigo: 1,
-                label: 1
-            }) 
+        experimentoModel.find() 
             .then(experimentos => {
                 return res.status(201).json(experimentos);
             })

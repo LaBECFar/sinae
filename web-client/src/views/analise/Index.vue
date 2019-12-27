@@ -4,8 +4,8 @@
     <b-row>
         <b-col>            
             <h2>
-                <v-icon style="width: 32px;" name="cast"></v-icon>
-                Analises do Experimento {{experimentoCodigo}}
+                <v-icon style="width: 32px;" name="grid"></v-icon>
+                Analises do Experimento <strong>{{experimentoCodigo}}</strong>
             </h2>
         </b-col>
         <b-col class="text-right">

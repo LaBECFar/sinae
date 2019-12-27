@@ -4,7 +4,7 @@
     <b-row>
         <b-col>            
             <h2>
-                <v-icon style="width: 32px;" name="cast"></v-icon>
+                <v-icon style="width: 32px;" name="layers"></v-icon>
                 Experimentos
             </h2>
         </b-col>
@@ -36,7 +36,7 @@
       <template v-slot:cell(actions)="row">    
 
         <b-button variant="success" size="sm" @click="listarAnalises(row.item)" class="mr-2">
-            <v-icon name="archive"></v-icon>
+            <v-icon name="grid"></v-icon>
             Análises
         </b-button>
 
@@ -84,7 +84,7 @@ export default {
             isBusy: true,
             isLoading: false,
             fields: [{
-                key:'data',
+                key:'createdAt',
                 label: 'Data Experimento'
             },{
                 key: 'codigo',
@@ -156,7 +156,7 @@ export default {
 
 <style>
     .experimentoIndexActions {
-        width: 450px;
+        width: 300px;
         text-align: center;
     }
 </style>

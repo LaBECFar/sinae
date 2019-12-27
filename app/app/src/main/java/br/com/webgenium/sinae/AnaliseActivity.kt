@@ -82,6 +82,12 @@ class AnaliseActivity : AppCompatActivity() {
                 txt_fps.text = "FPS: " + it.fps
                 txt_placa.text = getString(R.string.board) + ": " + it.placa
 
+                var data = it.dataColeta
+                if(data.contains("T")) {
+                    data = data.split("T")[0]
+                }
+                txt_data.text = getString(R.string.collection_date) + ": " + data
+
                 it.frames = dao.getFramesFromAnalise(id).toMutableList()
                 mAdapter.atualizar(it.frames)
                 txt_frames.text = "Frames: ${framesValue()}"

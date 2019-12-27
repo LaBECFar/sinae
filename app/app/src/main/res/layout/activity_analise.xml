@@ -60,6 +60,13 @@
             android:hint="@string/board"/>
 
         <TextView
+            android:id="@+id/txt_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:hint="@string/collection_date"/>
+
+        <TextView
             android:id="@+id/txt_fps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

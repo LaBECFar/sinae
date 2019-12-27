@@ -84,7 +84,7 @@ export default {
                 key:'tempo',
                 label: 'Tempo'
             },{
-                key: 'place',
+                key: 'placa',
                 label: 'Placa'
             }, {
                 key:'actions',

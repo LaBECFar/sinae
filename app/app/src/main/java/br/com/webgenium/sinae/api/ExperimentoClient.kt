@@ -15,7 +15,9 @@ class ExperimentoClient(val context: Context) {
             response?.body()?.let {
                 successo(it)
             } ?: run {
-                context.toast(context.getString(R.string.experiment_notfound), "error")
+                if(thorwable == null) {
+                    context.toast(context.getString(R.string.experiment_notfound), "error")
+                }
             }
 
             thorwable?.let {

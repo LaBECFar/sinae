@@ -45,12 +45,17 @@ const analiseController = {
     },
     
     post: (req, res, next) => {
+        var dataColeta = req.body.dataColeta
+        if(dataColeta){
+            dataColeta = moment(dataColeta).toDate()
+        }
+
         const analise = new analiseModel({
             tempo: req.body.tempo,
             fps: req.body.fps,
             experimentoCodigo: req.body.experimentoCodigo,
             placa: req.body.placa,
-            dataColeta: req.body.dataColeta
+            dataColeta: dataColeta
         })
 
         analise.save((err, analise) => {

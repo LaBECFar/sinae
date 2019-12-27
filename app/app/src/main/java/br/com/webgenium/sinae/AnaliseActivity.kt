@@ -3,7 +3,6 @@ package br.com.webgenium.sinae
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuInflater
@@ -81,7 +80,7 @@ class AnaliseActivity : AppCompatActivity() {
             analise?.let {
                 txt_titulo.text = it.tempo
                 txt_fps.text = "FPS: " + it.fps
-                txt_placa.text = "Placa: " + it.placa
+                txt_placa.text = getString(R.string.board) + ": " + it.placa
 
                 it.frames = dao.getFramesFromAnalise(id).toMutableList()
                 mAdapter.atualizar(it.frames)
@@ -137,11 +136,11 @@ class AnaliseActivity : AppCompatActivity() {
             countUploadedFrames()
 
             if (countUploaded >= it.frames.size) {
-                return "$countUploaded / ${it.frames.size} (Upload Completo)"
+                return "$countUploaded / ${it.frames.size} ("+getString(R.string.upload_completed)+")"
             }
 
             if (isUploading) {
-                return "$countUploaded / ${it.frames.size} (Enviando...)"
+                return "$countUploaded / ${it.frames.size} ("+getString(R.string.sending)+")"
             }
 
             return "$countUploaded / ${it.frames.size}"
@@ -196,7 +195,7 @@ class AnaliseActivity : AppCompatActivity() {
             }
 
             isUploading = false
-            txt_frames.text = getString(R.string.contador_frames, framesValue())
+            txt_frames.text = getString(R.string.frames_count, framesValue())
         }
     }
 
@@ -220,7 +219,7 @@ class AnaliseActivity : AppCompatActivity() {
                     pauseUpload()
                 }
             } else {
-                toast("Análise não cadastrada no servidor", "error")
+                toast(getString(R.string.server_analisis_notfound), "error")
             }
         }
     }
@@ -254,7 +253,7 @@ class AnaliseActivity : AppCompatActivity() {
 
                                     mAdapter.notifyDataSetChanged()
                                     txt_frames.text =
-                                        getString(R.string.contador_frames, framesValue())
+                                        getString(R.string.frames_count, framesValue())
 
 
                                     Timer("SettingUp", false).schedule(500) {
@@ -276,7 +275,7 @@ class AnaliseActivity : AppCompatActivity() {
 
     private fun onFramesUploadComplete() {
         hideUploadMenu()
-        Log.d("SINAE", "Nenhum frame para upload foi encontrado")
+        //Log.d("SINAE", "Nenhum frame para upload foi encontrado")
     }
 
     private fun hideUploadMenu() {
@@ -315,9 +314,7 @@ class AnaliseActivity : AppCompatActivity() {
         this.menu = menu
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.menu_analise, menu)
-
         checkUploadMenu()
-
         return true
     }
 
@@ -334,14 +331,14 @@ class AnaliseActivity : AppCompatActivity() {
 
 
     private fun checkActionMode() {
-        val count = mAdapter.getSelectedItemCount()
+        val count: Int = mAdapter.getSelectedItemCount()
 
         if (count > 0) {
             if (actionMode == null) {
                 actionMode = startActionMode(actionModeCallback)
             }
-            actionMode?.title = "Frames"
-            actionMode?.subtitle = "$count selecionado(s)"
+            actionMode?.title = getString(R.string.frames)
+            actionMode?.subtitle = getString(R.string.x_selected, count)
         } else {
             actionMode?.finish()
         }
@@ -353,7 +350,6 @@ class AnaliseActivity : AppCompatActivity() {
         checkActionMode()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun removerItensSelecionados() {
         val revertedSelectedPositions = mAdapter.getSelectedItems().asReversed()
 
@@ -367,30 +363,31 @@ class AnaliseActivity : AppCompatActivity() {
             }
 
             mAdapter.notifyDataSetChanged()
-            txt_frames.text = getString(R.string.contador_frames, framesValue())
+            txt_frames.text = getString(R.string.frames_count, framesValue())
         }
     }
+
 
     private fun confirmarExclusao() {
         val count = mAdapter.getSelectedItemCount()
 
-        var msg = "Deseja excluir $count frame"
+        var msg = getString(R.string.frame_exclude_x, count)
         if (count > 1) {
-            msg += "s"
+            msg = getString(R.string.frame_exclude_x_plural, count)
         }
-        msg += " localmente?"
 
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Excluir Frames")
+        builder.setTitle(getString(R.string.frames_exclude))
         builder.setMessage(msg)
-        builder.setPositiveButton("Sim") { _, _ ->
+        builder.setPositiveButton(getString(R.string.yes)) { _, _ ->
             removerItensSelecionados()
             actionMode?.finish()
         }
-        builder.setNegativeButton("Não") { _, _ -> }
+        builder.setNegativeButton(getString(R.string.no)) { _, _ -> }
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
+
 
     private inner class ActionModeCallback : ActionMode.Callback {
 

@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="@string/placa"
+            android:text="@string/board"
             android:textColor="@color/colorItemText"
             android:textSize="10sp"/>
 
@@ -37,7 +37,7 @@
             android:id="@+id/placa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/placa"
+            android:text="@string/board"
             android:textColor="@color/colorItemTitle"
             android:textStyle="bold"
             android:textSize="14sp"/>

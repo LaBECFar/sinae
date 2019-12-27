@@ -111,8 +111,8 @@ class MainActivity : AppCompatActivity() {
             if (actionMode == null) {
                 actionMode = startActionMode(actionModeCallback)
             }
-            actionMode?.title = "Experimentos"
-            actionMode?.subtitle = "$count selecionado(s)"
+            actionMode?.title = getString(R.string.experiments)
+            actionMode?.subtitle = getString(R.string.x_selected, count)
         } else {
             actionMode?.finish()
         }
@@ -152,20 +152,19 @@ class MainActivity : AppCompatActivity() {
     private fun confirmarExclusao() {
         val count = mAdapter.getSelectedItemCount()
 
-        var msg = "Deseja excluir $count experimento"
+        var msg = getString(R.string.experiment_exclude_x, count)
         if (count > 1) {
-            msg += "s"
+            msg = getString(R.string.experiment_exclude_x_plural, count)
         }
-        msg += "?"
 
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Excluir Experimentos")
+        builder.setTitle(getString(R.string.experiment_exclude))
         builder.setMessage(msg)
-        builder.setPositiveButton("Sim") { _, _ ->
+        builder.setPositiveButton(getString(R.string.yes)) { _, _ ->
             removerItensSelecionados()
             actionMode?.finish()
         }
-        builder.setNegativeButton("Não") { _, _ -> }
+        builder.setNegativeButton(getString(R.string.no)) { _, _ -> }
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }

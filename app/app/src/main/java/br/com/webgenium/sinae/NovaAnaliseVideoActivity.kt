@@ -109,12 +109,12 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
         if (inicioEdt.text.isEmpty()) {
             isValid = false
-            inicioEdt.error = "Campo obrigatório"
+            inicioEdt.error = getString(R.string.required_field)
         }
 
         if (fimEdt.text.isEmpty()) {
             isValid = false
-            fimEdt.error = "Campo obrigatório"
+            fimEdt.error = getString(R.string.required_field)
         }
 
         if (isValid) {
@@ -123,15 +123,15 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
             if (inicio > duracaoVideo) {
                 isValid = false
-                inicioEdt.error = "Valor inválido"
+                inicioEdt.error = getString(R.string.invalid_value)
             }
             if (fim > duracaoVideo) {
                 isValid = false
-                fimEdt.error = "Valor inválido"
+                fimEdt.error = getString(R.string.invalid_value)
             }
             if (inicio > fim) {
                 isValid = false
-                fimEdt.error = "O valor final deve ser maior que o inicial"
+                fimEdt.error = getString(R.string.finalvalue_must_be_bigger)
             }
         }
 
@@ -297,7 +297,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         progress_txt.text = progresso
 
         if(progresso == "100%"){
-            progress_title.text = "Salvando"
+            progress_title.text = getString(R.string.saving)
             progress_txt.text = ""
         }
     }
@@ -445,7 +445,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                         videoUri = it
                     }
                 } catch (e: IOException) {
-                    toast("Erro ao selecionar vídeo!", "error")
+                    toast(getString(R.string.select_video_error), "error")
                 }
             }
         } else {

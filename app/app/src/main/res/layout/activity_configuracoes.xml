@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/endereco_api"
+            android:text="@string/api_url"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -32,13 +32,14 @@
             android:importantForAutofill="no"
             android:inputType="textUri"
             android:padding="10dp"
-            android:text="http://localhost" />
+            android:text="http://192.168.0.1"
+            tools:ignore="HardcodedText" />
 
         <!-- API PORT -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/porta_api"
+            android:text="@string/api_port"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -53,7 +54,8 @@
             android:importantForAutofill="no"
             android:inputType="number"
             android:padding="10dp"
-            android:text="80" />
+            android:text="80"
+            tools:ignore="HardcodedText" />
 
 
         <!-- Frames por segundo (FPS) -->
@@ -61,7 +63,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/frames_por_segundo"
+            android:text="@string/frames_per_second"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -75,7 +77,8 @@
             android:importantForAutofill="no"
             android:inputType="number"
             android:padding="10dp"
-            android:text="1" />
+            android:text="1"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 
@@ -84,7 +87,7 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:text="@string/salvar"
+        android:text="@string/save"
         android:textAllCaps="true"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent" />

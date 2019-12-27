@@ -4,13 +4,12 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.webkit.MimeTypeMap
+import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Frame
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import retrofit2.Call
 import java.io.File
 
 
@@ -39,9 +38,6 @@ class FrameClient(val context: Context)  {
                 frame = fileBody
             )
 
-            Log.d("Teste", "Uploading " + frame.uri)
-
-
             call.enqueue(callback { response, thorwable ->
                 response?.body()?.let {
                     successo(it.toFrame())
@@ -50,7 +46,7 @@ class FrameClient(val context: Context)  {
                 }
 
                 thorwable?.let {
-                    context.toast("Não foi possivel se comunicar com o servidor", "error")
+                    context.toast(context.getString(R.string.no_server_communication), "error")
                 }
             })
         }

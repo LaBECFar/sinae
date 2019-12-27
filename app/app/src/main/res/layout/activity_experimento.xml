@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="5dp"
-            android:text="@string/analises"
+            android:text="@string/analisis"
             android:textSize="12sp"
             android:visibility="gone" />
 
@@ -52,7 +52,7 @@
             android:background="@color/backgroundItemsNotFound"
             android:gravity="center"
             android:padding="15dp"
-            android:text="@string/nenhuma_analise"
+            android:text="@string/no_analisis"
             android:visibility="gone" />
 
     </LinearLayout>

@@ -1,6 +1,7 @@
 package br.com.webgenium.sinae.api
 
 import android.content.Context
+import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Experimento
 
@@ -14,11 +15,11 @@ class ExperimentoClient(val context: Context) {
             response?.body()?.let {
                 successo(it)
             } ?: run {
-                context.toast("Experimento não encontrado", "error")
+                context.toast(context.getString(R.string.experiment_notfound), "error")
             }
 
             thorwable?.let {
-                context.toast("Não foi possivel se comunicar", "error")
+                context.toast(context.getString(R.string.no_server_communication), "error")
             }
         })
     }

@@ -49,7 +49,7 @@ class NovoExperimentoActivity : AppCompatActivity() {
             intent.putExtra("experimentoCodigo", experimento.codigo)
             startActivity(intent)
         } else {
-            toast("Experimento não encontrado", "error")
+            toast(getString(R.string.experiment_notfound), "error")
         }
     }
 
@@ -84,14 +84,14 @@ class NovoExperimentoActivity : AppCompatActivity() {
         var errorMsg = ""
 
         if(codigo.trim() == ""){
-            errorMsg = "Digite o código do experimento"
+            errorMsg = getString(R.string.type_experiment_code)
             isValid = false
         }
 
         runBlocking {
             val experimento = dao.getExperimentoByCodigo(codigo)
             experimento?.let{
-                errorMsg = "Experimento já cadastrado"
+                errorMsg = getString(R.string.experiment_already_exists)
                 isValid = false
             }
         }

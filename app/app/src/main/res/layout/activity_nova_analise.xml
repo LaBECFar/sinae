@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/tempo_experimento"
+            android:text="@string/experiment_time"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -42,7 +42,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/placa"
+            android:text="@string/board"
             android:textSize="12sp"
             android:layout_marginTop="10dp"
             android:textStyle="bold" />
@@ -76,7 +76,7 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:text="@string/selecionar_video"
+            android:text="@string/select_video"
             android:textAllCaps="true"
             android:textSize="14sp" />
 

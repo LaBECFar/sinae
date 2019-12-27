@@ -51,14 +51,14 @@ class ConfiguracoesActivity : AppCompatActivity() {
 
 
         if (url.isEmpty()) {
-            et_url.error = "Campo obrigatório"
+            et_url.error = getString(R.string.required_field)
         } else if( !URLUtil.isValidUrl(url) ) {
-            et_url.error = "URL Inválida"
+            et_url.error = getString(R.string.invalid_url)
         }
 
 
         if (port.isEmpty()) {
-            et_port.error = "Campo obrigatório"
+            et_port.error = getString(R.string.required_field)
         }
 
         if(et_fps.text.toString().isNotEmpty()){
@@ -68,7 +68,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
         }
 
         if (fps <= 0) {
-            et_fps.error = "Deve ser maior que 0"
+            et_fps.error = getString(R.string.bigger_than_0)
         }
 
 
@@ -77,9 +77,9 @@ class ConfiguracoesActivity : AppCompatActivity() {
             sharedPreference.save("api_port", port)
             sharedPreference.save("fps", fps)
 
-            toast("Configurações Salvas", "success")
+            toast(getString(R.string.config_saved), "success")
         } else {
-            toast("Configurações inválidas", "error")
+            toast(getString(R.string.config_invalid), "error")
         }
 
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.ActionMode
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -17,8 +16,6 @@ import android.view.MenuItem
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.appcompat.app.AlertDialog
-import br.com.webgenium.sinae.api.FrameClient
-import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Experimento
 
 
@@ -121,8 +118,8 @@ class ExperimentoActivity : AppCompatActivity() {
             if (actionMode == null) {
                 actionMode = startActionMode(actionModeCallback)
             }
-            actionMode?.title = "Analises"
-            actionMode?.subtitle = "$count selecionado(s)"
+            actionMode?.title = getString(R.string.analisis)
+            actionMode?.subtitle = getString(R.string.x_selected, count)
         } else {
             actionMode?.finish()
         }
@@ -157,20 +154,19 @@ class ExperimentoActivity : AppCompatActivity() {
     private fun confirmarExclusao() {
         val count = mAdapter.getSelectedItemCount()
 
-        var msg = "Deseja excluir $count análise"
+        var msg = getString(R.string.analisis_exclude_x, count)
         if (count > 1) {
-            msg += "s"
+            msg = getString(R.string.analisis_exclude_x_plural, count)
         }
-        msg += "?"
 
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Excluir Análises")
+        builder.setTitle(getString(R.string.analisis_exclude))
         builder.setMessage(msg)
-        builder.setPositiveButton("Sim") { _, _ ->
+        builder.setPositiveButton(getString(R.string.yes)) { _, _ ->
             removerItensSelecionados()
             actionMode?.finish()
         }
-        builder.setNegativeButton("Não") { _, _ -> }
+        builder.setNegativeButton(getString(R.string.no)) { _, _ -> }
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }

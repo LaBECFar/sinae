@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_sync_blue_24dp"
-            android:contentDescription="@string/sincronizar" />
+            android:contentDescription="@string/synchronize" />
 
     </LinearLayout>
 
@@ -50,14 +50,14 @@
             android:layout_marginBottom="5dp"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:hint="@string/titulo"/>
+            android:hint="@string/title"/>
 
         <TextView
             android:id="@+id/txt_placa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:hint="@string/placa"/>
+            android:hint="@string/board"/>
 
         <TextView
             android:id="@+id/txt_fps"
@@ -88,7 +88,7 @@
             android:background="@color/backgroundItemsNotFound"
             android:gravity="center"
             android:padding="15dp"
-            android:text="@string/nenhum_frame"
+            android:text="@string/no_frames"
             android:visibility="gone" />
 
 

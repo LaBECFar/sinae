@@ -1,6 +1,7 @@
 package br.com.webgenium.sinae.api
 
 import android.content.Context
+import br.com.webgenium.sinae.R
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Analise
 
@@ -16,7 +17,8 @@ class AnaliseClient(val context: Context) {
             }
 
             thorwable?.let {
-                context.toast("Não foi possivel se comunicar", "error")
+                val msg = context.getString(R.string.no_server_communication)
+                context.toast(msg, "error")
             }
         })
     }
@@ -26,12 +28,14 @@ class AnaliseClient(val context: Context) {
 
         call.enqueue(callback { response, thorwable ->
             response?.body()?.let {
-                context.toast("Analise (${analise.tempo}) cadastrada com sucesso!", "success")
+                val msg = context.getString(R.string.analisis_successfully_registered, analise.tempo)
+                context.toast(msg, "success")
                 sucesso(it)
             }
 
             thorwable?.let {
-                context.toast("Não foi possivel comunicar-se com o servidor", "error")
+                val msg = context.getString(R.string.no_server_communication)
+                context.toast(msg, "error")
                 erro(it.message.toString())
             }
         })

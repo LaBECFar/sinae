@@ -1,4 +1,5 @@
 const analiseModel = require("../models/analiseModel")
+const moment = require('moment')
 
 const analiseController = {
 
@@ -18,7 +19,8 @@ const analiseController = {
                 fps: 1,
                 tempo: 1,
                 experimentoCodigo: 1,
-                placa: 1
+                placa: 1,
+                dataColeta: 1
             }) 
             .then(analises => {
                 return res.status(201).json(analises);
@@ -47,7 +49,8 @@ const analiseController = {
             tempo: req.body.tempo,
             fps: req.body.fps,
             experimentoCodigo: req.body.experimentoCodigo,
-            placa: req.body.placa
+            placa: req.body.placa,
+            dataColeta: req.body.dataColeta
         })
 
         analise.save((err, analise) => {
@@ -76,9 +79,15 @@ const analiseController = {
                     return res.status(404).send()
                 }
 
+                var dataColeta = req.body.dataColeta
+                if(dataColeta){
+                    dataColeta = moment(dataColeta).toDate()
+                }
+
                 analise.placa = req.body.placa
                 analise.tempo = req.body.tempo
                 analise.fps = req.body.fps
+                analise.dataColeta = dataColeta
                 analise.experimentoCodigo = req.body.experimentoCodigo
 
                 analise.save(function (err, analise) {

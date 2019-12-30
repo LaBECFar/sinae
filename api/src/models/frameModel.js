@@ -17,7 +17,12 @@ const framesSchema = new Schema({
     'url' : {
 		type: String,
 		required: true
-	},
+    },
+    
+    'quadrante' : {
+        type: Number,
+		required: true
+    }
 },{
     timestamps: true
 });

@@ -1,12 +1,12 @@
 package br.com.webgenium.sinae
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.custom.SharedPreference
+import br.com.webgenium.sinae.custom.hideKeyboard
 import br.com.webgenium.sinae.database.AppDao
 import br.com.webgenium.sinae.database.AppDatabase
 import br.com.webgenium.sinae.model.Analise
@@ -16,13 +16,11 @@ import java.util.*
 
 class NovaAnaliseActivity : AppCompatActivity() {
 
-
     private val db: AppDatabase by lazy {  AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
     private val analise = Analise()
 
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nova_analise)
@@ -38,35 +36,46 @@ class NovaAnaliseActivity : AppCompatActivity() {
         }
 
         et_data.setOnClickListener {
-
-
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-            val datepicker = DatePickerDialog(this@NovaAnaliseActivity, DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                et_data.text = "${year}-${monthOfYear}-${dayOfMonth}"
-            }, year, month, day)
-
-            datepicker.show()
+            hideKeyboard()
+            selectDataColeta()
         }
 
 
         btn_continuar.setOnClickListener {
-            val sharedPreference = SharedPreference( this )
-            val fps = sharedPreference.getValueInt("fps")
-
-            analise.fps = fps
-            analise.tempo = et_tempo.text.toString()
-            analise.placa = et_placa.text.toString()
-            analise.dataColeta = et_data.text.toString()
-
-
-            val intent = Intent(this, NovaAnaliseVideoActivity::class.java)
-            intent.putExtra("analise", analise)
-            startActivity( intent )
+            selectVideo()
         }
+    }
+
+
+    // Exibe um DatePicker para o usuário escolher uma data da coleta em que a analise/vídeo foi feita
+    private fun selectDataColeta(){
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datepicker = DatePickerDialog(this@NovaAnaliseActivity, DatePickerDialog.OnDateSetListener { _, yyyy, MM, dd ->
+            val dataString = "${dd}/${MM}/${yyyy}"
+            et_data.text = dataString
+            et_data.tag = "${yyyy}-${MM}-${dd}"
+        }, year, month, day)
+
+        datepicker.show()
+    }
+
+
+    // Acopla as informações a uma nova analise e encaminha para a activity de seleção e opções do vídeo
+    private fun selectVideo(){
+        val sharedPreference = SharedPreference( this )
+
+        analise.fps = sharedPreference.getValueInt("fps")
+        analise.tempo = et_tempo.text.toString()
+        analise.placa = et_placa.text.toString()
+        analise.dataColeta = et_data.tag as String
+
+        val intent = Intent(this, NovaAnaliseVideoActivity::class.java)
+        intent.putExtra("analise", analise)
+        startActivity( intent )
     }
 
 }

@@ -14,6 +14,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.api.AnaliseClient
+import br.com.webgenium.sinae.custom.hideKeyboard
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Analise
 import br.com.webgenium.sinae.model.Frame
@@ -69,6 +70,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 playerview.player.stop()
                 playerview.player.release()
 
+                hideKeyboard()
                 removeFocus()
                 save()
             }

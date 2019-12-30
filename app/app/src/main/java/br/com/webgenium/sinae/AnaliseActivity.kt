@@ -1,6 +1,5 @@
 package br.com.webgenium.sinae
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.ActionMode
@@ -48,8 +47,42 @@ class AnaliseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analise)
         setupRecycler()
+        setupSyncButton()
 
+        val id: Long = intent.getLongExtra("analiseId", 0)
 
+        lifecycleScope.launch {
+            analise = dao.getAnaliseById(id)
+
+            analise?.let {
+                txt_titulo.text = it.tempo
+                txt_fps.text = getString(R.string.fps_count, it.fps)
+                txt_placa.text = getString(R.string.board_value, it.placa)
+
+                var data = it.dataColeta
+                if(data.contains("T")) {
+                    data = data.split("T")[0]
+                }
+                txt_data.text = getString(R.string.collection_date_value, data)
+
+                it.frames = dao.getFramesFromAnalise(id).toMutableList()
+                mAdapter.atualizar(it.frames)
+                txt_frames.text = getString(R.string.frames_count, framesValue())
+
+                toggleRecyclerVisibility(it.frames.isEmpty())
+
+                if(it.idserver.isEmpty()){
+                    sync_warning.visibility = TextView.VISIBLE
+                }
+            } ?: run {
+                toast(getString(R.string.analisis_notfound), "error")
+            }
+
+            checkUploadMenu()
+        }
+    }
+
+    private fun setupSyncButton(){
         sync_warning.setOnClickListener {
             val rotation = AnimationUtils.loadAnimation(this, R.anim.rotate)
             rotation.fillAfter = true
@@ -68,40 +101,12 @@ class AnaliseActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
+
     override fun onResume() {
         super.onResume()
-
-        val id: Long = intent.getLongExtra("analiseId", 0)
-
-        lifecycleScope.launch {
-            analise = dao.getAnaliseById(id)
-
-            analise?.let {
-                txt_titulo.text = it.tempo
-                txt_fps.text = "FPS: " + it.fps
-                txt_placa.text = getString(R.string.board) + ": " + it.placa
-
-                var data = it.dataColeta
-                if(data.contains("T")) {
-                    data = data.split("T")[0]
-                }
-                txt_data.text = getString(R.string.collection_date) + ": " + data
-
-                it.frames = dao.getFramesFromAnalise(id).toMutableList()
-                mAdapter.atualizar(it.frames)
-                txt_frames.text = "Frames: ${framesValue()}"
-
-                toggleRecyclerVisibility(it.frames.isEmpty())
-
-                if(it.idserver.isEmpty()){
-                    sync_warning.visibility = TextView.VISIBLE
-                }
-            }
-
-            checkUploadMenu()
-        }
+        checkUploadMenu()
     }
+
 
     // Salva a analise no servidor / server-side
     private fun saveServer(sucesso: (analise: Analise) -> Unit = {}, erro: (msg: String) -> Unit = {}){

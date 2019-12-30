@@ -28,6 +28,7 @@
     <string name="frame">Frame</string>
     <string name="frames">Frames</string>
     <string name="frames_count">Frames: %s</string>
+    <string name="fps_count">FPS: %d</string>
     <string name="analisis">Análises</string>
     <string name="analisis_exclude">Excluir Análises</string>
     <string name="frames_exclude">Excluir Frames</string>
@@ -47,6 +48,7 @@
     <string name="saving">Salvando</string>
     <string name="upload">Upload</string>
     <string name="board">Placa</string>
+    <string name="board_value">Placa: %s</string>
     <string name="no_analisis">Nenhuma análise cadastrada nesse experimento</string>
     <string name="no_frames">Nenhum frame vinculado a essa análise</string>
     <string name="api_port">Porta da API</string>
@@ -58,6 +60,7 @@
     <string name="server_analisis_notfound">Análise não cadastrada no servidor</string>
     <string name="synchronize">Sincronizar</string>
     <string name="analisis_successfully_registered">Analise (%s) cadastrada com sucesso!</string>
+    <string name="analisis_notfound">Análise não encontrada</string>
     <string name="no_server_communication">Não foi possivel comunicar-se com o servidor</string>
     <string name="required_field">Campo obrigatório</string>
     <string name="invalid_url">URL Inválida</string>
@@ -70,4 +73,6 @@
     <string name="config_saved">Configurações salvas</string>
     <string name="config_invalid">Configurações inválidas</string>
     <string name="collection_date">Data de coleta</string>
+    <string name="collection_date_value">Data de coleta: %s</string>
+    <string name="date_format">dd/MM/yyyy</string>
 </resources>

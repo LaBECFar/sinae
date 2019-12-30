@@ -1,8 +1,11 @@
 package br.com.webgenium.sinae.custom
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -32,4 +35,13 @@ fun Context.toast(message: CharSequence, type: String = "") {
      text.setTextColor(Color.WHITE)
      toast.setMargin(0f,0f)
      toast.show()
+}
+
+fun Activity.hideKeyboard() {
+     hideKeyboard(currentFocus ?: View(this))
+}
+
+fun Context.hideKeyboard(view: View) {
+     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }

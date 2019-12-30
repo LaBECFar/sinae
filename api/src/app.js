@@ -10,6 +10,7 @@ const index = require('./routes/index');
 const experimentoRoutes   = require('./routes/experimentoRoutes');
 const analiseRoutes   = require('./routes/analiseRoutes');
 const frameRoutes   = require('./routes/frameRoutes');
+const pocoRoutes   = require('./routes/pocoRoutes');
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -28,6 +29,7 @@ app.use(cors(corsOptions));
 app.use('/experimento', experimentoRoutes);
 app.use('/analise', analiseRoutes);
 app.use('/frame', frameRoutes);
+app.use('/poco', pocoRoutes);
 app.use('/', index);
 
 module.exports = app;

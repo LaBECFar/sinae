@@ -19,39 +19,36 @@
         <activity
             android:name=".FrameActivity"
             android:label="Frames"
-            android:launchMode="singleTask"
             android:parentActivityName=".AnaliseActivity"
             android:theme="@style/AlphaActionBar" />
         <activity
             android:name=".AnaliseActivity"
             android:label="Analise"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ExperimentoActivity" />
+            android:parentActivityName=".ExperimentoActivity"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".ExperimentoActivity"
             android:label="Experimento"
-            android:launchMode="singleTask"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".NovaAnaliseVideoActivity"
             android:label="Vídeo da Análise"
-            android:launchMode="singleTask"
-            android:parentActivityName=".NovaAnaliseActivity" />
+            android:parentActivityName=".NovaAnaliseActivity"/>
         <activity
             android:name=".NovaAnaliseActivity"
             android:label="Nova Análise"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ExperimentoActivity" />
+            android:parentActivityName=".ExperimentoActivity"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".NovoExperimentoActivity"
             android:label="Novo Experimento"
-            android:launchMode="singleTask"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ConfiguracoesActivity"
             android:label="Configurações"
-            android:launchMode="singleTask"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".MainActivity"
             android:label="Experimentos">

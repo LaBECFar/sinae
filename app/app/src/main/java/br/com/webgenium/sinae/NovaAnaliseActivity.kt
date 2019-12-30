@@ -38,6 +38,8 @@ class NovaAnaliseActivity : AppCompatActivity() {
         }
 
         et_data.setOnClickListener {
+
+
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)

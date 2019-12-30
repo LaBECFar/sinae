@@ -11,13 +11,12 @@ import br.com.webgenium.sinae.model.Frame
 
 @Database(
     entities = [Experimento::class, Frame::class, Analise::class],
-    version = 27
+    version = 28
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun dao(): AppDao
 
-    // singleton
     companion object {
         @Volatile private var instance: AppDatabase? = null
         private val LOCK = Any()

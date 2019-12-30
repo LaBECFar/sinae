@@ -245,7 +245,8 @@ class AnaliseActivity : AppCompatActivity() {
                             frame = frame,
                             experimentoCodigo = analise.experimentoCodigo,
                             analiseId = analise.idserver,
-                            tempoMilis = frame.tempoMilis
+                            tempoMilis = frame.tempoMilis,
+                            quadrante = frame.quadrante
                         ) {
                             if (it.uploaded) {
                                 val frameLocal: Frame? = analise.getFrameById(frame.id)

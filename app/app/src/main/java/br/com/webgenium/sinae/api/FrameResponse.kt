@@ -8,12 +8,14 @@ class FrameResponse {
     var analiseId: String = ""
     var url: String = ""
     var tempoMilis: Long = 0
+    var quadrante: Int = 0
 
     fun toFrame() : Frame {
         val frame = Frame()
         frame.tempoMilis = tempoMilis
         frame.uri = url
         frame.uploaded = true
+        frame.quadrante = quadrante
         return frame
     }
 }

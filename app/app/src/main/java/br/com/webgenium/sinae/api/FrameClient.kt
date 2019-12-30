@@ -15,7 +15,7 @@ import java.io.File
 
 class FrameClient(val context: Context)  {
 
-    fun uploadFrame(frame: Frame, experimentoCodigo: String, analiseId: String, tempoMilis: Long, successo: (frame: Frame) -> Unit){
+    fun uploadFrame(frame: Frame, experimentoCodigo: String, analiseId: String, tempoMilis: Long, quadrante: Int,  successo: (frame: Frame) -> Unit){
 
         val fileUri = Uri.parse(frame.uri)
         if(fileUri === null){
@@ -30,12 +30,15 @@ class FrameClient(val context: Context)  {
             val experimentoCodigoBody = RequestBody.create(MultipartBody.FORM, experimentoCodigo)
             val analiseIdBody = RequestBody.create(MultipartBody.FORM, analiseId)
             val tempoMilisBody = RequestBody.create(MultipartBody.FORM, tempoMilis.toString())
+            val quadranteBody = RequestBody.create(MultipartBody.FORM, quadrante.toString())
 
             val call = RetrofitInitializer(context).frameService().upload(
                 experimentoCodigo = experimentoCodigoBody,
                 analiseId = analiseIdBody,
                 tempoMilis = tempoMilisBody,
+                quadrante = quadranteBody,
                 frame = fileBody
+
             )
 
             call.enqueue(callback { response, thorwable ->

@@ -13,6 +13,7 @@ interface FrameService {
         @Part("experimentoCodigo") experimentoCodigo: RequestBody,
         @Part("analiseId") analiseId: RequestBody,
         @Part("tempoMilis") tempoMilis: RequestBody,
+        @Part("quadrante") quadrante: RequestBody,
         @Part frame: MultipartBody.Part
     ) : Call<FrameResponse>
 

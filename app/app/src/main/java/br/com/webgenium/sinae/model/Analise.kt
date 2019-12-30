@@ -30,6 +30,8 @@ class Analise : Serializable {
 
     var placa: String = ""
 
+    var dataColeta: String = "0000-00-00"
+
     @Ignore
     var experimento: Experimento? = null
 

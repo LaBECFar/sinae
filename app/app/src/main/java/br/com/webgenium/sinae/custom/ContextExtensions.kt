@@ -2,7 +2,6 @@ package br.com.webgenium.sinae.custom
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.Gravity
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +30,6 @@ fun Context.toast(message: CharSequence, type: String = "") {
      toast.view.setBackgroundColor(Color.parseColor(bgcolor))
      val text = toast.view.findViewById(android.R.id.message) as TextView
      text.setTextColor(Color.WHITE)
-
+     toast.setMargin(0f,0f)
      toast.show()
 }

@@ -69,4 +69,5 @@
     <string name="select_video_error">Erro ao selecionar vídeo!</string>
     <string name="config_saved">Configurações salvas</string>
     <string name="config_invalid">Configurações inválidas</string>
+    <string name="collection_date">Data de coleta</string>
 </resources>

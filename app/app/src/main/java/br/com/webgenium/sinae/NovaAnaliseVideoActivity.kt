@@ -42,7 +42,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     private var videoUri: Uri? = null
 
-    private var analise: Analise? = null
+    private lateinit var analise: Analise
 
     private val db: AppDatabase by lazy { AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
@@ -154,22 +154,20 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     // Salva o experimento no banco de dados
     private fun save() {
-        analise?.let { analise ->
+        progress_overlay.visibility = View.VISIBLE
 
-            progress_overlay.visibility = View.VISIBLE
+        saveLocal(analise) {
+            analise.id = it.id
 
-            saveLocal(analise) {
+            saveServer(sucesso = {
+                progress_overlay.visibility = View.INVISIBLE
+                startExperimentoActivity()
 
-                saveServer(sucesso = {
-                    progress_overlay.visibility = View.INVISIBLE
-                    startAnaliseActivity()
+            }, erro = {
+                progress_overlay.visibility = View.INVISIBLE
+                startExperimentoActivity()
+            })
 
-                }, erro = {
-                    progress_overlay.visibility = View.INVISIBLE
-                    startAnaliseActivity()
-                })
-
-            }
         }
     }
 
@@ -194,28 +192,36 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     // Salva a analise no servidor / server-side
     private fun saveServer(sucesso: (analise: Analise) -> Unit = {}, erro: (msg: String) -> Unit = {}){
-        analise?.let { analiseLocal ->
-            AnaliseClient(this).insert( analiseLocal,
-                sucesso = {analiseServer ->
-                    analiseLocal.idserver = analiseServer.idserver
+        AnaliseClient(this).insert( analise,
+            sucesso = {analiseServer ->
+                analise.idserver = analiseServer.idserver
 
-                    lifecycleScope.launch {
-                        dao.updateAnalise(analiseLocal)
-                    }
-
-                    sucesso(analiseLocal)
-
-                }, erro = {
-                    erro(it)
+                lifecycleScope.launch {
+                    dao.updateAnalise(analise)
                 }
-            )
-        }
+
+                sucesso(analise)
+
+            }, erro = {
+                erro(it)
+            }
+        )
+    }
+
+
+    private fun startExperimentoActivity() {
+        val intent = Intent(this, ExperimentoActivity::class.java)
+        intent.putExtra("experimentoCodigo", analise.experimentoCodigo)
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 
 
     private fun startAnaliseActivity(){
-        val intent = Intent(baseContext, AnaliseActivity::class.java)
-        intent.putExtra("analiseId", analise?.id)
+        val intent = Intent(this, AnaliseActivity::class.java)
+        intent.putExtra("analiseId", analise.id)
+        intent.putExtra("new", true)
+        intent.putExtra("experimentoCodigo", analise.experimentoCodigo)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
@@ -224,12 +230,11 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     private fun extractFrames(): List<Frame> {
 
         val frames = mutableListOf<Frame>()
-        val milisecondsToFrame: Long = (1000 / analise!!.fps).toLong()
+        val milisecondsToFrame: Long = (1000 / analise.fps).toLong()
 
         var q = 1
-        analise?.quadrantes?.forEach {
+        analise.quadrantes.forEach {
             val tempo = it.split("-")
-
             val inicioQuadrante = stringToTime(tempo[0])
             val fimQuadrante = stringToTime(tempo[1])
 
@@ -240,11 +245,12 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     tString = "0$t"
                 }
 
-                val filename = "${analise?.experimentoCodigo}_${analise?.tempo}_Q${q}_${tString}"
+                val filename = "${analise.experimentoCodigo}_${analise.tempo}_Q${q}_${tString}"
 
                 val frame = Frame()
                 frame.filename = filename
                 frame.tempoMilis = t
+                frame.quadrante = q
                 frames.add(frame)
             }
 

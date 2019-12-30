@@ -22,7 +22,12 @@ const analisesSchema = new Schema({
     'experimentoCodigo' : {
 		type: String,
 		required: true
-	}
+    },
+    
+    'dataColeta' : {
+        type: Date,
+        required: true
+    }
 },{
     timestamps: true
 });

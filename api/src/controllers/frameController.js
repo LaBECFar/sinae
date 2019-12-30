@@ -17,8 +17,9 @@ const frameController = {
         frameModel.find( search, {
                 analiseId: 1,
                 url: 1,
-                tempoMilis: 1
-            }) 
+                tempoMilis: 1,
+                quadrante: 1
+            })
             .then(frames => {
                 return res.status(201).json(frames);
             })
@@ -56,6 +57,7 @@ const frameController = {
             let experimentoCodigo = fields.experimentoCodigo
             let analiseId = fields.analiseId
             let tempoMilis = fields.tempoMilis
+            let quadrante = fields.quadrante
 
             let filename = file.name
             let oldpath = file.path
@@ -72,6 +74,11 @@ const frameController = {
 
             if(!tempoMilis){
                 let errorMsg = 'Tempo em milisegundos não informado'
+                return res.status(500).json({ error: true, message: errorMsg });
+            }
+
+            if(!quadrante){
+                let errorMsg = 'Quadrante não informado'
                 return res.status(500).json({ error: true, message: errorMsg });
             }
 
@@ -109,7 +116,8 @@ const frameController = {
                         const frame = new frameModel({
                             tempoMilis: tempoMilis,
                             url: targetpath,
-                            analiseId: analiseId
+                            analiseId: analiseId,
+                            quadrante: quadrante
                         })
                         
                         frame.save((err, frame) => {
@@ -145,6 +153,7 @@ const frameController = {
                 frame.analiseId = req.body.analiseId
                 frame.tempoMilis = req.body.tempoMilis
                 frame.experimentoCodigo = req.body.experimentoCodigo
+                frame.quadrante = req.body.quadrante
 
                 frame.save(function (err, frame) {
                     if (err) {

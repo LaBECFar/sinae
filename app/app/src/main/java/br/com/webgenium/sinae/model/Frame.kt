@@ -28,6 +28,8 @@ class Frame {
 
     var tempoMilis: Long = 0
 
+    var quadrante: Int = 0
+
     fun removerArquivo(): Boolean{
         val filePath = Uri.parse(this.uri).path
         filePath?.let{ filePath ->

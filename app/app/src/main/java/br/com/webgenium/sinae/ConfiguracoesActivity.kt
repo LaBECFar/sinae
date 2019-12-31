@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.URLUtil
 import br.com.webgenium.sinae.custom.SharedPreference
+import br.com.webgenium.sinae.custom.TOAST_ERROR
+import br.com.webgenium.sinae.custom.TOAST_SUCCESS
 import br.com.webgenium.sinae.custom.toast
 import kotlinx.android.synthetic.main.activity_configuracoes.*
 
@@ -77,9 +79,9 @@ class ConfiguracoesActivity : AppCompatActivity() {
             sharedPreference.save("api_port", port)
             sharedPreference.save("fps", fps)
 
-            toast(getString(R.string.config_saved), "success")
+            toast(getString(R.string.config_saved), TOAST_SUCCESS)
         } else {
-            toast(getString(R.string.config_invalid), "error")
+            toast(getString(R.string.config_invalid), TOAST_ERROR)
         }
 
 

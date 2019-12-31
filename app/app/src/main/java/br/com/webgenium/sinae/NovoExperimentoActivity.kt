@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.api.ExperimentoClient
+import br.com.webgenium.sinae.custom.TOAST_ERROR
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.database.AppDao
 import br.com.webgenium.sinae.database.AppDatabase
@@ -49,7 +50,7 @@ class NovoExperimentoActivity : AppCompatActivity() {
             intent.putExtra("experimentoCodigo", experimento.codigo)
             startActivity(intent)
         } else {
-            toast(getString(R.string.experiment_notfound), "error")
+            toast(getString(R.string.experiment_notfound), TOAST_ERROR)
         }
     }
 

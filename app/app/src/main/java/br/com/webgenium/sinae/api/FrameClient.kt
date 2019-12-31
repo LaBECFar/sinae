@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import android.webkit.MimeTypeMap
 import br.com.webgenium.sinae.R
+import br.com.webgenium.sinae.custom.TOAST_ERROR
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Frame
 import okhttp3.MediaType
@@ -49,7 +50,7 @@ class FrameClient(val context: Context)  {
                 }
 
                 thorwable?.let {
-                    context.toast(context.getString(R.string.no_server_communication), "error")
+                    context.toast(context.getString(R.string.no_server_communication), TOAST_ERROR)
                 }
             })
         }

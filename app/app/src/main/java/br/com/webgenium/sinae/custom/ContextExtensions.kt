@@ -11,6 +11,10 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import br.com.webgenium.sinae.R
 
+
+const val TOAST_SUCCESS = "success"
+const val TOAST_ERROR = "error"
+
 fun Context.toast(message: CharSequence, type: String = "") {
      val toast =  Toast.makeText(this, message, Toast.LENGTH_SHORT)
      toast.setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, 0)
@@ -19,13 +23,13 @@ fun Context.toast(message: CharSequence, type: String = "") {
      var bgcolor = "#" + Integer.toHexString(ContextCompat.getColor(this, R.color.toastBackground))
 
      if(type.isNotEmpty()) {
-          if(type == "error") {
+          if(type == TOAST_ERROR) {
                bgcolor = "#"+Integer.toHexString(ContextCompat.getColor(this, R.color.toastBackgroundError))
 
 
           }
 
-          if(type == "success") {
+          if(type == TOAST_SUCCESS) {
                bgcolor = "#"+Integer.toHexString(ContextCompat.getColor(this, R.color.toastBackgroundSuccess))
           }
      }
@@ -37,9 +41,11 @@ fun Context.toast(message: CharSequence, type: String = "") {
      toast.show()
 }
 
+
 fun Activity.hideKeyboard() {
      hideKeyboard(currentFocus ?: View(this))
 }
+
 
 fun Context.hideKeyboard(view: View) {
      val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager

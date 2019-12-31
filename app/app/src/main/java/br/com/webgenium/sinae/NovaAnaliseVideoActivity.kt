@@ -14,6 +14,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.api.AnaliseClient
+import br.com.webgenium.sinae.custom.TOAST_ERROR
 import br.com.webgenium.sinae.custom.hideKeyboard
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Analise
@@ -453,7 +454,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                         videoUri = it
                     }
                 } catch (e: IOException) {
-                    toast(getString(R.string.select_video_error), "error")
+                    toast(getString(R.string.select_video_error), TOAST_ERROR)
                 }
             }
         } else {

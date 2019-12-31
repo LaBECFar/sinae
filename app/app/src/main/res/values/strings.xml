@@ -28,6 +28,7 @@
     <string name="frame">Frame</string>
     <string name="frames">Frames</string>
     <string name="frames_count">Frames: %s</string>
+    <string name="frames_uploaded">Upload de frames concluído</string>
     <string name="fps_count">FPS: %d</string>
     <string name="analisis">Análises</string>
     <string name="analisis_exclude">Excluir Análises</string>

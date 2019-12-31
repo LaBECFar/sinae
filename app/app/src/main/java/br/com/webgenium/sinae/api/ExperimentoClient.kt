@@ -2,6 +2,7 @@ package br.com.webgenium.sinae.api
 
 import android.content.Context
 import br.com.webgenium.sinae.R
+import br.com.webgenium.sinae.custom.TOAST_ERROR
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Experimento
 
@@ -16,12 +17,12 @@ class ExperimentoClient(val context: Context) {
                 successo(it)
             } ?: run {
                 if(thorwable == null) {
-                    context.toast(context.getString(R.string.experiment_notfound), "error")
+                    context.toast(context.getString(R.string.experiment_notfound), TOAST_ERROR)
                 }
             }
 
             thorwable?.let {
-                context.toast(context.getString(R.string.no_server_communication), "error")
+                context.toast(context.getString(R.string.no_server_communication), TOAST_ERROR)
             }
         })
     }

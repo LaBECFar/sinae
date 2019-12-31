@@ -14,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.com.webgenium.sinae.api.AnaliseClient
 import br.com.webgenium.sinae.api.FrameClient
+import br.com.webgenium.sinae.custom.TOAST_ERROR
+import br.com.webgenium.sinae.custom.TOAST_SUCCESS
 import br.com.webgenium.sinae.custom.adapter.FrameAdapter
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.database.AppDao
@@ -47,42 +49,60 @@ class AnaliseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analise)
         setupRecycler()
-        setupSyncButton()
+        setupSyncWarning()
 
         val id: Long = intent.getLongExtra("analiseId", 0)
 
         lifecycleScope.launch {
             analise = dao.getAnaliseById(id)
-
-            analise?.let {
-                txt_titulo.text = it.tempo
-                txt_fps.text = getString(R.string.fps_count, it.fps)
-                txt_placa.text = getString(R.string.board_value, it.placa)
-
-                var data = it.dataColeta
-                if(data.contains("T")) {
-                    data = data.split("T")[0]
-                }
-                txt_data.text = getString(R.string.collection_date_value, data)
-
-                it.frames = dao.getFramesFromAnalise(id).toMutableList()
-                mAdapter.atualizar(it.frames)
-                txt_frames.text = getString(R.string.frames_count, framesValue())
-
-                toggleRecyclerVisibility(it.frames.isEmpty())
-
-                if(it.idserver.isEmpty()){
-                    sync_warning.visibility = TextView.VISIBLE
-                }
-            } ?: run {
-                toast(getString(R.string.analisis_notfound), "error")
-            }
-
-            checkUploadMenu()
+            refreshActivity()
         }
     }
 
-    private fun setupSyncButton(){
+
+    override fun onResume() {
+        super.onResume()
+        refreshFrames()
+    }
+
+
+    private fun refreshActivity(){
+        analise?.let {
+            txt_titulo.text = it.tempo
+            txt_fps.text = getString(R.string.fps_count, it.fps)
+            txt_placa.text = getString(R.string.board_value, it.placa)
+
+            var data = it.dataColeta
+            if(data.contains("T")) {
+                data = data.split("T")[0]
+            }
+            txt_data.text = getString(R.string.collection_date_value, data)
+
+            refreshFrames()
+
+            if(it.idserver.isEmpty()){
+                showSyncWarning()
+            }
+        } ?: run {
+            toast(getString(R.string.analisis_notfound), TOAST_ERROR)
+        }
+
+        checkUploadMenu()
+    }
+
+    private fun refreshFrames(){
+        analise?.let {
+            lifecycleScope.launch {
+                it.frames = dao.getFramesFromAnalise(it.id).toMutableList()
+                mAdapter.atualizar(it.frames)
+                txt_frames.text = getString(R.string.frames_count, framesValue())
+                toggleRecyclerVisibility(it.frames.isEmpty())
+            }
+        }
+    }
+
+
+    private fun setupSyncWarning(){
         sync_warning.setOnClickListener {
             val rotation = AnimationUtils.loadAnimation(this, R.anim.rotate)
             rotation.fillAfter = true
@@ -90,21 +110,25 @@ class AnaliseActivity : AppCompatActivity() {
             sync_warning_txt.text = getString(R.string.syncing_warning_analise)
 
             saveServer({
-                sync_warning_drawable.clearAnimation()
-                sync_warning.visibility = TextView.GONE
-                showUploadMenu()
+                hideSyncWarning()
             }, {
-                sync_warning_drawable.clearAnimation()
-                sync_warning_txt.text = getString(R.string.sync_warning_analise)
-                sync_warning.visibility = TextView.VISIBLE
+                showSyncWarning()
             })
         }
     }
 
 
-    override fun onResume() {
-        super.onResume()
-        checkUploadMenu()
+    private fun hideSyncWarning(){
+        sync_warning_drawable.clearAnimation()
+        sync_warning.visibility = TextView.GONE
+        showUploadMenu()
+    }
+
+
+    private fun showSyncWarning(){
+        sync_warning_drawable.clearAnimation()
+        sync_warning_txt.text = getString(R.string.sync_warning_analise)
+        sync_warning.visibility = TextView.VISIBLE
     }
 
 
@@ -128,6 +152,7 @@ class AnaliseActivity : AppCompatActivity() {
         }
     }
 
+
     private fun toggleRecyclerVisibility(isVisible: Boolean) {
         if (!isVisible) {
             empty_view.visibility = TextView.GONE
@@ -137,6 +162,7 @@ class AnaliseActivity : AppCompatActivity() {
             empty_view.visibility = TextView.VISIBLE
         }
     }
+
 
     private fun framesValue(): String {
         analise?.let {
@@ -158,6 +184,7 @@ class AnaliseActivity : AppCompatActivity() {
         }
         return "?"
     }
+
 
     private fun countUploadedFrames() {
         countUploaded = 0
@@ -198,6 +225,7 @@ class AnaliseActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
     private fun pauseUpload() {
         if (isUploading) {
             val item: MenuItem? = menu?.findItem(R.id.upload_frames)
@@ -209,6 +237,7 @@ class AnaliseActivity : AppCompatActivity() {
             txt_frames.text = getString(R.string.frames_count, framesValue())
         }
     }
+
 
     // Método para iniciar o upload dos frames dessa analise
     private fun uploadFrames() {
@@ -230,7 +259,7 @@ class AnaliseActivity : AppCompatActivity() {
                     pauseUpload()
                 }
             } else {
-                toast(getString(R.string.server_analisis_notfound), "error")
+                toast(getString(R.string.server_analisis_notfound), TOAST_ERROR)
             }
         }
     }
@@ -238,45 +267,24 @@ class AnaliseActivity : AppCompatActivity() {
 
     private fun uploadNextFrame() {
         if (isUploading) {
-
-            analise?.let { analise ->
-                val context = this
-
+            analise?.let {
                 lifecycleScope.launch {
-                    val frame = dao.getFrameFromAnaliseToUpload(analise.id)
+                    val frame = dao.getFrameFromAnaliseToUpload(it.id)
 
                     if (frame != null) {
-                        FrameClient(context).uploadFrame(
+                        FrameClient(this@AnaliseActivity).uploadFrame(
                             frame = frame,
-                            experimentoCodigo = analise.experimentoCodigo,
-                            analiseId = analise.idserver,
+                            experimentoCodigo = it.experimentoCodigo,
+                            analiseId = it.idserver,
                             tempoMilis = frame.tempoMilis,
                             quadrante = frame.quadrante
                         ) {
                             if (it.uploaded) {
-                                val frameLocal: Frame? = analise.getFrameById(frame.id)
-
-                                frameLocal?.let { frameLocal ->
-                                    frameLocal.uploaded = true
-
-                                    lifecycleScope.launch {
-                                        dao.updateFrame(frameLocal)
-                                    }
-
-                                    mAdapter.notifyDataSetChanged()
-                                    txt_frames.text =
-                                        getString(R.string.frames_count, framesValue())
-
-
-                                    Timer("SettingUp", false).schedule(500) {
-                                        uploadNextFrame()
-                                    }
-
-                                }
+                                onFrameUploadComplete(frame.id)
                             }
                         }
                     } else {
-                        onFramesUploadComplete()
+                        onAllFramesUploadComplete()
                     }
                 }
             }
@@ -285,10 +293,33 @@ class AnaliseActivity : AppCompatActivity() {
     }
 
 
-    private fun onFramesUploadComplete() {
-        hideUploadMenu()
-        //Log.d("SINAE", "Nenhum frame para upload foi encontrado")
+    private fun onFrameUploadComplete(id: Long) {
+        analise?.let{
+            val frame: Frame? = it.getFrameById(id)
+
+            frame?.let { frameLocal ->
+                frameLocal.uploaded = true
+
+                lifecycleScope.launch {
+                    dao.updateFrame(frameLocal)
+                    mAdapter.notifyDataSetChanged()
+
+                    Timer("SettingUp", false).schedule(500) {
+                        uploadNextFrame()
+                    }
+                }
+
+                txt_frames.text =  getString(R.string.frames_count, framesValue())
+            }
+        }
     }
+
+
+    private fun onAllFramesUploadComplete() {
+        hideUploadMenu()
+        toast(getString(R.string.frames_uploaded), TOAST_SUCCESS)
+    }
+
 
     private fun hideUploadMenu() {
         val item: MenuItem? = menu?.findItem(R.id.upload_frames)
@@ -296,6 +327,7 @@ class AnaliseActivity : AppCompatActivity() {
             item.setVisible(false)
         }
     }
+
 
     private fun showUploadMenu() {
         val item: MenuItem? = menu?.findItem(R.id.upload_frames)

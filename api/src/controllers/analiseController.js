@@ -47,7 +47,7 @@ const analiseController = {
     post: (req, res, next) => {
         var dataColeta = req.body.dataColeta
         if(dataColeta){
-            dataColeta = moment(dataColeta).toDate()
+            dataColeta = moment(dataColeta, "YYYY-MM-DD").toDate()
         }
 
         const analise = new analiseModel({

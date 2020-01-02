@@ -19,7 +19,8 @@
     "formidable": "^1.2.1",
     "moment": "^2.24.0",
     "mongoose": "^5.8.3",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "sharp": "^0.23.4"
   },
   "devDependencies": {
     "jest": "^24.9.0",

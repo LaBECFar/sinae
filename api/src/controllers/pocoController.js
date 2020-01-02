@@ -8,7 +8,9 @@ const formidable = require('formidable')
 const pocoController = {
 
     extrair: (req, res, next) => {
-        return res.status(201).json(frame);
+
+        
+        return res.status(201).json("ok");
     }
 
     /*

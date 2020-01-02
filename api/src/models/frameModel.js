@@ -22,7 +22,13 @@ const framesSchema = new Schema({
     'quadrante' : {
         type: Number,
 		required: true
-    }
+    },
+
+    'processado' : {
+        type: Boolean,
+        required: false,
+        default: false
+    }    
 },{
     timestamps: true
 });

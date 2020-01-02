@@ -18,7 +18,8 @@ const frameController = {
                 analiseId: 1,
                 url: 1,
                 tempoMilis: 1,
-                quadrante: 1
+                quadrante: 1,
+                processado: 'false'
             })
             .then(frames => {
                 return res.status(201).json(frames);

@@ -4,19 +4,10 @@
 const fs = require("fs")
 const path = require('path');
 const formidable = require('formidable')
-const sharp = require('sharp');
 
 const pocoController = {
 
     extrair: (req, res, next) => {
-
-        let img_path = path.join(__dirname, `../uploads/tmp/f.jpg`)
-
-        sharp(img_path)
-        .resize(320, 240)
-        .toFile('output.webp', (err, info) => { 
-            console.log("a")
-         });
 
         return res.status(201).json("ok");
     }

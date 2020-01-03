@@ -248,12 +248,13 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     tString = "0$t"
                 }
 
-                val filename = "${analise.experimentoCodigo}_${analise.tempo}_Q${q}_${tString}"
+                val filename = "Q${q}_${tString}"
 
                 val frame = Frame()
                 frame.filename = filename
                 frame.tempoMilis = t
                 frame.quadrante = q
+                frame.analiseId = analise.id
                 frames.add(frame)
             }
 
@@ -277,7 +278,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                     MediaMetadataRetriever.OPTION_CLOSEST_SYNC
                 )
 
-                val file = saveFrameToInternalStorage(bmp, frame.filename)
+                val file = saveFrameToInternalStorage(bmp, frame)
 
                 frame.uri = file.toString()
                 frame.analiseId = analiseId
@@ -297,9 +298,17 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             }
         }
 
-        mediaretriever.release()
-        mediaretriever.close()
+        try {
+            mediaretriever.release()
+        } catch (e: NoSuchMethodError) {
+            Log.e("Error", "Erro em release() MediaMetadataRetriver")
+        }
 
+        try {
+            mediaretriever.close()
+        } catch (e: NoSuchMethodError) {
+            Log.e("Error", "Erro em close() MediaMetadataRetriver")
+        }
     }
 
     private fun atualizarProgresso(progresso: String) {
@@ -312,13 +321,16 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
 
-    private fun saveFrameToInternalStorage(bmp: Bitmap, filename: String): Uri {
+    private fun saveFrameToInternalStorage(bmp: Bitmap, frame: Frame): Uri {
 
         val wrapper = ContextWrapper(applicationContext)
         var file = wrapper.getDir("frames", Context.MODE_PRIVATE)
 
+        val analisisDir = File(file, "${frame.analiseId}")
+        analisisDir.mkdir()
+
         // Arquivo em que a imagem sera salva
-        file = File(file, "${filename}.jpg")
+        file = File(analisisDir, "${frame.filename}.jpg")
 
         try {
             val stream: OutputStream = FileOutputStream(file)

@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
+            android:textAlignment="textEnd"
             android:text="@string/board"
             android:textColor="@color/colorItemText"
             android:textSize="10sp"/>
@@ -40,6 +40,7 @@
             android:text="@string/board"
             android:textColor="@color/colorItemTitle"
             android:textStyle="bold"
+            android:textAlignment="textEnd"
             android:textSize="14sp"/>
 
     </LinearLayout>

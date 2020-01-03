@@ -26,9 +26,7 @@ class FrameAdapter(frames: MutableList<Frame>) : SelectableAdapter<FrameAdapter.
     }
 
     private fun frameTitle(frame: Frame) : String{
-        var title : String = frame.filename.split("_Q")[1]
-        title = "Q" + title.replace("_", " ") +"ms"
-        return title
+        return frame.filename.replace("_", " ") +"ms"
     }
 
     @SuppressLint("SetTextI18n")

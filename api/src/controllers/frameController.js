@@ -107,8 +107,8 @@ const frameController = {
 
                     targetpath += '/' + filename
         
-                    if(!fs.existsSync(targetpath)){
-                        console.log("frameController.js: Não existe o targetpath")
+                    if(fs.existsSync(targetpath)){
+                        console.log("frameController.js: diretório de destino já existe")
                     }
         
                     fs.rename(oldpath, targetpath, (err) => {

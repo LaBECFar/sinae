@@ -9,6 +9,11 @@ import os
 # python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 40 5e0e5a65a7c6ed0024b5f219 b02 55 60 c02 136 60 d02 220 60  
 # python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q2_5000.jpg 40 5e0e5a65a7c6ed0024b5f219 b02 55 65 c02 136 65 d02 220 65
 
+# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480
+
+# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480 b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  
+
+
 # parametros
 # 1 - caminho da imagem 
 # 2 - raio do poco
@@ -18,10 +23,10 @@ import os
 img_name = sys.argv[1]
 r  = int(sys.argv[2])
 
-px = 450
-py = 500
-
 img_original = cv2.imread(img_name, 0)
+
+width = img_original.shape[0]
+height = img_original.shape[1]
 
 # numero de pocos que foram inseridos na linha de comando, por padrao tem que ser 15
 qtd_pocos = ((len(sys.argv) - 4) / 3)+1
@@ -36,23 +41,33 @@ try:
 except OSError:
     pass
 
-# print(mills[0])
-# sys.exit()
-
 pocos = []
 
 for i in range(1,qtd_pocos):
     pos_nome = 3*(int(i)-1)+4
     nome = str(sys.argv[pos_nome])
 
-    pos_x = 3*(int(i)-1)+5
-    x = int(sys.argv[pos_x]) - r
+    pos_y = 3*(int(i)-1)+5
+    y = int(sys.argv[pos_y])
 
-    pos_y = 3*(int(i)-1)+6
-    y = int(sys.argv[pos_y]) + r
+    pos_x = 3*(int(i)-1)+6
+    x = int(sys.argv[pos_x])
 
     # crop image as a square
-    img = img_original[y:y+r*2, x:x+r*2]
+    ax = x - r
+    ay = y - r
+    bx = x + r
+    by = y + r
+
+    #     x  
+    #   y  . . . . . . . . . . . . . .
+    #      . . (ax,ay) - - - - . . . .
+    #      . . | . . . . . . . . . . .
+    #      . . | . . . . . . . . . . .
+    #      . . | . . . . . . . . . . .
+    #      . . | . . . . . . . (bx,by)
+
+    img = img_original[ax:bx, ay:by]
 
     # create a mask
     mask = np.full((img.shape[0], img.shape[1]), 0, dtype=np.uint8) 
@@ -65,20 +80,18 @@ for i in range(1,qtd_pocos):
     mask = cv2.bitwise_not(mask)
     background = np.full(img.shape, 255, dtype=np.uint8)
     bk = cv2.bitwise_or(background, background, mask=mask)
-    final = cv2.bitwise_or(fg, bk)
+    img_final = cv2.bitwise_or(fg, bk)
 
     nome_img_poco = aux_nome[0]+'/'+nome+'.'+aux_nome[1]
 
-    # salva a imagem na pasta
-    cv2.imwrite(nome_img_poco,final)
-
     # pocos.append(Poco(nome, nome_img_poco))
-
     poco = {}
     poco['nome'] = nome
     poco['url'] = nome_img_poco
     pocos += [poco]
-
+    
+    # salva a imagem na pasta
+    cv2.imwrite(nome_img_poco,img_final)
 
 # MONGO DB SALVA DADOS
 client = MongoClient()
@@ -89,6 +102,4 @@ id_frame = {'_id': ObjectId(sys.argv[3])}
 frame = collection.find_one(id_frame)
 novos_valores = { '$set': { 'processado': True, 'pocos': pocos}}
 collection.update_one(id_frame, novos_valores)
-print(frame)
-
-
+# print(frame)

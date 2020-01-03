@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Schema   = mongoose.Schema;
 
 const framesSchema = new Schema({
+
     'analiseId' : {
         type: String,
         required: true
@@ -28,7 +29,20 @@ const framesSchema = new Schema({
         type: Boolean,
         required: false,
         default: false
-    }    
+    },
+
+	'pocos' : [{
+        'nome' : {
+            type: String,
+            required: true
+        },
+    
+        'url' : {
+            type: String,
+            required: true
+        },
+   }],
+
 },{
     timestamps: true
 });

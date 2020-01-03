@@ -44,6 +44,7 @@ except OSError:
 pocos = []
 
 for i in range(1,qtd_pocos):
+    
     pos_nome = 3*(int(i)-1)+4
     nome = str(sys.argv[pos_nome])
 
@@ -69,11 +70,26 @@ for i in range(1,qtd_pocos):
 
     img = img_original[ax:bx, ay:by]
 
+    # ////////////
+    # img = cv2.medianBlur(img,5)
+    min_r = int(0.8*r)
+    max_r = int(1.3*r)
+    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.9, r, param1=50, param2=30, minRadius=min_r, maxRadius=max_r)
+    
+    circles = np.uint16(np.around(circles))
+
+    kx, ky, r = circles[0][0]
+ 
+    # ajuste para não ficar tão colado
+    r+=3
+
+    # ////////////
+
     # create a mask
     mask = np.full((img.shape[0], img.shape[1]), 0, dtype=np.uint8) 
 
     # create circle mask, center, radius, fill color, size of the border
-    cv2.circle(mask,(r,r), r, (255,255,255),-1)
+    cv2.circle(mask,(kx,ky), r, (255,255,255),-1)
 
     # get only the inside pixels
     fg = cv2.bitwise_or(img, img, mask=mask)

@@ -32,6 +32,11 @@ export default new Router({
       path: '/experimento/:experimentoCodigo/analises',
       name: 'analiseIndex',
       component: () => import(/* webpackChunkName: "analiseIndex" */ './views/analise/Index.vue')
+    },
+    {
+      path: '/analise/:analiseCodigo',
+      name: 'analiseDetalhes',
+      component: () => import(/* webpackChunkName: "analiseIndex" */ './views/analise/Detalhes.vue')
     }
   ]
 })

@@ -1,5 +1,6 @@
 const analiseModel = require("../models/analiseModel")
 const moment = require('moment')
+const frameModel = require("../models/frameModel")
 
 const analiseController = {
 
@@ -37,7 +38,29 @@ const analiseController = {
             .then(analise => {
                 let obj = analise.toObject()
                 obj.idserver = analise._id
-                return res.status(201).json(obj);
+
+                frameModel.find({'analiseId': obj._id})
+                    .then(frames => {
+                        let processados = 0;
+                        let total = 0;
+                        frames.forEach(element => {
+                            total++;
+                            if (element.processado) {
+                                processados++;
+                            }
+                        });
+                        
+                        
+                        obj['frames_total']  = total;
+                        obj['frames_processados']  = processados;
+                        
+                        return res.status(201).json(obj);
+                    })
+                    .catch(err => {
+                        return res.status(422).send(err.errors);
+                    });                    
+
+                // return res.status(201).json(obj);
             })
             .catch(err => {
                 return res.status(422).send(err.errors);

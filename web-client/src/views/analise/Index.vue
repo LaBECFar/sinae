@@ -29,19 +29,25 @@
         striped 
         responsive="sm">
 
-      <template v-slot:cell(location)="data">
-          {{ data.item.location.name }}
+      <template v-slot:cell(dataColeta)="data">
+          <span>{{ data.item.dataColeta | moment("utc", "DD/MM/YYYY") }}</span>
       </template>
 
       <template v-slot:cell(actions)="row">    
+
+        <b-button variant="secondary" size="sm" @click="detalhesAnalise(row.item)" class="mr-2">
+            <v-icon name="align-justify"></v-icon>
+            Detalhes
+        </b-button>
+      
         <b-button variant="primary" size="sm" @click="editarExperimento(row.item)" class="mr-2">
             <v-icon name="edit-2"></v-icon>
-            Edit
+            Editar
         </b-button>
 
         <b-button variant="danger" size="sm" @click="removerExperimento(row.item)" class="mr-2">
             <v-icon name="trash"></v-icon>
-            Remove
+            Remover
         </b-button>
       </template>        
 
@@ -81,12 +87,15 @@ export default {
             isLoading: false,
             experimentoCodigo: 'abx',
             fields: [{
+                key: 'dataColeta',
+                label: 'Data Coleta'
+            },{
                 key:'tempo',
                 label: 'Tempo'
             },{
                 key: 'placa',
                 label: 'Placa'
-            }, {
+            },{
                 key:'actions',
                 label: 'Ações',
                 class: 'analiseIndexActions'
@@ -102,6 +111,10 @@ export default {
      
         editarExperimento (experimento) {
             this.$router.push(`/experimento/${experimento._id}/editar`)
+        },
+     
+        detalhesAnalise (analise) {
+            this.$router.push(`/analise/${analise._id}`)
         },
 
         removerExperimento(experimento) {
@@ -149,7 +162,7 @@ export default {
 
 <style>
     .analiseIndexActions {
-        width: 350px;
+        width: 400px;
         text-align: center;
     }
 </style>

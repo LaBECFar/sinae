@@ -29,8 +29,8 @@
         striped 
         responsive="sm">
 
-      <template v-slot:cell(location)="data">
-          {{ data.item.location.name }}
+      <template v-slot:cell(createdAt)="data">
+          <span>{{ data.item.createdAt | moment("utc", "DD/MM/YYYY") }}</span>
       </template>
 
       <template v-slot:cell(actions)="row">    

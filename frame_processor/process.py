@@ -12,7 +12,7 @@ import os
 # python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480
 # python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480 b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  
 
-# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 320 5e0e5a65a7c6ed0024b5f219 1 424 1136 2 416 2456 3 1072 2464 4 1720 2464 5 1728 3136 6 1064 3136 7 408 3120 8 440 480 9 1088 480 10 1760 480 11 1088 1136 12 1760 1136 13 440 1800 14 1088 1800 15 1760 1800
+# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 320 5e0e5a65a7c6ed0024b5f219 1 1728 3136 2 1048 3104 3 400 3112 4 440 480 5 1088 480 6 1760 480 7 440 1136 8 1088 1136 9 1760 1136 10 440 1800 11 1088 1800 12 1760 1800 13 440 2480 14 1088 2480 15 1760 2480
 
 # parametros
 # 1 - caminho da imagem 
@@ -74,8 +74,9 @@ for img_name in files:
 
         # crop image as a square
         ax = x - r
-        ay = y - r
         bx = x + r
+
+        ay = y - r
         by = y + r
 
         # print(ax, ay, bx, by)
@@ -87,31 +88,36 @@ for img_name in files:
         #      . . | . . . . . . . . . . .
         #      . . | . . . . . . . . . . .
         #      . . | . . . . . . . (bx,by)
+        # img eh a imagem cortada contendo o circulo selecionado pelo usuario
         img = img_original[ax:bx, ay:by]
+        
+        # salva a imagem na pasta antes de pasar pelo circle
+        nome_img_poco_sem = aux_nome[0]+'/'+nome+'_org.'+aux_nome[1]
+        cv2.imwrite(nome_img_poco_sem,img)
 
         # ////////////
         # img = cv2.medianBlur(img,5)
         min_r = int(0.8*r)
-        max_r = int(1.3*r)
+        max_r = int(1.2*r)
+
+        circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.9, r, param1=30, param2=50, minRadius=min_r, maxRadius=max_r)
         
-        circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.9, r, param1=50, param2=30, minRadius=min_r, maxRadius=max_r)
-        
-        kx = x
-        ky = y
+        kx = r
+        ky = r
+        kr = r
 
         # se nao achou o circulo vai com fundo mesmo
         if circles is not None:
             circles = np.uint16(np.around(circles))
-            kx, ky, r = circles[0][0]
+            kx, ky, kr = circles[0][0]
     
-        # ajuste para nao ficar tao apertado o circulo
-        r+=3
+        # print(kx, kx, ax, ay, bx, by)
 
         # create a mask
         mask = np.full((img.shape[0], img.shape[1]), 0, dtype=np.uint8) 
 
         # create circle mask, center, radius, fill color, size of the border
-        cv2.circle(mask,(kx,ky), r, (255,255,255),-1)
+        cv2.circle(mask,(kx,ky), kr, (255,255,255),-1)
 
         # get only the inside pixels
         fg = cv2.bitwise_or(img, img, mask=mask)

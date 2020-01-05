@@ -12,50 +12,67 @@ import os
 # python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480
 # python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480 b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  
 
-# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 320 5e0e5a65a7c6ed0024b5f219 1 1728 3136 2 1048 3104 3 400 3112 4 440 480 5 1088 480 6 1760 480 7 440 1136 8 1088 1136 9 1760 1136 10 440 1800 11 1088 1800 12 1760 1800 13 440 2480 14 1088 2480 15 1760 2480
+# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 320 5e0fc9139d27170036e28b18 1 1728 3136 2 1048 3104 3 400 3112 4 440 480 5 1088 480 6 1760 480 7 440 1136 8 1088 1136 9 1760 1136 10 440 1800 11 1088 1800 12 1760 1800 13 440 2480 14 1088 2480 15 1760 2480
+
+
 
 # parametros
-# 1 - caminho da imagem 
+# 1 - caminho da primeira imagem
 # 2 - raio do poco
 # 3 - Id do Frame no banco
 # repetindo (4, 5, 6) nome do poco, x e y
 
 r  = int(sys.argv[2])
 
+quadrante = sys.argv[1]
+
 # numero de pocos que foram inseridos na linha de comando, por padrao tem que ser 15
 qtd_pocos = ((len(sys.argv) - 4) / 3)+1
 
-img_name = sys.argv[1]
+# conecta no banco de dados 
+client = MongoClient()
+db = client['sinae']
 
-path = img_name.split('/')
+collection = db['frames']
 
-quadrante = path[-1].split('_')[0]
+# localiza todos os frames da analise x
+id_frame = {'analiseId': sys.argv[3],'quadrante':int(quadrante)}
 
-path = '/'.join(path[0:-1])
+frames = collection.find(id_frame)
 
-files = []
+# novos_valores = { '$set': { 'processado': True, 'pocos': pocos}}
+# collection.update_one(id_frame, novos_valores)
+
+
+# img_name = sys.argv[1]
+
+# path = img_name.split('/')
+
+# quadrante = path[-1].split('_')[0]
+
+# path = '/'.join(path[0:-1])
+
+# files = []
 # le todos os arquivos do diretorio
-for rd, dd, fd in os.walk(path):
-    for file in fd:
-        if quadrante in file:
-            files.append(os.path.join(rd, file))
+# for rd, dd, fd in os.walk(path):
+    #for file in fd:
+     #   if quadrante in file:
+      #      files.append(os.path.join(rd, file))
 
 # armazena a posicao no primeiro frame de cada poco
 posicao_cada_poco = []
 
-################
-img_name = files[0]
+img_name = frames[0]['url']
 img_original = cv2.imread(img_name, 0)
 
 aux_nome = img_name.split('.')
 aux_nome_data = img_name.split('/')
-# nome_final = aux_nome_data[-1].split('_')
-# mills = nome_final[1].split('.')
 
-# pasta onde sera salva a imagem     
-folder_name = '/'.join(aux_nome_data[:-1])+'/'+quadrante
 
-# cria a pasta caso nao exista
+# pasta onde serao salva a imagem, quero colocar o Q antes do quadrante
+folder_name = '/'.join(aux_nome_data[:-1])+'/Q'+quadrante
+
+# cria a pasta para o quadrantecaso nao exista
 try:
     os.makedirs(folder_name)
 except OSError:
@@ -83,7 +100,7 @@ for i in range(1,qtd_pocos):
     min_r = int(0.9*r)
     max_r = int(1.2*r)
 
-    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.9, r, param1=1, param2=1, minRadius=min_r, maxRadius=max_r)
+    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.9, r, param1=1, param2=3, minRadius=min_r, maxRadius=max_r)
     
     # essa jah eh a imagem cortada por isso usamos o raio para todas as posicoes
     kx = r
@@ -98,14 +115,16 @@ for i in range(1,qtd_pocos):
     posicao_cada_poco.append({'kx':kx,'ky':ky, 'kr':kr})
 
 # processa todas as imagens do quadrante (por conta da posicao do x e y de cada poco e para distribuir o processamento)
-for img_name in files:
-   
+for frame in frames:
+    
+    img_name = frame['url']
     img_original = cv2.imread(img_name, 0)
 
     aux_nome = img_name.split('.')
     aux_nome_data = img_name.split('/')
     nome_final = aux_nome_data[-1].split('_')
     mills = nome_final[1].split('.')
+    # print(img_name)
 
     # lista com os pocos identificados dentro daquele frame
     pocos = []
@@ -168,10 +187,8 @@ for img_name in files:
         cv2.imwrite(nome_img_poco,img_final)
 
     # MONGO DB SALVA DADOS
-    client = MongoClient()
-    db = client['sinae']
     collection = db['frames']
-    id_frame = {'_id': ObjectId(sys.argv[3])}
+    id_frame = {'_id': frame['_id']}
     # atualiza o frame dizendo que ele ja foi processado
     frame = collection.find_one(id_frame)
     novos_valores = { '$set': { 'processado': True, 'pocos': pocos}}

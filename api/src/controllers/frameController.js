@@ -45,7 +45,7 @@ const frameController = {
         var form = new formidable.IncomingForm();
         //form.multiples = true;
         form.keepExtensions = true
-        form.uploadDir = path.join(__dirname, '../uploads/tmp/')
+        form.uploadDir = '/usr/uploads/tmp/'
 
         form.parse(req, function(err, fields, files) {
             if (err) return res.status(422).send(err.errors);
@@ -99,7 +99,7 @@ const frameController = {
 
             analiseModel.findById(analiseId)
                 .then(analise => {
-                    let targetpath = path.join(__dirname, `../uploads/experimentos/${experimentoCodigo}/${analise.placa}/${analise.tempo}`)
+                    let targetpath = `/usr/uploads/experimentos/${experimentoCodigo}/${analise.placa}/${analise.tempo}`
         
                     if(!fs.existsSync(targetpath)){
                         fs.mkdirSync(targetpath, { recursive: true })

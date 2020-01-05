@@ -1,1 +1,7 @@
 sudo apt install python-pip
+
+eg: docker run -it -v /my/host/vol busybox . This will mount host volume /my/host/vol to /my/host/vol inside the container.
+
+docker build .
+
+a pasta onde os arquivos serão maperados é no /usr/uploads

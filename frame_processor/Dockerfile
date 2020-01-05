@@ -50,3 +50,12 @@ RUN wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip \
 RUN ln -s \
   /usr/local/python/cv2/python-3.7/cv2.cpython-37m-x86_64-linux-gnu.so \
   /usr/local/lib/python3.7/site-packages/cv2.so
+
+RUN pip install pymongo
+
+COPY process.py process.py
+COPY start.sh start.sh
+
+USER root
+
+ENTRYPOINT ["./start.sh"]

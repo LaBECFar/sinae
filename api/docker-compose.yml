@@ -1,10 +1,10 @@
 version: "3"
 
 services:
-  mongo-sinae:
+  mongo:
     image: mongo
-    hostname: mongo-sinae
-    container_name: mongo-sinae
+    hostname: mongo
+    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
@@ -16,14 +16,14 @@ services:
   rest-api-sinae:
     hostname: rest-api-sinae
     container_name: rest-api-sinae
-    depends_on: ["mongo-sinae"]
+    depends_on: ["mongo"]
     build: ./
     command: npm run dev
     ports:
       - "3000:3000"
     volumes:
       - ./:/usr/app
-      - /usr/uploads:/usr/uploads
+      - /usr/uploads
     networks:
       - express-mongo-network-sinae
     healthcheck:

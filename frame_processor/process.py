@@ -6,19 +6,11 @@ from bson import ObjectId
 import os
 
 # run 
-# python process.py /home/battisti/versionado/sinae/api/src/uploads/experimentos/pxt/1/24h/Q1_11000.jpg 40 5e0e5a65a7c6ed0024b5f219 1 218 228 2 214 310 3 52 390 4 51 306 5 55 60 6 136 60 7 220 60 8 55 142 9 136 142 10 220 142 11 55 225 12 136 225 13 136 310 14 136 395 15 215 395
-# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 40 5e0e5a65a7c6ed0024b5f219 b02 55 60 c02 136 60 d02 220 60  
-# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q2_5000.jpg 40 5e0e5a65a7c6ed0024b5f219 b02 55 65 c02 136 65 d02 220 65
-# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480
-# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 360 5e0e5a65a7c6ed0024b5f219 b02 440 480 c02 1088 480 d02 1760 480 b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  b02 440 480 c02 1088 480 d02 1760 480  
-
-# python process.py /home/battisti/versionado/sinae/frame_processor/experimentos/pxt/1/0/Q1_2000.jpg 320 5e0fc9139d27170036e28b18 1 1728 3136 2 1048 3104 3 400 3112 4 440 480 5 1088 480 6 1760 480 7 440 1136 8 1088 1136 9 1760 1136 10 440 1800 11 1088 1800 12 1760 1800 13 440 2480 14 1088 2480 15 1760 2480
-
-
+# sudo python process.py 1 40 5e11f5add6f73000247d162e 1 55 60 2 136 60 3 220 60 4 55 142 5 136 142 6 220 142 7 55 225 8 136 225 9 220 225 10 55 310 11 136 310 12 220 310 13 50 395 14 136 395 15 215 395
 
 # parametros
-# 1 - caminho da primeira imagem
-# 2 - raio do poco
+# 1 - quadrante
+# 2 - raio
 # 3 - Id do Frame no banco
 # repetindo (4, 5, 6) nome do poco, x e y
 
@@ -27,10 +19,16 @@ r  = int(sys.argv[2])
 quadrante = sys.argv[1]
 
 # numero de pocos que foram inseridos na linha de comando, por padrao tem que ser 15
-qtd_pocos = ((len(sys.argv) - 4) / 3)+1
+qtd_pocos = int(((len(sys.argv) - 4) / 3)+1)
 
-# conecta no banco de dados 
-client = MongoClient()
+print(qtd_pocos)
+
+# conecta no banco de dados  (DENTRO DO DOCKER)
+client = MongoClient("mongodb://mongo:27017/")
+
+# LOCAL
+# client = MongoClient("mongodb://mongo:27017/")
+
 db = client['sinae']
 
 collection = db['frames']

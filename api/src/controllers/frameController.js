@@ -41,6 +41,24 @@ const frameController = {
             });                    
     },
     
+    getImage: (req, res, next) => {
+        let id = req.params.id;
+
+        frameModel.findById(id)
+            .then(frame => {
+                base64 = "";
+                console.log(frame['url'])
+                if (fs.existsSync(frame['url'])) {
+                    var bitmap = fs.readFileSync(frame['url'])
+                    base64 = "data:image/png;base64,".concat(new Buffer(bitmap).toString('base64'))                
+                }
+                return res.json(base64);
+            })
+            .catch(err => {
+                return res.status(422).send(err.errors);
+            });                    
+    },
+    
     post: (req, res, next) => {
         var form = new formidable.IncomingForm();
         //form.multiples = true;

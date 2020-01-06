@@ -6,6 +6,8 @@ const frameController = require('../controllers/frameController')
 
 router.get('/', frameController.list);
 
+router.get('/image/:id', frameController.getImage);
+
 router.get('/:id', frameController.get);
 
 router.post('/', frameController.post);

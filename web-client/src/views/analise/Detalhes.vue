@@ -47,11 +47,14 @@
         </b-col>
     </b-row>
 
+    <img :src=frameimage />
+
   </div>
 </template>
 
 <script>
 import {apiAnalise} from './api'
+import {apiFrame} from '../frame/api'
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 
@@ -60,6 +63,7 @@ export default {
     components: {Loading},
     data() {
         return {
+            frameimage: '',
             isBusy: true,
             isLoading: false,
             analiseCodigo: '',
@@ -88,6 +92,14 @@ export default {
     created() {        
         this.analiseCodigo = this.$route.params.analiseCodigo
         this.refresh()
+
+        apiFrame.getImage('5e11f60816478d0024580f95')
+            .then((data) => {
+                this.frameimage = data
+            })
+            .catch(e => {
+                console.log(e)
+            })
     }
 }
 </script>

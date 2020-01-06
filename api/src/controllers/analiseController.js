@@ -1,6 +1,9 @@
 const analiseModel = require("../models/analiseModel")
 const moment = require('moment')
 const frameModel = require("../models/frameModel")
+const fs = require("fs")
+var archiver = require('archiver')
+var path = require('path')
 
 const analiseController = {
 
@@ -141,6 +144,53 @@ const analiseController = {
             }
             return res.status(201).json(analise);
         })
+    },
+
+    downloadFrames: (req, res, next) => {
+        let search = {}
+        if(req.params.id){
+            search.analiseId = req.params.id
+        }
+
+        frameModel.find( search, {
+                url: 1
+            })
+            .then(frames => {                
+                let path_zip_folder = '/usr/uploads/tmp/'
+                let path_zip_file = path.join(path_zip_folder, `/${search.analiseId}.zip`)
+
+                if (fs.existsSync(path_zip_file)) {
+                    fs.unlinkSync(path_zip_file)
+                }
+                var output = fs.createWriteStream(path_zip_file);
+
+                var archive = archiver('zip', {
+                    gzip: true,
+                    zlib: { level: 9 } // compression level.
+                });
+                archive.on('error', (err) => { 
+                    console.log("Erro ao criar zip")
+                    throw err
+                });
+                archive.pipe(output);
+
+                // adiciona os frames ao zip
+                for(let i=0; i < frames.length; i++) {
+                    let frame = frames[i]
+                    if (fs.existsSync(frame.url)) {
+                        let filename = frame.url.replace("/usr/uploads/experimentos", "")
+                        archive.file(frame.url, {name: filename});
+                    }
+                }
+
+                archive.finalize();
+                res.attachment(path_zip_file);
+                archive.pipe(res);
+            })
+            .catch(err => {
+                return res.status(422).send(err.errors);
+            });   
+    
     }
 }    
 module.exports = analiseController

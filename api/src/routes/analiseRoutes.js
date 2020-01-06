@@ -8,6 +8,8 @@ router.get('/', analiseController.list);
 
 router.get('/:id', analiseController.get);
 
+router.get('/:id/download-frames', analiseController.downloadFrames);
+
 router.post('/', analiseController.post);
 
 router.put('/:id', analiseController.put);

@@ -42,20 +42,41 @@ const analiseController = {
                 let obj = analise.toObject()
                 obj.idserver = analise._id
 
+                aux_quadrante = 0
+                idPrimeiroFrame = []
+
+                frameQuadrante = []
+                frameQuadrante[1] = {qtd: 0, processados: 0, quadrante: 1}
+                frameQuadrante[2] = {qtd: 0, processados: 0, quadrante: 2}
+                frameQuadrante[3] = {qtd: 0, processados: 0, quadrante: 3}
+                frameQuadrante[4] = {qtd: 0, processados: 0, quadrante: 4}
+
                 frameModel.find({'analiseId': obj._id})
                     .then(frames => {
                         let processados = 0;
                         let total = 0;
                         frames.forEach(element => {
                             total++;
+                            frameQuadrante[element.quadrante].qtd++;
                             if (element.processado) {
                                 processados++;
+                                frameQuadrante[element.quadrante].processados++;
+                            }
+
+                            if (aux_quadrante != element.quadrante) {
+                                aux_quadrante = element.quadrante
+                                idPrimeiroFrame.push({
+                                    quadrante: aux_quadrante,
+                                    idFrame: element._id
+                                })
                             }
                         });
                         
                         
-                        obj['frames_total']  = total;
-                        obj['frames_processados']  = processados;
+                        obj['framesTotal']  = total;
+                        obj['framesProcessados']  = processados;
+                        obj['idPrimeiroFrame']  = idPrimeiroFrame;
+                        obj['frameQuadrante']  = frameQuadrante;
                         
                         return res.status(201).json(obj);
                     })

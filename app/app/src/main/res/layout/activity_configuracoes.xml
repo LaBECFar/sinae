@@ -54,7 +54,7 @@
             android:importantForAutofill="no"
             android:inputType="number"
             android:padding="10dp"
-            android:text="80"
+            android:text="3000"
             tools:ignore="HardcodedText" />
 
 

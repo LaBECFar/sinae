@@ -19,16 +19,13 @@
         </div>
          -->
 
-        {{ x1 }}
-        {{ y1 }}
-        {{ c1.left }}
-        {{ c1.top }}
         <b-button type="submit" variant="primary" @click="enviar">Enviar</b-button>
         <div class="insideWrapper" style="float:left">
             <img :src=frameimage class="coveredImage" id="img_frame">     
-            <canvas class="canvaframe" ref="can" width="270" height="480"></canvas>
+            <canvas class="canvaframe" ref="can" width="300" height="480"></canvas>
         </div>
 
+{{ circles }}
     </div>
 </template>
 
@@ -46,9 +43,28 @@ export default {
     },
     data() {
         return {
-            c1: "",
-            x1: 50,
-            y1: 50,
+            circles: [
+                {top: 15, left: 17},
+                {top: 15, left: 110},
+                {top: 15, left: 199},
+
+                {top: 100, left: 17},
+                {top: 100, left: 110},
+                {top: 100, left: 199},
+
+                {top: 180, left: 17},
+                {top: 180, left: 110},
+                {top: 180, left: 199},
+
+                {top: 260, left: 17},
+                {top: 260, left: 110},
+                {top: 260, left: 199},
+
+                {top: 350, left: 17},
+                {top: 350, left: 110},
+                {top: 350, left: 199},
+
+            ],
             fill: "#ffffff",
             stroke: "#000000",
             radius: 45,
@@ -58,7 +74,7 @@ export default {
     },  
     methods: {   
         
-        moved: function(e) {
+        moved: function(e) {            
             console.log('s')
             console.log(e)
         },
@@ -91,17 +107,32 @@ export default {
     mounted() {
         const ref = this.$refs.can;
         const canvas = new fabric.Canvas(ref);
-        this.c1 = new fabric.Circle({
-            fill: this.fill,
-            stroke: this.stroke,
-            opacity: 0.5,
-            top: this.x1,
-            left: this.y1,
-            radius: this.radius,
-            hasControls: false
+
+        let t = this.circles.length
+
+        for (let i = 0; i < t; i++) {
+            let circle = this.circles[i]
+            
+            let c = new fabric.Circle({
+                id: i,
+                fill: this.fill,
+                stroke: this.stroke,
+                opacity: 0.5,
+                top: circle.top,
+                left: circle.left,
+                radius: this.radius,
+                hasControls: false
+            });
+            canvas.add(c);
+        }
+
+        let that = this
+        canvas.on('object:moved', function(options) {
+            let id = parseInt(options.target.id)
+            that.circles[id].top = parseInt(options.target.top)
+            that.circles[id].left = parseInt(options.target.left)
         });
 
-        canvas.add(this.c1);
         canvas.renderAll();
     }
 };

@@ -37,6 +37,11 @@ export default new Router({
       path: '/analise/:analiseCodigo',
       name: 'analiseDetalhes',
       component: () => import(/* webpackChunkName: "analiseIndex" */ './views/analise/Detalhes.vue')
+    },
+    {
+      path: '/analise/:analiseCodigo/quadrante/:quadrante',
+      name: 'analiseDetalhesQuadrante',
+      component: () => import(/* webpackChunkName: "analiseIndex" */ './views/analise/DetalhesQuadrante.vue')
     }
   ]
 })

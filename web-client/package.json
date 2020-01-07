@@ -12,6 +12,7 @@
     "bootstrap-vue": "^2.0.0-rc.28",
     "core-js": "^2.6.5",
     "vue": "^2.6.10",
+    "vue-fabric-wrapper": "^0.3.50",
     "vue-icon": "^2.1.1",
     "vue-json-viewer": "^2.2.2",
     "vue-loading-overlay": "^3.2.0",

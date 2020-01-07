@@ -10,6 +10,8 @@ router.get('/:id', analiseController.get);
 
 router.get('/:id/download-frames', analiseController.downloadFrames);
 
+router.get('/:id/download-pocos', analiseController.downloadPocos);
+
 router.post('/', analiseController.post);
 
 router.put('/:id', analiseController.put);

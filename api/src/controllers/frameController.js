@@ -2,7 +2,6 @@ const frameModel = require("../models/frameModel")
 const analiseModel = require("../models/analiseModel")
 
 const fs = require("fs")
-const path = require('path');
 const formidable = require('formidable')
 
 const frameController = {
@@ -70,6 +69,7 @@ const frameController = {
             let frameFile = files.frame || files.file
             saveFrame(fields, frameFile)
         })
+
 
 
         function saveFrame(fields, file){

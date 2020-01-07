@@ -191,6 +191,59 @@ const analiseController = {
                 return res.status(422).send(err.errors);
             });   
     
+    },
+
+
+    downloadPocos: (req, res, next) => {
+        let search = {}
+        if(req.params.id){
+            search.analiseId = req.params.id
+        }
+
+        frameModel.find( search, {
+                pocos: 1
+            })
+            .then(frames => {                
+                let path_zip_folder = '/usr/uploads/tmp/'
+                let path_zip_file = path.join(path_zip_folder, `/${search.analiseId}_pocos.zip`)
+
+                if (fs.existsSync(path_zip_file)) {
+                    fs.unlinkSync(path_zip_file)
+                }
+                var output = fs.createWriteStream(path_zip_file);
+
+                var archive = archiver('zip', {
+                    gzip: true,
+                    zlib: { level: 9 } // compression level.
+                });
+                archive.on('error', (err) => { 
+                    console.log("Erro ao criar zip")
+                    throw err
+                });
+                archive.pipe(output);
+
+                // adiciona os frames ao zip
+                for(let i=0; i < frames.length; i++) {
+                    let pocos = frames[i].pocos
+
+                    for(let j=0; j < pocos.length; j++){
+                        let poco = pocos[j]
+
+                        if (fs.existsSync(poco.url)) {
+                            let filename = poco.url.replace("/usr/uploads/experimentos", "")
+                            archive.file(poco.url, {name: filename});
+                        }
+                    }
+                }
+
+                archive.finalize();
+                res.attachment(path_zip_file);
+                archive.pipe(res);
+            })
+            .catch(err => {
+                return res.status(422).send(err.errors);
+            });   
+    
     }
 }    
 module.exports = analiseController

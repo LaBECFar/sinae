@@ -38,12 +38,14 @@
         <b-col>            
                 <strong>Total de Frames: </strong>
                 <span>{{ analise.frames_total }}</span>
+                <a v-if="analise.frames_total > 0" :href="framesDownloadLink" class="link-download">[ Download de Frames ]</a>
         </b-col>
     </b-row>
     <b-row>
         <b-col>            
                 <strong>Frames já Processados: </strong>
                 <span>{{ analise.frames_processados }}</span>
+                <a v-if="analise.frames_processados > 0" :href="pocosDownloadLink" class="link-download">[ Download de Poços ]</a>
         </b-col>
     </b-row>
 
@@ -71,7 +73,9 @@ export default {
             msg: {
                 text: false,
                 type: ''
-            }
+            },
+            framesDownloadLink: '',
+            pocosDownloadLink: ''
         }
     },
     methods: {     
@@ -91,6 +95,9 @@ export default {
     },
     created() {        
         this.analiseCodigo = this.$route.params.analiseCodigo
+        this.framesDownloadLink = apiAnalise.getFramesDownloadLink(this.analiseCodigo)
+        this.pocosDownloadLink = apiAnalise.getPocosDownloadLink(this.analiseCodigo)
+
         this.refresh()
 
         apiFrame.getImage('5e11f60816478d0024580f95')
@@ -105,4 +112,5 @@ export default {
 </script>
 
 <style>
+    .link-download {margin-left:10px;}
 </style>

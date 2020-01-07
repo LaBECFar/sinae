@@ -70,5 +70,13 @@ export const apiAnalise = {
           reject(e)
         })
     })
+  },
+
+  getFramesDownloadLink(analiseId){
+    return `${config.URL_API}/analise/${analiseId}/download-frames`
+  },
+
+  getPocosDownloadLink(analiseId){
+    return `${config.URL_API}/analise/${analiseId}/download-pocos`
   }
 }

@@ -44,25 +44,25 @@ export default {
     data() {
         return {
             circles: [
-                {top: 15, left: 17},
-                {top: 15, left: 110},
-                {top: 15, left: 199},
+                {top: 15, left: 13},
+                {top: 15, left: 105},
+                {top: 15, left: 195},
 
-                {top: 100, left: 17},
-                {top: 100, left: 110},
-                {top: 100, left: 199},
+                {top: 100, left: 13},
+                {top: 100, left: 105},
+                {top: 100, left: 195},
 
-                {top: 180, left: 17},
-                {top: 180, left: 110},
-                {top: 180, left: 199},
+                {top: 180, left: 13},
+                {top: 180, left: 105},
+                {top: 180, left: 195},
 
-                {top: 260, left: 17},
-                {top: 260, left: 110},
-                {top: 260, left: 199},
+                {top: 260, left: 13},
+                {top: 260, left: 105},
+                {top: 260, left: 195},
 
-                {top: 350, left: 17},
-                {top: 350, left: 110},
-                {top: 350, left: 199},
+                {top: 345, left: 13},
+                {top: 345, left: 105},
+                {top: 345, left: 195},
 
             ],
             fill: "#ffffff",

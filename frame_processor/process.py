@@ -21,8 +21,6 @@ quadrante = sys.argv[1]
 # numero de pocos que foram inseridos na linha de comando, por padrao tem que ser 15
 qtd_pocos = int(((len(sys.argv) - 4) / 3)+1)
 
-print(qtd_pocos)
-
 # conecta no banco de dados  (DENTRO DO DOCKER)
 client = MongoClient("mongodb://mongo:27017/")
 

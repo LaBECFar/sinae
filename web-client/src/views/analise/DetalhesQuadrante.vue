@@ -1,6 +1,12 @@
 <template>
     <div>
-
+        <h4>Quadrante {{ quadrante }}</h4>
+        <h5>Tamanho do Raio</h5>
+        <input v-model="radius" style="width: 60px; margin: 5px">
+        <b-button variant="secondary" size="sm" @click="alterarRaio()">
+            Alterar Raio
+        </b-button>&nbsp;        
+      
         <h5>Mover Poços</h5>
         
         <b-button variant="secondary" size="sm" @click="moveLeft(2)">
@@ -66,7 +72,7 @@ export default {
             ],
             fill: "#ffffff",
             stroke: "#000000",
-            radius: 45,
+            radius: 40,
             alfa: 0.5,
             frameimage: '',
             isLoading: false,
@@ -80,6 +86,10 @@ export default {
     },  
     methods: {   
         
+        alterarRaio() {
+            this.renderCircles()
+        },
+
         moveLeft: function(e) {
             let t = this.circles.length
             for (let i = 0; i < t; i++) {
@@ -104,9 +114,10 @@ export default {
             
             let ratio_width = realWidth / this.min_width;
 
-            let aux_radio = this.radius * ratio_width
+            let aux_radio = parseInt(this.radius * ratio_width)
 
-            // console.log(ratio_width)
+            console.log(ratio_width)
+            console.log(aux_radio)
 
             // document.getElementById('raio').innerHTML = raio*ratio_width
 

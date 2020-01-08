@@ -300,7 +300,7 @@ const analiseController = {
 
         // startupParameters = "echo 'a'"
 
-        console.log(startupParameters)
+        // console.log(startupParameters)
         // return;
 
         // return res.status(422).send('ok');
@@ -311,7 +311,7 @@ const analiseController = {
 
         // Cmd: ["python", "/process.py", startupParameters],
 
-        console.log(startupParameters)
+        // console.log(startupParameters)
         
         d.api()
             .then((api) => {
@@ -327,8 +327,10 @@ const analiseController = {
                     }                    
                 }).then(function(container) {
                     container.start()
-                        .then((res) => {
-                            console.log(res)
+                        .then((r) => {
+                            console.log(r)
+                            console.log(startupParameters.join(" "));
+                            return res.status(201).json(r);
                         })
                 }).catch(function(err) {
                     /* istanbul ignore next */ 

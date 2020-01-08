@@ -14,6 +14,8 @@ router.get('/:id/download-pocos', analiseController.downloadPocos);
 
 router.post('/', analiseController.post);
 
+router.post('/:id/extract-pocos', analiseController.extractPocos);
+
 router.put('/:id', analiseController.put);
 
 router.delete('/:id', analiseController.delete);

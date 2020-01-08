@@ -27,7 +27,7 @@ print(qtd_pocos)
 client = MongoClient("mongodb://mongo:27017/")
 
 # LOCAL
-# client = MongoClient("mongodb://mongo:27017/")
+# client = MongoClient()
 
 db = client['sinae']
 

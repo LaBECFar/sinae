@@ -53,6 +53,8 @@ RUN ln -s \
 
 RUN pip install pymongo
 
+WORKDIR /
+
 COPY process.py process.py
 COPY start.sh start.sh
 
@@ -60,4 +62,4 @@ RUN chmod +x start.sh
 
 USER root
 
-ENTRYPOINT ["./start.sh"]
+# ENTRYPOINT ["./start.sh"]

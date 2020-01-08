@@ -1,32 +1,32 @@
 <template>
     <div>
-        <!-- <div class="insideWrapper" style="float:left">
-            <img :src=frameimage class="coveredImage" id="img_frame">        
-            <fabric-canvas name="canvaframe" class="coveringCanvas" :width=300 :height=480>
-                <fabric-circle 
-                    id='c1'
-                    :radius=radius
-                    :alfa=alfa
-                    :left=x1
-                    :top=y1
-                    :opacity= 0.50
-                    :fill=fill
-                    :stroke=stroke
-                >
-                </fabric-circle>
 
-            </fabric-canvas>
-        </div>
-         -->
+        <h5>Mover Poços</h5>
+        
+        <b-button variant="secondary" size="sm" @click="moveLeft(2)">
+            <v-icon name="arrow-left"></v-icon>
+        </b-button>&nbsp;
+        
+        <b-button variant="secondary" size="sm" @click="moveLeft(-2)">
+            <v-icon name="arrow-right"></v-icon>
+        </b-button>&nbsp;
 
-        <loading :active.sync="isLoading" :is-full-page="true"></loading>      
+        <b-button variant="secondary" size="sm" @click="moveTop(2)">
+            <v-icon name="arrow-up"></v-icon>
+        </b-button>&nbsp;
 
+        <b-button variant="secondary" size="sm" @click="moveTop(-2)">
+            <v-icon name="arrow-down"></v-icon>
+        </b-button>&nbsp;
+        <br/>
+        <br/>
+        <b-button @click="enviar()" variant="primary">Extrair Poços</b-button>                
+        <hr/>
         <div class="insideWrapper" style="float:left">
             <img :src=frameimage class="coveredImage" id="img_frame">     
             <canvas class="canvaframe" ref="can" :width=min_width :height=min_height></canvas>
         </div>
-
-        <b-button @click="enviar()" variant="primary">Extrair Poços</b-button>                
+      
     </div>
 </template>
 
@@ -35,14 +35,11 @@
 import {apiAnalise} from './api'
 import {apiFrame} from '../frame/api'
 import { fabric } from 'fabric';
-import Loading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
 
     name: "DetalhesFrame",
 
-    components: {Loading},
     data() {
         return {
             circles: [
@@ -69,21 +66,34 @@ export default {
             ],
             fill: "#ffffff",
             stroke: "#000000",
-            radius: 40,
+            radius: 45,
             alfa: 0.5,
             frameimage: '',
             isLoading: false,
             isBusy: false,
             quadrante: 0,
             min_height: 480,
-            min_width: 270
+            min_width: 270,
+            ref:'',
+            canvas:''
         }
     },  
     methods: {   
         
-        moved: function(e) {            
-            console.log('s')
-            console.log(e)
+        moveLeft: function(e) {
+            let t = this.circles.length
+            for (let i = 0; i < t; i++) {
+                this.circles[i].left = this.circles[i].left-parseInt(e);
+            }
+            this.renderCircles()
+        },
+
+        moveTop: function(e) {
+            let t = this.circles.length
+            for (let i = 0; i < t; i++) {
+                this.circles[i].top = this.circles[i].top-parseInt(e);
+            }
+            this.renderCircles()
         },
 
         enviar: function()  {
@@ -94,15 +104,36 @@ export default {
             
             let ratio_width = realWidth / this.min_width;
 
-            console.log(ratio_width)
+            let aux_radio = this.radius * ratio_width
+
+            // console.log(ratio_width)
 
             // document.getElementById('raio').innerHTML = raio*ratio_width
 
+            let aux_circle = []
             this.circles.forEach((circle) => {
-                let x = (circle.left + this.radius)*ratio_width
-                let y = (circle.top + this.radius)*ratio_width
-                console.log(`${x},${y}`)
+                let x = parseInt((circle.left + this.radius)*ratio_width)
+                let y = parseInt((circle.top + this.radius)*ratio_width)
+                aux_circle.push({
+                    left: y,
+                    top: x,
+                    nome: circle.nome
+                })
             });
+            
+            let dados = {
+                quadrante: this.quadrante,
+                raio: aux_radio,
+                pocos: aux_circle
+            }
+
+            apiAnalise.extractPocos(this.analiseCodigo, dados)
+                .then((data) => {
+                    console.log(data)
+                })
+                .catch(e => {
+                    console.log(e)
+                })     
         },
 
         refresh() {
@@ -129,10 +160,38 @@ export default {
                     console.log(e)
                     this.isBusy = false
                 })            
-        }        
+        },
+
+        renderCircles() {
+
+            this.canvas.selection = false; // disable group selection
+            this.canvas.clear()
+
+            let t = this.circles.length
+
+            for (let i = 0; i < t; i++) {
+                let circle = this.circles[i]
+                
+                let c = new fabric.Circle({
+                    id: i,
+                    fill: this.fill,
+                    stroke: this.stroke,
+                    opacity: 0.5,
+                    top: circle.top,
+                    left: circle.left,
+                    radius: this.radius,
+                    hasControls: false
+                });
+                this.canvas.add(c);
+            }
+
+            this.canvas.renderAll();
+        }
     },
 
     created() {        
+
+
 
         this.analiseCodigo = this.$route.params.analiseCodigo
         this.quadrante = this.$route.params.quadrante
@@ -210,39 +269,18 @@ export default {
         }
 
         this.refresh()
-
     },
 
     mounted() {
-        const ref = this.$refs.can;
-        const canvas = new fabric.Canvas(ref);
-
-        let t = this.circles.length
-
-        for (let i = 0; i < t; i++) {
-            let circle = this.circles[i]
-            
-            let c = new fabric.Circle({
-                id: i,
-                fill: this.fill,
-                stroke: this.stroke,
-                opacity: 0.5,
-                top: circle.top,
-                left: circle.left,
-                radius: this.radius,
-                hasControls: false
-            });
-            canvas.add(c);
-        }
-
+        this.ref = this.$refs.can;
+        this.canvas = new fabric.Canvas(this.ref);
         let that = this
-        canvas.on('object:moved', function(options) {
+        this.canvas.on('object:moved', function(options) {
             let id = parseInt(options.target.id)
             that.circles[id].top = parseInt(options.target.top)
             that.circles[id].left = parseInt(options.target.left)
-        });
-
-        canvas.renderAll();
+        });        
+        this.renderCircles()
     }
 };
 </script>

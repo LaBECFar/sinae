@@ -78,5 +78,20 @@ export const apiAnalise = {
 
   getPocosDownloadLink(analiseId){
     return `${config.URL_API}/analise/${analiseId}/download-pocos`
-  }
+  },
+
+  extractPocos (idAnalise, dados) {
+    if (!dados || !idAnalise) {
+      return Promise.reject(new Error('Dados não informados.'))
+    }
+    return new Promise((resolve, reject) => {
+      config.api.post(`/analise/${idAnalise}/extract-pocos`,dados)
+        .then(resp => {
+          resolve(resp.data)
+        })
+        .catch((e) => {
+          reject(new Error(`Erro ao criar o analise ${e}`))
+        })
+    })
+  },  
 }

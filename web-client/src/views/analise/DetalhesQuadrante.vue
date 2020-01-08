@@ -3,7 +3,7 @@
         <h4>Quadrante {{ quadrante }}</h4>
         <h5>Tamanho do Raio</h5>
         <input v-model="radius" style="width: 60px; margin: 5px">
-        <b-button variant="secondary" size="sm" @click="alterarRaio()">
+        <b-button variant="secondary" size="sm" @click="alterarRaio()" @blur="alterarRaio()">
             Alterar Raio
         </b-button>&nbsp;        
       
@@ -32,7 +32,7 @@
             <img :src=frameimage class="coveredImage" id="img_frame">     
             <canvas class="canvaframe" ref="can" :width=min_width :height=min_height></canvas>
         </div>
-      
+
     </div>
 </template>
 
@@ -111,20 +111,32 @@ export default {
             let myImg = document.getElementById("img_frame");
 
             let realWidth = myImg.naturalWidth;
+            let realHeight = myImg.naturalHeight;
             
             let ratio_width = realWidth / this.min_width;
-
             let aux_radio = parseInt(this.radius * ratio_width)
 
+            /*
+            let ratio_height = realHeight / this.min_height;
+
+
             console.log(ratio_width)
-            console.log(aux_radio)
+            console.log(ratio_height)
+            console.log(aux_radio) */
 
             // document.getElementById('raio').innerHTML = raio*ratio_width
 
             let aux_circle = []
             this.circles.forEach((circle) => {
-                let x = parseInt((circle.left + this.radius)*ratio_width)
-                let y = parseInt((circle.top + this.radius)*ratio_width)
+                /*
+                let x = parseInt((circle.top + aux_radio)*ratio_width)
+                let y = parseInt((circle.left + aux_radio)*ratio_height)
+                */
+                //console.log(circle.top / this.min_width)
+                // console.log(realWidth)
+                let y = parseInt((circle.top / this.min_width) * realWidth) + aux_radio
+                let x = parseInt((circle.left / this.min_height) * realHeight) + aux_radio
+
                 aux_circle.push({
                     left: y,
                     top: x,
@@ -132,6 +144,8 @@ export default {
                 })
             });
             
+            console.log(aux_circle)
+
             let dados = {
                 quadrante: this.quadrante,
                 raio: aux_radio,

@@ -56,9 +56,9 @@ RUN pip install pymongo
 WORKDIR /
 
 COPY process.py process.py
-COPY start.sh start.sh
 
-RUN chmod +x start.sh
+# COPY start.sh start.sh
+# RUN chmod +x start.sh
 
 USER root
 

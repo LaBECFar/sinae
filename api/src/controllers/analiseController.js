@@ -310,6 +310,9 @@ const analiseController = {
         // docker run -v /usr/uploads:/usr/uploads --network=api_express-mongo-network-sinae frame_processor
 
         // Cmd: ["python", "/process.py", startupParameters],
+
+        console.log(startupParameters)
+        
         d.api()
             .then((api) => {
                 api.createContainer({

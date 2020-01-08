@@ -95,7 +95,7 @@ for i in range(1,qtd_pocos):
     by = y + r
 
     img = img_original[ax:bx, ay:by]    
-    min_r = int(0.9*r)
+    min_r = int(0.8*r)
     max_r = int(1.2*r)
 
     circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 0.9, r, param1=1, param2=3, minRadius=min_r, maxRadius=max_r)

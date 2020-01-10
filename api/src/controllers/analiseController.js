@@ -484,11 +484,15 @@ const analiseController = {
                 const json2csvParser = new Parser({ fields, quote: '', delimiter: ';' });
                 const csv = json2csvParser.parse(data);
                 
-
-                res.attachment(search.analiseId + '.csv');
-                res.status(200).send(csv.substr(1))
-            })
-            .catch(err => {
+                analiseModel.findById(search.analiseId)
+                    .then(analise => {
+                        res.attachment(analise.experimentoCodigo + '_' + analise.tempo + '.csv');
+                        return res.status(200).send(csv.substr(1))
+                    }).catch(err => {
+                        return res.status(422).send(err.errors);
+                    });                    
+                
+            }).catch(err => {
                 return res.status(422).send(err.errors);
             });   
     

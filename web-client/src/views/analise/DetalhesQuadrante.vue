@@ -1,5 +1,9 @@
 <template>
     <div>
+        <b-alert :show="msg.text" :v-show="msg.text" :variant=msg.type>
+            {{ msg.text }}
+        </b-alert>
+
         <h4>Quadrante {{ quadrante }}</h4>
         <h5>Tamanho do Raio</h5>
         <input v-model="radius" style="width: 60px; margin: 5px">
@@ -81,7 +85,11 @@ export default {
             min_height: 480,
             min_width: 270,
             ref:'',
-            canvas:''
+            canvas:'',
+            msg: {
+                text: false,
+                type: ''
+            }            
         }
     },  
     methods: {   
@@ -116,35 +124,31 @@ export default {
             let ratio_width = realWidth / this.min_width;
             let aux_radio = parseInt(this.radius * ratio_width)
 
-            /*
-            let ratio_height = realHeight / this.min_height;
-
-
-            console.log(ratio_width)
-            console.log(ratio_height)
-            console.log(aux_radio) */
-
-            // document.getElementById('raio').innerHTML = raio*ratio_width
-
             let aux_circle = []
-            this.circles.forEach((circle) => {
-                /*
-                let x = parseInt((circle.top + aux_radio)*ratio_width)
-                let y = parseInt((circle.left + aux_radio)*ratio_height)
-                */
-                //console.log(circle.top / this.min_width)
-                // console.log(realWidth)
+            for (let i = 0; i < this.circles.length; i++) {
+                let circle = this.circles[i]
+            
+                if (
+                        circle.top <= 0 || 
+                        circle.left <= 0 || 
+                        (circle.top+2*this.radius >= this.min_height) ||
+                        (circle.left+2*this.radius >= this.min_width)
+                    ) {
+                    this.msg.text = `O poço ${circle.nome} está fora da área da imagem`
+                    this.msg.type = "danger"
+                    return false;
+                }
+
                 let y = parseInt((circle.top / this.min_width) * realWidth) + aux_radio
                 let x = parseInt((circle.left / this.min_height) * realHeight) + aux_radio
+
 
                 aux_circle.push({
                     left: y,
                     top: x,
                     nome: circle.nome
                 })
-            });
-            
-            console.log(aux_circle)
+            }
 
             let dados = {
                 quadrante: this.quadrante,
@@ -155,6 +159,8 @@ export default {
             apiAnalise.extractPocos(this.analiseCodigo, dados)
                 .then((data) => {
                     console.log(data)
+                    this.msg.text = "Poços em processo de extração. Acompanhe quantos frames já foram processados na tela anterior"
+                    this.msg.type = "success"
                 })
                 .catch(e => {
                     console.log(e)
@@ -215,8 +221,6 @@ export default {
     },
 
     created() {        
-
-
 
         this.analiseCodigo = this.$route.params.analiseCodigo
         this.quadrante = this.$route.params.quadrante

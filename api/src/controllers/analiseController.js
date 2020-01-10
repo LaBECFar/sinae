@@ -407,43 +407,55 @@ const analiseController = {
 
         frameModel.find( search, {
                 tempoMilis: 1,
-                pocos: 1
+                pocos: 1,
+                quadrante: 1
             })
-            .then(frames => {                
+            .then(frames => { 
+
+                // filtra os frames em quadrantes separados
+                let quadrantes = [ [], [], [], [] ]
+                frames.forEach((frame) => {
+                    quadrantes[frame.quadrante-1].push(frame)
+                })
 
                 let data = []
                 let count = 0;
-                let firstPoco = frames[0].tempoMilis
-                let lastPoco = frames[frames.length - 1].tempoMilis
 
-                for(let i=0; i < frames.length; i++) {
-                    let frame = frames[i]
-                    let pocos = frame.pocos
-                    let previousPoco = 0
-                    
-                    if(i > 0){
-                        previousPoco = frames[i - 1].tempoMilis
-                    }
+                quadrantes.forEach((quadrante, qIndex) => {
 
-                    for(let j=0; j < pocos.length; j++){
-                        let poco = pocos[j]
+                    quadrante.forEach((frame, index) => {
 
-                        if (fs.existsSync(poco.url)) {
-                            let item = {
-                                i: count,
-                                file: poco.url,
-                                miliseconds: frame.tempoMilis,
-                                previousPoco: previousPoco,
-                                firstPoco: firstPoco,
-                                lastPoco: lastPoco
-                            }
+                        let isFirst = index == 0 ? 1 : 0
+                        let isLast = index == (quadrante.length-1) ? 1 : 0
+                        
+                        let previousPoco = frame.tempoMilis
+                        let previousFrame = quadrante[index-1]
 
-                            data.push(item)                            
-                            count++
+                        if(previousFrame){
+                            previousPoco = previousFrame.tempoMilis
                         }
-                    }
-                }
 
+                        frame.pocos.forEach((poco) => {
+                            if (fs.existsSync(poco.url)) {
+                                let item = {
+                                    i: count,
+                                    file: poco.url,
+                                    miliseconds: frame.tempoMilis,
+                                    previousPoco: previousPoco,
+                                    firstPoco: isFirst,
+                                    lastPoco: isLast
+                                }
+    
+                                data.push(item)                            
+                                count++
+                            }
+                        });
+                    })
+
+                })
+
+
+                // value: nome do atributo do objeto e label: nome da coluna no arquivo csv
                 const fields = [{
                         label: 'i',
                         value: 'i'
@@ -468,9 +480,11 @@ const analiseController = {
                         value: 'lastPoco'
                 }]
 
+
                 const json2csvParser = new Parser({ fields, quote: '', delimiter: ';' });
                 const csv = json2csvParser.parse(data);
                 
+
                 res.attachment(search.analiseId + '.csv');
                 res.status(200).send(csv.substr(1))
             })

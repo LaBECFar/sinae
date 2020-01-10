@@ -76,7 +76,14 @@
                 <b-button @click="detalhesQuadrante(4)" variant="secondary">Extrair Poços</b-button>                
         </b-col>
     </b-row>
-
+    <hr>
+    <b-row  align-v="center" align-h="between">
+        <b-col>
+            <h4>Exportação</h4>
+            <p>Após a realização de processamento e extração de poços você pode exportar os dados</p>
+            <b-button variant="primary" @click="exportCsv()" :disabled="analise.framesProcessados != analise.framesTotal">Exportar CSV</b-button>
+        </b-col>
+    </b-row>
   </div>
 </template>
 
@@ -99,7 +106,8 @@ export default {
                 type: ''
             },
             framesDownloadLink: '',
-            pocosDownloadLink: ''
+            pocosDownloadLink: '',
+            csvExportLink: ''
         }
     },
     methods: {     
@@ -118,12 +126,17 @@ export default {
                     console.log(e)
                     this.isBusy = false
                 })
+        },
+
+        exportCsv(){
+            window.open(this.csvExportLink, '_blank');
         }
     },
     created() {        
         this.analiseCodigo = this.$route.params.analiseCodigo
         this.framesDownloadLink = apiAnalise.getFramesDownloadLink(this.analiseCodigo)
         this.pocosDownloadLink = apiAnalise.getPocosDownloadLink(this.analiseCodigo)
+        this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo)
 
         this.refresh()
     }

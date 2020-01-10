@@ -12,6 +12,8 @@ router.get('/:id/download-frames', analiseController.downloadFrames);
 
 router.get('/:id/download-pocos', analiseController.downloadPocos);
 
+router.get('/:id/download-csv', analiseController.exportCsv);
+
 router.post('/', analiseController.post);
 
 router.post('/:id/extract-pocos', analiseController.extractPocos);

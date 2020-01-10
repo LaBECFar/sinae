@@ -80,6 +80,10 @@ export const apiAnalise = {
     return `${config.URL_API}/analise/${analiseId}/download-pocos`
   },
 
+  getCsvExportLink(analiseId){
+    return `${config.URL_API}/analise/${analiseId}/download-csv`
+  },
+
   extractPocos (idAnalise, dados) {
     if (!dados || !idAnalise) {
       return Promise.reject(new Error('Dados não informados.'))

@@ -5,6 +5,8 @@ const fs = require("fs")
 var archiver = require('archiver')
 var path = require('path')
 const d = require("../util/dockerApi")
+const { Parser } = require('json2csv');
+
 
 const analiseController = {
 
@@ -395,5 +397,87 @@ const analiseController = {
 
             return res.status(201).json('1');
     },
+
+
+    exportCsv: (req, res, next) => {
+        let search = {}
+        if(req.params.id){
+            search.analiseId = req.params.id
+        }
+
+        frameModel.find( search, {
+                tempoMilis: 1,
+                pocos: 1
+            })
+            .then(frames => {                
+
+                let data = []
+                let count = 0;
+                let firstPoco = frames[0].tempoMilis
+                let lastPoco = frames[frames.length - 1].tempoMilis
+
+                for(let i=0; i < frames.length; i++) {
+                    let frame = frames[i]
+                    let pocos = frame.pocos
+                    let previousPoco = 0
+                    
+                    if(i > 0){
+                        previousPoco = frames[i - 1].tempoMilis
+                    }
+
+                    for(let j=0; j < pocos.length; j++){
+                        let poco = pocos[j]
+
+                        if (fs.existsSync(poco.url)) {
+                            let item = {
+                                i: count,
+                                file: poco.url,
+                                miliseconds: frame.tempoMilis,
+                                previousPoco: previousPoco,
+                                firstPoco: firstPoco,
+                                lastPoco: lastPoco
+                            }
+
+                            data.push(item)                            
+                            count++
+                        }
+                    }
+                }
+
+                const fields = [{
+                        label: 'i',
+                        value: 'i'
+                    },{
+                        label: 'File_name',
+                        value: 'file'
+                    },
+                    {
+                        label: 'Number',
+                        value: 'miliseconds'
+                    },
+                    {
+                        label: 'Previous_number',
+                        value: 'previousPoco'
+                    },
+                    {
+                        label: 'First',
+                        value: 'firstPoco'
+                    },
+                    {
+                        label: 'Last',
+                        value: 'lastPoco'
+                }]
+
+                const json2csvParser = new Parser({ fields, quote: '', delimiter: ';' });
+                const csv = json2csvParser.parse(data);
+                
+                res.attachment(search.analiseId + '.csv');
+                res.status(200).send(csv.substr(1))
+            })
+            .catch(err => {
+                return res.status(422).send(err.errors);
+            });   
+    
+    }
 }    
 module.exports = analiseController

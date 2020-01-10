@@ -80,7 +80,8 @@
     <b-row  align-v="center" align-h="between">
         <b-col>
             <h4>Exportação</h4>
-            <p>Após a realização de processamento e extração de poços você pode exportar os dados</p>
+            <b-alert variant="warning" :show="analise.framesProcessados != analise.framesTotal">O botão de exportação só sera habilitado após a extração de todos os poços</b-alert>
+            <b-alert variant="info" :show="analise.framesProcessados == analise.framesTotal">Você já pode exportar os dados dos poços clicando no botão abaixo</b-alert>
             <b-button variant="primary" @click="exportCsv()" :disabled="analise.framesProcessados != analise.framesTotal">Exportar CSV</b-button>
         </b-col>
     </b-row>

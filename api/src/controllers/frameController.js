@@ -83,32 +83,32 @@ const frameController = {
 
             if(!experimentoCodigo){
                 let errorMsg = 'Código do experimento não informado'
-                return res.status(500).json({ error: true, message: errorMsg });
+                return res.status(500).json({ error: true, message: errorMsg, success: false });
             }
 
             if(!analiseId){
                 let errorMsg = 'ID da análise não informado'
-                return res.status(500).json({ error: true, message: errorMsg });
+                return res.status(500).json({ error: true, message: errorMsg, success: false });
             }
 
             if(!tempoMilis){
                 let errorMsg = 'Tempo em milisegundos não informado'
-                return res.status(500).json({ error: true, message: errorMsg });
+                return res.status(500).json({ error: true, message: errorMsg, success: false });
             }
 
             if(!quadrante){
                 let errorMsg = 'Quadrante não informado'
-                return res.status(500).json({ error: true, message: errorMsg });
+                return res.status(500).json({ error: true, message: errorMsg, success: false });
             }
 
             if(!file){
                 let errorMsg = 'Arquivo do frame não transferido'
-                return res.status(500).json({ error: true,message: errorMsg });
+                return res.status(500).json({ error: true,message: errorMsg, success: false });
             }
 
             if(file.type !== 'image/jpeg' && file.type !== 'image/png'){
                 let errorMsg = 'Tipo de arquivo não permitido'
-                return res.status(500).json({ error: true, message: errorMsg });
+                return res.status(500).json({ error: true, message: errorMsg, success: false });
             }
 
             if(!fs.existsSync(oldpath)){
@@ -141,7 +141,7 @@ const frameController = {
                         
                         frame.save((err, frame) => {
                             if (err) {
-                                return res.status(500).json({  message: 'Erro ao criar frame', error: err });
+                                return res.status(500).json({  message: 'Erro ao criar frame', error: err, success: false });
                             }
                             return res.status(201).json(frame);
                         })

@@ -46,7 +46,8 @@ const experimentoController = {
             if (err) {
                 return res.status(500).json({
                     message: 'Erro ao criar experimento',
-                    error: err
+                    error: err,
+                    success: false
                 });
             }
             return res.status(201).json(experimento);
@@ -72,7 +73,8 @@ const experimentoController = {
                     if (err) {
                         return res.status(500).json({
                             message: 'Erro ao atualizar experimento.',
-                            error: err
+                            error: err,
+                            success: false
                         });
                     }
                     return res.status(201).json(experimento);
@@ -86,7 +88,8 @@ const experimentoController = {
             if (err) {
                 return res.status(500).json({
                     message: 'Erro ao deletar experimento.',
-                    error: err
+                    error: err,
+                    success: false
                 });
             }
             return res.status(201).json(experimento);

@@ -112,7 +112,8 @@ const analiseController = {
             if (err) {
                 return res.status(500).json({
                     message: 'Erro ao criar analise',
-                    error: err
+                    error: err,
+                    success: false
                 });
             }
 
@@ -149,7 +150,8 @@ const analiseController = {
                     if (err) {
                         return res.status(500).json({
                             message: 'Erro ao atualizar analise.',
-                            error: err
+                            error: err,
+                            success: false
                         });
                     }
                     return res.status(201).json(analise);
@@ -163,7 +165,8 @@ const analiseController = {
             if (err) {
                 return res.status(500).json({
                     message: 'Erro ao deletar analise.',
-                    error: err
+                    error: err,
+                    success: false
                 });
             }
             return res.status(201).json(analise);
@@ -274,16 +277,7 @@ const analiseController = {
         let id = req.params.id;
         let quadrante = req.body.quadrante;
         let pocos = req.body.pocos;
-
         let raio = req.body.raio;
-
-        // console.log(id)
-
-        // console.log(quadrante)
-        
-        // console.log(pocos)
-        
-        // console.log(raio)
 
         startupParameters = []
         startupParameters.push("python")
@@ -297,23 +291,7 @@ const analiseController = {
             startupParameters.push(poco.nome)
             startupParameters.push(poco.top.toString())
             startupParameters.push(poco.left.toString())
-            //startupParameters += ` ${poco.nome} ${poco.top} ${poco.left}`
         }
-
-        // startupParameters = "echo 'a'"
-
-        // console.log(startupParameters)
-        // return;
-
-        // return res.status(422).send('ok');
-
-        //   Volumes: { /* Here? */ },
-
-        // docker run -v /usr/uploads:/usr/uploads --network=api_express-mongo-network-sinae frame_processor
-
-        // Cmd: ["python", "/process.py", startupParameters],
-
-        // console.log(startupParameters)
         
         d.api()
             .then((api) => {
@@ -341,61 +319,7 @@ const analiseController = {
                 });
         });
 
-        /*
-        analiseModel.findById(id)
-            .then(analise => {
-                let obj = analise.toObject()
-                obj.idserver = analise._id
-
-                aux_quadrante = 0
-                idPrimeiroFrame = []
-
-                frameQuadrante = []
-                frameQuadrante[1] = {qtd: 0, processados: 0, quadrante: 1}
-                frameQuadrante[2] = {qtd: 0, processados: 0, quadrante: 2}
-                frameQuadrante[3] = {qtd: 0, processados: 0, quadrante: 3}
-                frameQuadrante[4] = {qtd: 0, processados: 0, quadrante: 4}
-
-                frameModel.find({'analiseId': obj._id})
-                    .then(frames => {
-                        let processados = 0;
-                        let total = 0;
-                        frames.forEach(element => {
-                            total++;
-                            frameQuadrante[element.quadrante].qtd++;
-                            if (element.processado) {
-                                processados++;
-                                frameQuadrante[element.quadrante].processados++;
-                            }
-
-                            if (aux_quadrante != element.quadrante) {
-                                aux_quadrante = element.quadrante
-                                idPrimeiroFrame.push({
-                                    quadrante: aux_quadrante,
-                                    idFrame: element._id
-                                })
-                            }
-                        });
-                        
-                        
-                        obj['framesTotal']  = total;
-                        obj['framesProcessados']  = processados;
-                        obj['idPrimeiroFrame']  = idPrimeiroFrame;
-                        obj['frameQuadrante']  = frameQuadrante;
-                        
-                        return res.status(201).json(obj);
-                    })
-                    .catch(err => {
-                        return res.status(422).send(err.errors);
-                    });                    
-
-                // return res.status(201).json(obj);
-            })
-            .catch(err => {
-                return res.status(422).send(err.errors);
-            });                    */
-
-            return res.status(201).json('1');
+        return res.status(201).json('1');
     },
 
 

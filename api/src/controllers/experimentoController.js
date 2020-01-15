@@ -3,7 +3,12 @@ const experimentoModel = require("../models/experimentoModel")
 const experimentoController = {
 
     list: (req, res, next) => {
-        experimentoModel.find() 
+        let filtros = {}
+        if(req.user){
+            filtros.createdBy = req.user.userid
+        }
+
+        experimentoModel.find(filtros) 
             .then(experimentos => {
                 return res.status(201).json(experimentos);
             })
@@ -41,6 +46,10 @@ const experimentoController = {
             codigo: req.body.codigo,
             label: req.body.label
         })
+
+        if(req.user){
+            experimento.createdBy = req.user._id
+        }
         
         experimento.save((err, experimento) => {
             if (err) {

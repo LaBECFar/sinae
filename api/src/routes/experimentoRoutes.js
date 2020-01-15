@@ -1,10 +1,10 @@
 const express = require('express');
-const middleware = require('./middleware');
+const auth = require('./auth');
 
 const router = express.Router();
 const experimentoController = require('../controllers/experimentoController')
 
-router.get('/', middleware.checkToken, experimentoController.list);
+router.get('/', auth, experimentoController.list);
 
 router.get('/:id', experimentoController.get);
 

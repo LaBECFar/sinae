@@ -1,0 +1,73 @@
+<template>
+    <div class="login-container">
+        <h1 class="text-center">Login</h1>
+        <b-alert variant="danger" :show="msg.length > 0">{{msg}}</b-alert>
+
+        <b-form @submit="onSubmit">
+            <b-form-group id="input-group-1" label="E-mail" label-for="email">
+                <b-form-input id="email" v-model="form.email" type="text" />
+            </b-form-group>
+
+            <b-form-group id="input-group-2" label="Password" label-for="password">
+                <b-form-input id="password" v-model="form.password" type="password" />
+            </b-form-group>
+
+            <div class="actions">
+                <b-button type="submit" variant="primary">Fazer Login</b-button>
+            </div>
+        </b-form>
+
+    </div>
+</template>
+
+<script>
+
+import {apiUsuario} from './api'
+
+export default {
+    name: 'login',
+    data() {
+        return {
+            msg: '',
+            form: {
+                email: '',
+                password: ''
+            }
+        }
+    },  
+    methods: {
+        onSubmit: function(event) {
+            event.preventDefault();
+
+            if(!this.form.email) {
+                this.msg = "E-mail inválido"
+                return
+            }
+
+            if(!this.form.password) {
+                this.msg = "Senha inválida"
+                return
+            }
+
+            apiUsuario.login(this.form.email, this.form.password)
+                .then((data) => {
+                    if(data.success){
+                        this.$router.push('/')
+                    }
+                })
+                .catch((e) => {
+                    this.msg.text = `Erro ao atualizar o experimento ${e}`
+                })
+        }
+
+    },
+    created() {
+        //this.refresh();
+    }  
+}
+</script>
+
+<style scoped>
+.login-container {max-width: 500px; margin:0 auto;}
+.actions {text-align: center;}
+</style>

@@ -23,7 +23,8 @@ const userController = {
                 return res.status(201).json({
                     success: true,
                     message: 'Authentication successful!',
-                    token: token
+                    token: token,
+                    isAdmin: user.isAdmin ? user.isAdmin : false
                 });
 
             } else {

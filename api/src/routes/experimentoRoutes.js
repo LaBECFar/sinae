@@ -1,19 +1,26 @@
-const express = require('express');
-const auth = require('./auth');
-
-const router = express.Router();
+const express = require('express')
+const auth = require('./auth')
+const router = express.Router()
 const experimentoController = require('../controllers/experimentoController')
 
-router.get('/', auth, experimentoController.list);
 
-router.get('/:id', experimentoController.get);
+// detalhes por id
+router.get('/:id', experimentoController.get)
 
-router.get('/codigo/:codigo', experimentoController.getByCodigo);
+// detalhes por codigo
+router.get('/codigo/:codigo', experimentoController.getByCodigo) 
 
-router.post('/', experimentoController.post);
+// criar novo experimento
+router.post('/', experimentoController.post) 
 
-router.put('/:id', experimentoController.put);
+// listagem de experimentos criados pelo usuário
+router.get('/', auth, experimentoController.list)
 
-router.delete('/:id', experimentoController.delete);
+// atualizar
+router.put('/:id', auth, experimentoController.put)
+
+// deletar experimento
+router.delete('/:id', auth, experimentoController.delete)
+
 
 module.exports = router;

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator')
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const userSchema = new Schema({
     name: {
@@ -28,6 +28,11 @@ const userSchema = new Schema({
         type: String,
         required: true,
         minlength: 6
+    },
+
+    isAdmin: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -43,8 +48,12 @@ userSchema.statics.cryptoPass = function (pass) {
 }
 
 userSchema.methods.generateAuthToken = function() { 
-    const token = jwt.sign({ userid: this._id }, process.env.TOKEN_SECRET, { expiresIn: '30d' });
-    return token;
-  }
+    const data = {
+        userid: this._id, 
+        isAdmin: this.isAdmin
+    }
+    const token = jwt.sign(data, process.env.TOKEN_SECRET, { expiresIn: '30d' })
+    return token
+}
 
 module.exports = mongoose.model('user', userSchema);

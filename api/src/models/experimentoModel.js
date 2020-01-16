@@ -1,8 +1,5 @@
 var mongoose = require('mongoose');
-const moment = require('moment')
-const userSchema = require('./userModel').schema;
 const analiseSchema = require('./analiseModel').schema;
-
 var Schema   = mongoose.Schema;
 
 const experimentosSchema = new Schema({
@@ -16,7 +13,9 @@ const experimentosSchema = new Schema({
 		required: true
 	},
 
-	'analises' : [analiseSchema],
+	'analises' : [
+		analiseSchema
+	],
 
 	'createdBy' : {
 		type: String

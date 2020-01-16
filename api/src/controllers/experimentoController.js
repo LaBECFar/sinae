@@ -3,8 +3,11 @@ const experimentoModel = require("../models/experimentoModel")
 const experimentoController = {
 
     list: (req, res, next) => {
+
+        let user = req.user
         let filtros = {}
-        if(req.user){
+
+        if(user){
             filtros.createdBy = req.user.userid
         }
 

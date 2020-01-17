@@ -14,5 +14,6 @@ export const config = {
 // console.log(process.env.VUE_APP_MY_URL_API)
 
 config.api = axios.create({
-    baseURL: config.URL_API
+    baseURL: config.URL_API,
+    headers: {'Authorization': 'Bearer '+localStorage.getItem('token')}
 })

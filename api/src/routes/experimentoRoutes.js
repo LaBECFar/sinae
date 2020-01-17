@@ -5,13 +5,13 @@ const experimentoController = require('../controllers/experimentoController')
 
 
 // detalhes por id
-router.get('/:id', experimentoController.get)
+router.get('/:id', auth, experimentoController.get)
 
-// detalhes por codigo
+// detalhes por codigo - autenticação desnecessária para uso no app
 router.get('/codigo/:codigo', experimentoController.getByCodigo) 
 
-// criar novo experimento
-router.post('/', experimentoController.post) 
+// cadastro de experimento
+router.post('/', auth,  experimentoController.post) 
 
 // listagem de experimentos criados pelo usuário
 router.get('/', auth, experimentoController.list)
@@ -19,7 +19,7 @@ router.get('/', auth, experimentoController.list)
 // atualizar
 router.put('/:id', auth, experimentoController.put)
 
-// deletar experimento
+// remover
 router.delete('/:id', auth, experimentoController.delete)
 
 

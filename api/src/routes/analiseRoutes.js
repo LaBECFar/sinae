@@ -1,25 +1,32 @@
 const express = require('express');
-
 const router = express.Router();
-
 const analiseController = require('../controllers/analiseController')
 
-router.get('/', analiseController.list);
+// cadastro de analise - autenticação desnecessária para uso no app
+router.post('/', analiseController.post); 
 
-router.get('/:id', analiseController.get);
+// listagem
+router.get('/', auth, analiseController.list);
 
-router.get('/:id/download-frames', analiseController.downloadFrames);
+// detalhes
+router.get('/:id', auth, analiseController.get);
 
-router.get('/:id/download-pocos', analiseController.downloadPocos);
+// atualizar
+router.put('/:id', auth, analiseController.put);
 
-router.get('/:id/download-csv', analiseController.exportCsv);
+// remover
+router.delete('/:id', auth, analiseController.delete);
 
-router.post('/', analiseController.post);
+// download de um arquivo .zip com todos os frames da analise
+router.get('/:id/download-frames', auth, analiseController.downloadFrames);
 
-router.post('/:id/extract-pocos', analiseController.extractPocos);
+// download de um arquivo .zip com todos os poços da analise
+router.get('/:id/download-pocos', auth, analiseController.downloadPocos);
 
-router.put('/:id', analiseController.put);
+// download de um arquivo csv com as informações dos poços para serem usadas no cellprofiller
+router.get('/:id/download-csv', auth, analiseController.exportCsv);
 
-router.delete('/:id', analiseController.delete);
+// processa os frames para extrair os poços do quadrante
+router.post('/:id/extract-pocos', auth, analiseController.extractPocos);
 
 module.exports = router;

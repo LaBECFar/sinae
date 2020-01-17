@@ -1,19 +1,25 @@
 const express = require('express');
-
 const router = express.Router();
-
 const frameController = require('../controllers/frameController')
 
-router.get('/', frameController.list);
 
-router.get('/image/:id', frameController.getImage);
+// listagem
+router.get('/', auth, frameController.list);
 
-router.get('/:id', frameController.get);
+// imagem em base64
+router.get('/image/:id', auth, frameController.getImage);
 
+// detalhes
+router.get('/:id', auth, frameController.get);
+
+// cadastrar - autenticação desnecessária para uso no app
 router.post('/', frameController.post);
 
-router.put('/:id', frameController.put);
+// atualizar
+router.put('/:id', auth, frameController.put);
 
-router.delete('/:id', frameController.delete);
+// remover
+router.delete('/:id', auth, frameController.delete);
+
 
 module.exports = router;

@@ -5,7 +5,8 @@ var Schema   = mongoose.Schema;
 const experimentosSchema = new Schema({
 	'codigo' : {
 		type: String,
-		required: true
+		required: true,
+		unique: true
 	},
 
 	'label' : {

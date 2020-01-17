@@ -51,7 +51,7 @@ const experimentoController = {
         })
 
         if(req.user){
-            experimento.createdBy = req.user._id
+            experimento.createdBy = req.user.userid
         }
         
         experimento.save((err, experimento) => {

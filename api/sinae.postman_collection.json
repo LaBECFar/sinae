@@ -11,6 +11,16 @@
 				{
 					"name": "list-experimento",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiI1ZTFlZjMzZjk4ZjQ3ZDAwMzA0NDM4NjYiLCJpYXQiOjE1NzkwOTY2NTIsImV4cCI6MTU4MTY4ODY1Mn0.3wT72OAXJgGLmdqF7YkUGfm3hD5-gSHBF2h8MxPBs-s",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -253,7 +263,7 @@
 			"name": "analise",
 			"item": [
 				{
-					"name": "list-analise",
+					"name": "list",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -273,7 +283,7 @@
 					"response": []
 				},
 				{
-					"name": "list-analise-by-codigo",
+					"name": "list-by-codigo",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -299,12 +309,12 @@
 					"response": []
 				},
 				{
-					"name": "get-analise",
+					"name": "get",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/analise/5e0a04e8d4aa8f0030374d5a",
+							"raw": "http://localhost:3000/analise/5e132b68a3b16000306ab8d8",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -312,14 +322,35 @@
 							"port": "3000",
 							"path": [
 								"analise",
-								"5e0a04e8d4aa8f0030374d5a"
+								"5e132b68a3b16000306ab8d8"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "new-analise",
+					"name": "download-frames",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/analise/5e132b68a3b16000306ab8d8/download-frames",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"analise",
+								"5e132b68a3b16000306ab8d8",
+								"download-frames"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -385,7 +416,7 @@
 					"response": []
 				},
 				{
-					"name": "delete-analise",
+					"name": "delete",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -551,6 +582,255 @@
 							"path": [
 								"analise",
 								"5dd5263a25f0c70030344527"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "poco",
+			"item": [
+				{
+					"name": "list-pocos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/frame/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"frame",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "lkalsovik@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/user/login/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imx1Y2FzQHdlYmdlbml1bS5jb20uYnIiLCJpYXQiOjE1Nzg5MjQxNDIsImV4cCI6MTU4MTUxNjE0Mn0.cnC2NigsUXJb8Z8m9EKNNIV9M1kElnDyVQ704VF4r4w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "info (token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiI1ZTFlZjMzZjk4ZjQ3ZDAwMzA0NDM4NjYiLCJpYXQiOjE1NzkwOTY2NTIsImV4cCI6MTU4MTY4ODY1Mn0.3wT72OAXJgGLmdqF7YkUGfm3hD5-gSHBF2h8MxPBs-s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/user/info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imx1Y2FzQHdlYmdlbml1bS5jb20uYnIiLCJpYXQiOjE1Nzg5MjQxNDIsImV4cCI6MTU4MTUxNjE0Mn0.cnC2NigsUXJb8Z8m9EKNNIV9M1kElnDyVQ704VF4r4w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Lucas K",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "lkalsovik@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/user/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imx1Y2FzQHdlYmdlbml1bS5jb20uYnIiLCJpYXQiOjE1Nzg5MjQxNDIsImV4cCI6MTU4MTUxNjE0Mn0.cnC2NigsUXJb8Z8m9EKNNIV9M1kElnDyVQ704VF4r4w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Lucas K1",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "lucas@webgenium.com.br",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "teste",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/user/5e1c76e25d54e23598083cd6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"user",
+								"5e1c76e25d54e23598083cd6"
 							]
 						}
 					},

@@ -34,7 +34,7 @@ const userController = {
     },
 
     tokenUserInfo: (req, res, next) => {
-        return res.status(201).json(req.teste);
+        return res.status(201).json(req.user);
     },
 
     list: (req, res, next) => {

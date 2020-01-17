@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('./auth')
 const analiseController = require('../controllers/analiseController')
 
 // cadastro de analise - autenticação desnecessária para uso no app

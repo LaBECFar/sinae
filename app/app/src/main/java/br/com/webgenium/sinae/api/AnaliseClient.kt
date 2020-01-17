@@ -9,22 +9,6 @@ import br.com.webgenium.sinae.model.Analise
 
 class AnaliseClient(val context: Context) {
 
-    fun list(codigo: String, successo: (analises: List<Analise>) -> Unit){
-        val call = RetrofitInitializer(context).analiseService().list(codigo)
-
-        call.enqueue(callback { response, thorwable ->
-
-            response?.body()?.let {
-                successo(it)
-            }
-
-            thorwable?.let {
-                val msg = context.getString(R.string.no_server_communication)
-                context.toast(msg, TOAST_ERROR)
-            }
-        })
-    }
-
     fun insert(analise: Analise, sucesso: (analise: Analise) -> Unit, erro: (msg: String) -> Unit) {
         val call = RetrofitInitializer(context).analiseService().insert(analise)
 
@@ -42,4 +26,5 @@ class AnaliseClient(val context: Context) {
             }
         })
     }
+
 }

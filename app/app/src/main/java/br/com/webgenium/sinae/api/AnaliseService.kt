@@ -9,14 +9,6 @@ import retrofit2.http.Path
 
 interface AnaliseService {
 
-    @GET("analise/{id}")
-    fun get(@Path("id") id: String) : Call<Analise>
-
-
-    @GET("experimento/{codigo}/analise/")
-    fun list(@Path("codigo") codigo: String) : Call<List<Analise>>
-
-
     @POST("analise")
     fun insert(@Body analise: Analise) : Call<Analise>
 

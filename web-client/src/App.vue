@@ -1,50 +1,7 @@
 <template>
-  <div id="app" class="h-100">
-    <b-container fluid class="h-100">
-      <b-row id="head">
-        <div>
-          <!-- <img style="float:left;" src="prism.png">  -->
-          <div style="font-size: 40px; float:left; margin-top:7px;"><em>&nbsp;SINAE</em></div>
-        </div>
-      </b-row>
-      <b-row>        
-        <b-col cols="2" id="menu">
-          <ul>
-            <li>
-              <router-link to="/">
-                <v-icon name="home"></v-icon>
-                Home
-              </router-link>
-            </li>
-            <li>
-              <v-icon name="layers"></v-icon>
-              Experimentos
-              <ul>
-                <li class="subMenu">
-                  <router-link to="/experimento">
-                    - Listar
-                  </router-link>
-                </li>
-                <li class="subMenu">
-                  <router-link to="/experimento/Novo">- Novo</router-link>
-                </li>
-              </ul>
-            </li>           
-            <hr/>
-            <li>
-              <a target="_blank" href="https://github.com/anselmobattisti/sinae">
-                <v-icon name="github"></v-icon>
-                Github
-              </a>
-            </li>
-          </ul>
-        </b-col>
-        <b-col class="h-100" id="content">
-          <router-view/>
-        </b-col>
-      </b-row>
-    </b-container>
-  </div>
+	<div id="app" class="h-100">
+		<router-view/>
+	</div>
 </template>
 
 <style>

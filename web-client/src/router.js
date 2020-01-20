@@ -1,76 +1,88 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import Dashboard from './views/layouts/Dashboard.vue'
 import auth from './middleware/auth';
 
 Vue.use(Router)
 
 
 const router = new Router({
-	routes: [{
-			path: '/',
-			name: 'home',
-			component: Home,
-			meta: {
-				middleware: auth
-			}
-		},
-
+	routes: [
 		{
 			path: '/login',
 			name: 'login',
 			component: () => import( /* webpackChunkName: "locationNew" */ './views/user/Login.vue')
 		},
 
-		// LOCATION ROUTES    
 		{
-			path: '/experimento',
-			name: 'experimentoIndex',
-			component: () => import( /* webpackChunkName: "locationIndex" */ './views/experimento/Index.vue'),
+			path: '/',
+			name: 'dashboard',
+			component: Dashboard,
 			meta: {
 				middleware: auth
-			}
+			},
+			children: [
+				{
+					path: '',
+					name: 'home',
+					component: () => import( /* webpackChunkName: "locationIndex" */ './views/Home.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
+					path: 'experimento',
+					name: 'experimentoIndex',
+					component: () => import( /* webpackChunkName: "locationIndex" */ './views/experimento/Index.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
+					path: 'experimento/novo',
+					name: 'locationNovo',
+					component: () => import( /* webpackChunkName: "locationNew" */ './views/experimento/Novo.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+				{
+					path: 'experimento/:id/editar',
+					name: 'experimentoEditar',
+					component: () => import( /* webpackChunkName: "locationEdit" */ './views/experimento/Editar.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+				{
+					path: 'experimento/:experimentoCodigo/analises',
+					name: 'analiseIndex',
+					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/Index.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+				{
+					path: 'analise/:analiseCodigo',
+					name: 'analiseDetalhes',
+					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/Detalhes.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+				{
+					path: 'analise/:analiseCodigo/quadrante/:quadrante',
+					name: 'analiseDetalhesQuadrante',
+					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/DetalhesQuadrante.vue'),
+					meta: {
+						middleware: auth
+					}
+				}
+			]
 		},
-		{
-			path: '/experimento/novo',
-			name: 'locationNovo',
-			component: () => import( /* webpackChunkName: "locationNew" */ './views/experimento/Novo.vue'),
-			meta: {
-				middleware: auth
-			}
-		},
-		{
-			path: '/experimento/:id/editar',
-			name: 'experimentoEditar',
-			component: () => import( /* webpackChunkName: "locationEdit" */ './views/experimento/Editar.vue'),
-			meta: {
-				middleware: auth
-			}
-		},
-		{
-			path: '/experimento/:experimentoCodigo/analises',
-			name: 'analiseIndex',
-			component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/Index.vue'),
-			meta: {
-				middleware: auth
-			}
-		},
-		{
-			path: '/analise/:analiseCodigo',
-			name: 'analiseDetalhes',
-			component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/Detalhes.vue'),
-			meta: {
-				middleware: auth
-			}
-		},
-		{
-			path: '/analise/:analiseCodigo/quadrante/:quadrante',
-			name: 'analiseDetalhesQuadrante',
-			component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/DetalhesQuadrante.vue'),
-			meta: {
-				middleware: auth
-			}
-		}
+
 	]
 })
 

@@ -10,7 +10,6 @@ const index = require('./routes/index');
 const experimentoRoutes   = require('./routes/experimentoRoutes');
 const analiseRoutes   = require('./routes/analiseRoutes');
 const frameRoutes   = require('./routes/frameRoutes');
-const pocoRoutes   = require('./routes/pocoRoutes');
 const userRoutes   = require('./routes/userRoutes');
 
 app.use(bodyParser.json())
@@ -30,7 +29,6 @@ app.use(cors(corsOptions));
 app.use('/experimento', experimentoRoutes);
 app.use('/analise', analiseRoutes);
 app.use('/frame', frameRoutes);
-app.use('/poco', pocoRoutes);
 app.use('/user', userRoutes);
 app.use('/', index);
 

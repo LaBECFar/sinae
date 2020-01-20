@@ -96,7 +96,8 @@ const experimentoController = {
     
     delete: (req, res, next) => {
         let id = req.params.id;
-        experimentoModel.deleteOne({_id: id},function(err, experimento){
+
+        experimentoModel.findOneAndDelete({_id: id},function(err, experimento){
             if (err) {
                 return res.status(500).json({
                     message: 'Erro ao deletar experimento.',
@@ -104,8 +105,13 @@ const experimentoController = {
                     success: false
                 });
             }
+
+            experimento.deleteAnalises()
+            experimento.deleted = true
+
             return res.status(201).json(experimento);
         })
     }
-}    
+}   
+
 module.exports = experimentoController

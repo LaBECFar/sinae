@@ -161,7 +161,8 @@ const analiseController = {
     
     delete: (req, res, next) => {
         let id = req.params.id;
-        analiseModel.deleteOne({_id: id},function(err, analise){
+
+        analiseModel.findOneAndDelete({_id: id},function(err, analise){
             if (err) {
                 return res.status(500).json({
                     message: 'Erro ao deletar analise.',
@@ -169,6 +170,10 @@ const analiseController = {
                     success: false
                 });
             }
+
+            analise.deleteFrames()
+            analise.deleted = true
+
             return res.status(201).json(analise);
         })
     },

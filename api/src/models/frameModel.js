@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
-
-var Schema   = mongoose.Schema;
+const mongoose = require('mongoose')
+const fs = require('fs')
+const Schema   = mongoose.Schema
 
 const framesSchema = new Schema({
 
@@ -46,5 +46,19 @@ const framesSchema = new Schema({
 },{
     timestamps: true
 });
+
+framesSchema.methods.removerArquivos = function() { 
+    // remover imagens de poços
+    if(this.pocos && this.pocos.length > 0){
+        this.pocos.forEach((poco) => {
+            fs.unlinkSync(poco.url)
+        })
+    }
+
+    // remover imagem do frame
+    if(this.url) {
+        fs.unlinkSync(this.url)
+    }
+}
 
 module.exports = mongoose.model('frame', framesSchema);

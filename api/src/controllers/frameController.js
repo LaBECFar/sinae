@@ -188,13 +188,17 @@ const frameController = {
     
     delete: (req, res, next) => {
         let id = req.params.id;
-        frameModel.deleteOne({_id: id},function(err, frame){
+        
+        frameModel.findOneAndDelete({_id: id},function(err, frame){
             if (err) {
                 return res.status(500).json({
                     message: 'Erro ao deletar frame.',
                     error: err
                 });
             }
+
+            frame.removerArquivos()
+
             return res.status(201).json(frame);
         })
     }

@@ -43,6 +43,11 @@ export const apiUsuario = {
                     reject(new Error(`Erro ao criar o usuário ${e}`));
                 });
         });
-    },
+	},
+	
+	logout() {
+		localStorage.removeItem('token')
+		localStorage.removeItem('isAdmin')
+	}
 
 }

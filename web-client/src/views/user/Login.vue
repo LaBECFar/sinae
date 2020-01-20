@@ -59,7 +59,7 @@ export default {
                 .login(this.form.email, this.form.password)
                 .then(data => {
                     if (data.success) {
-                        this.$router.push("/");
+                        this.$router.push("/experimento");
                     }
                 })
                 .catch(e => {

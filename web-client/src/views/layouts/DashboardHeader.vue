@@ -1,12 +1,23 @@
 <template>
-    <header id="header">
-        <div class="logo-container"><em>SINAE</em></div>
+    <header id="header" style="min-height:75px">
+        <div class="float-left logo-container"><em>SINAE</em></div>        
+        <b-button style="margin-right:10px" class="float-right" @click="logout()" variant="light">
+            <v-icon style="font-weight: bolder" name="x"></v-icon>
+        </b-button>
     </header>
 </template>
 
 <script>
+import { apiUsuario } from "../user/api";
+
 export default {
-    name: "DashboardHeader"
+    name: "DashboardHeader",
+    methods: {
+        logout() {
+            apiUsuario.logout();
+            this.$router.push("/#/login");
+        }
+    }
 };
 </script>
 

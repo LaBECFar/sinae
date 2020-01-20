@@ -137,7 +137,7 @@ export default {
         refresh() {
             this.isBusy = true
             this.isLoading = false
-            apiExperimento.lisatrExperimentos()
+            apiExperimento.listarExperimentos()
                 .then((data) => {
                     this.items = data
                     this.isBusy = false

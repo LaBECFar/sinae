@@ -28,13 +28,13 @@ const experimentosSchema = new Schema({
 
 experimentosSchema.methods.deleteAnalises = function() { 
 
-    analiseModel.find({ experimentoId: this._id })
+    analiseModel.find({ experimentoCodigo: this.codigo })
 		.then(analises => {
 			analises.forEach((analise) => {
 				analise.deleteFrames()
 			});
 
-			analiseModel.deleteMany({ experimentoId: this._id })
+			analiseModel.deleteMany({ experimentoCodigo: this.codigo })
 		})
 		.catch(err => {
 			console.log(err.errors)

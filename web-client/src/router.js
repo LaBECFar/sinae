@@ -79,7 +79,15 @@ const router = new Router({
 					meta: {
 						middleware: auth
 					}
-				}
+				},
+				{
+					path: 'user/novo',
+					name: 'userNovo',
+					component: () => import( /* webpackChunkName: "userNew" */ './views/user/Novo.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
 			]
 		},
 

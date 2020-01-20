@@ -27,6 +27,22 @@ export const apiUsuario = {
 					reject(new Error(`Erro ao fazer login ${e}`))
 				})
 		})
-	}
+	},
+
+	criarUsuario(user) {
+        if (!user) {
+            return Promise.reject(new Error("Dados não informados."));
+        }
+        return new Promise((resolve, reject) => {
+            config.api
+                .post(`/user/`, user)
+                .then(resp => {
+                    resolve(resp.data);
+                })
+                .catch(e => {
+                    reject(new Error(`Erro ao criar o usuário ${e}`));
+                });
+        });
+    },
 
 }

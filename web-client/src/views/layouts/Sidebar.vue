@@ -1,46 +1,78 @@
 <template>
     <aside class="main-sidebar">
-		<section class="sidebar">
-			<ul class="menu">
+        <section class="sidebar">
+            <ul class="menu">
+                <li>
+                    <router-link to="/"><v-icon name="home"></v-icon>Home</router-link>
+                </li>
+                <li>
+                    <v-icon name="layers"></v-icon>Experimentos
+                    <ul class="sub-menu">
+                        <li>
+                            <router-link to="/experimento"
+                                >- Listar</router-link
+                            >
+                        </li>
+                        <li>
+                            <router-link to="/experimento/Novo"
+                                >- Novo</router-link
+                            >
+                        </li>
+                    </ul>
+                </li>
+                <li v-if="isAdmin">
+                    <v-icon name="users"></v-icon>Usuários
+                    <ul class="sub-menu">
+                        <li>
+                            <router-link to="/user">- Listar</router-link
+                            >
+                        </li>
+                        <li>
+                            <router-link to="/user/Novo">- Novo</router-link>
+                        </li>
+                    </ul>
+                </li>
 				<li>
-					<router-link to="/"><v-icon name="home"></v-icon>Home</router-link>
+                    <router-link :to="{path:'/user/'+userId+'/Editar'}"><v-icon name="user"></v-icon>Meu Perfil</router-link>
 				</li>
-				<li>
-					<v-icon name="layers"></v-icon>Experimentos
-					<ul class="sub-menu">
-						<li>
-							<router-link to="/experimento">- Listar</router-link>
-						</li>
-						<li>
-							<router-link to="/experimento/Novo">- Novo</router-link>
-						</li>
-					</ul>
-				</li>           
-				<hr/>
-				<li>
-					<a target="_blank" href="https://github.com/anselmobattisti/sinae"><v-icon name="github"></v-icon> Github</a>
-				</li>
-			</ul>
-		</section>
+                <hr />
+                <li>
+                    <a
+                        target="_blank"
+                        href="https://github.com/anselmobattisti/sinae"
+                        ><v-icon name="github"></v-icon> Github</a
+                    >
+                </li>
+            </ul>
+        </section>
     </aside>
 </template>
 
 <script>
 export default {
-  name: 'Sidebar'
-}
+    name: "Sidebar",
+    data() {
+        return {
+            isAdmin: localStorage.getItem('isAdmin'),
+            userId: localStorage.getItem('userid')
+        };
+    },
+    methods: {
+        created() {
+			//this.isAdmin =  || false
+		}
+    }
+};
 </script>
 
 <style scoped>
 .main-sidebar {
-	background-color: #f5f5f5;
+    background-color: #f5f5f5;
     min-height: 100vh;
     height: 100%;
     min-width: 280px;
-	padding:20px;
-	
+    padding: 20px;
 }
-
 
 ul {
     width: 100%;
@@ -48,10 +80,12 @@ ul {
     text-align: left;
     margin: 0px;
     padding: 0px;
-	list-style: none;
+    list-style: none;
 }
 
-.sub-menu {padding-left: 40px;}
+.sub-menu {
+    padding-left: 40px;
+}
 
 .menu li {
     width: 100%;

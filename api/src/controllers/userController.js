@@ -24,7 +24,8 @@ const userController = {
                     success: true,
                     message: 'Authentication successful!',
                     token: token,
-                    isAdmin: user.isAdmin ? user.isAdmin : false
+                    isAdmin: user.isAdmin ? user.isAdmin : false,
+                    userid: user._id
                 });
 
             } else {
@@ -102,17 +103,30 @@ const userController = {
         var id = req.params.id;
 
         userModel.findById(id)
-            .populate('users')
-            .exec()
+            //.populate('users')
+            //.exec()
             .then((user) => {
                 if (!user) {
                     return res.status(404).send()
                 }
 
-                const {name, email, password} = req.body
+                const {name, email, password, isAdmin} = req.body
 
-                user.name = name
-                user.password = userModel.cryptoPass(password)
+                if(name){
+                    user.name = name
+                }
+
+                if(email) {
+                    user.email = email
+                }
+
+                if(isAdmin) {
+                    user.isAdmin = isAdmin
+                }
+
+                if(password){
+                    user.password = userModel.cryptoPass(password)
+                }
 
                 user.save(function (err, user) {
                     if (err) {

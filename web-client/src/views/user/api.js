@@ -14,11 +14,12 @@ export const apiUsuario = {
 					password
 				})
 				.then(resp => {
-					let { token, success, isAdmin } = resp.data
+					let { token, success, isAdmin, userid } = resp.data
 
 					if (success) {
 						if(token) localStorage.setItem('token', token)
-						if(isAdmin) localStorage.setItem('isAdmin', isAdmin)
+                        if(isAdmin) localStorage.setItem('isAdmin', isAdmin)
+                        if(userid)  localStorage.setItem('userid', userid)
 					}
 
 					resolve(resp.data)
@@ -48,6 +49,70 @@ export const apiUsuario = {
 	logout() {
 		localStorage.removeItem('token')
 		localStorage.removeItem('isAdmin')
-	}
+	},
+
+
+	removerUsuario(userId) {
+        if (!userId) {
+            return Promise.reject(new Error("Dados não informados."));
+        }
+        return new Promise((resolve, reject) => {
+            config.api
+                .delete(`/user/${userId}`)
+                .then(resp => {
+                    resolve(resp.data);
+                })
+                .catch(e => {
+                    reject(new Error(`Erro ao remover o usuário ${e}`));
+                });
+        });
+    },
+
+    listarUsuarios() {
+		return new Promise((resolve, reject) => {
+            config.api
+                .get(`/user/`)
+                .then(resp => {
+                    resolve(resp.data);
+                })
+                .catch(e => {
+                    reject(e);
+                });
+        });
+    },
+
+    getUsuario(userId) {
+        return new Promise((resolve, reject) => {
+            config.api
+                .get(`/user/${userId}`)
+                .then(resp => {
+                    resolve(resp.data);
+                })
+                .catch(e => {
+                    reject(e);
+                });
+        });
+    },
+
+    atualizarUsuario(user) {
+        if (!user) {
+            return Promise.reject(new Error("Dados não informados."));
+        }
+
+        if(!user.password){
+            delete user.password
+        }
+
+        return new Promise((resolve, reject) => {
+            config.api
+                .put(`/user/${user._id}`, user)
+                .then(resp => {
+                    resolve(resp.data);
+                })
+                .catch(e => {
+                    reject(new Error(`Erro ao atualizar o Experimento ${e}.`));
+                });
+        });
+    },
 
 }

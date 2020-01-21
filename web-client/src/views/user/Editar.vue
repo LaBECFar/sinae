@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2>Novo Usuário</h2>
+        <h2>Editar Usuário</h2>
 
         <b-alert :show="msg.text" :v-show="msg.text" :variant=msg.type>
             {{ msg.text }}
@@ -16,7 +16,7 @@
             </b-form-group>
 
             <b-form-group label="Senha:" label-for="password">
-                <b-form-input id="password" v-model="form.password" type="password" required/>
+                <b-form-input id="password" v-model="form.password" type="password" autocomplete="nope" aria-autocomplete="nope"/>
             </b-form-group>
 
             <b-form-group>
@@ -27,7 +27,7 @@
             </b-form-group>
 
             <hr>
-            
+
             <b-row>
                 <b-col>
                     <b-button type="submit" variant="primary">Salvar</b-button>
@@ -37,21 +37,23 @@
                 </b-col>
             </b-row>
         </b-form>
+
   </div>
 </template>
 
 <script>
-import {apiUsuario} from './api'
+import { apiUsuario } from './api'
 
 export default {
-    name: 'novoExperimento',
+    name: 'userEditar',
     data() {
         return {
             form: {
+                _id: '',
                 name: '',
                 email: '',
                 password: '',
-                isAdmin: false
+                isAdmin: false           
             },
             msg: {
                 text: false,
@@ -59,21 +61,35 @@ export default {
             }
         }
     },
+
     methods: {
         onSubmit(evt) {
             evt.preventDefault()
-            apiUsuario.criarUsuario(this.form)
-                .then(() => {
-                    this.msg.text = "Usuário criado"
+
+            apiUsuario.atualizarUsuario(this.form)
+                .then((user) => {
+                    this.msg.text = "Usuário atualizado"
                     this.msg.type = "success"
+
+                    if(user._id == localStorage.getItem('userid')){
+                        apiUsuario.logout();
+                        this.$router.push("/#/login");
+                    }
                 })
                 .catch((e) => {
-                    this.msg.text = `Erro ao criar o usuário ${e}`
+                    this.msg.text = `Erro ao atualizar o usuário ${e}`
                     this.msg.type = "danger"
+                })
+        },
+        refresh() {
+            apiUsuario.getUsuario(this.$route.params.id)
+                .then((ret) => {
+                    this.form = ret
                 })
         }
     },
     created() {
+        this.refresh()
     }
 }
 </script>

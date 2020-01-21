@@ -8,6 +8,9 @@
                 Detalhes da Análise
             </h2>
         </b-col>
+        <b-col class="text-right">
+            <b-button :to="'/experimento/'+analise.experimentoCodigo+'/analises'" variant="secondary">Voltar</b-button>        
+        </b-col>
     </b-row>
     <b-row>
         <b-col>            

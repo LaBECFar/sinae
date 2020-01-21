@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const frameModel = require("./frameModel")
+
 var Schema = mongoose.Schema;
 
 const analisesSchema = new Schema({
@@ -34,20 +35,24 @@ const analisesSchema = new Schema({
 
 
 
-analisesSchema.methods.deleteFrames = function() { 
+analisesSchema.methods.deleteFrames = function(removeFiles = true) { 
 
-    frameModel.find({analiseId: this._id}, {url: 1, pocos:1})
-        .then(frames => {
-            frames.forEach((frame) => {
-                frame.removerArquivos()
+    if(removeFiles) {
+        const dir = `/usr/uploads/experimentos/${this.experimentoCodigo}/${this.placa}/${this.tempo}`
+        const fs = require('fs')
+        const rmdir = require('rimraf');
+                
+        // remove diretório onde ficam os arquivos da analise
+        if( fs.existsSync(dir) ) {
+            rmdir(dir, function(error){
+                if(error) console.log(error)
             })
+        }
+    }
 
-            // remove todos os frames dessa analise do banco de dados
-            frameModel.deleteMany({ analiseId: this._id })
-        })
-        .catch(err => {
-            console.log(err.errors)
-        }); 
+    // remove todos os frames dessa analise do banco de dados
+    frameModel.deleteMany({ analiseId: this._id })
+
 }
 
 module.exports = mongoose.model('analise', analisesSchema);

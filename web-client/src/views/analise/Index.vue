@@ -83,7 +83,7 @@ export default {
             experimentoCodigo: 'abx',
             fields: [{
                 key: 'dataColeta',
-                label: 'Data Coleta'
+                label: 'Data da Coleta'
             },{
                 key:'tempo',
                 label: 'Tempo'
@@ -112,16 +112,17 @@ export default {
             this.$router.push(`/analise/${analise._id}`)
         },
 
-        removerAnalise(experimento) {
+        removerAnalise(analise) {
             this.$swal.fire({
                 title: 'Tem certeza?',
                 text: "Você não poderá desfazer isso ok!",
                 type: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Sim, REMOVER o experimento!'
+                confirmButtonText: 'Sim, remover análise!',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.value) {
-                    apiAnalise.removerExperimento(experimento._id)
+                    apiAnalise.removerAnalise(analise._id)
                         .then(() => {
                             this.refresh()
                         })
@@ -147,9 +148,7 @@ export default {
         }
     },
     created() {
-        
         this.experimentoCodigo = this.$route.params.experimentoCodigo
-
         this.refresh()
     }
 }

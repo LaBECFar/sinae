@@ -120,10 +120,11 @@ export default {
                 text: "Você não poderá desfazer isso ok!",
                 type: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Sim, REMOVER o experimento!'
+                confirmButtonText: 'Sim, remover experimento!',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.value) {
-                    apiExperimento.removeExperimento(experimento._id)
+                    apiExperimento.removerExperimento(experimento._id)
                         .then(() => {
                             this.refresh()
                         })

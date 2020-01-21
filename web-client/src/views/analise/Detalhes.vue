@@ -101,7 +101,9 @@ export default {
             isBusy: true,
             isLoading: false,
             analiseCodigo: '',
-            analise: [],
+            analise: {
+                frameQuadrante: [[],[],[],[],[]]
+            },
             msg: {
                 text: false,
                 type: ''

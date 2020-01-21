@@ -19,13 +19,13 @@ router.put('/:id', auth, analiseController.put);
 router.delete('/:id', auth, analiseController.delete);
 
 // download de um arquivo .zip com todos os frames da analise
-router.get('/:id/download-frames', auth, analiseController.downloadFrames);
+router.get('/:id/download-frames', analiseController.downloadFrames);
 
 // download de um arquivo .zip com todos os poços da analise
-router.get('/:id/download-pocos', auth, analiseController.downloadPocos);
+router.get('/:id/download-pocos', analiseController.downloadPocos);
 
 // download de um arquivo csv com as informações dos poços para serem usadas no cellprofiller
-router.get('/:id/download-csv', auth, analiseController.exportCsv);
+router.get('/:id/download-csv', analiseController.exportCsv);
 
 // processa os frames para extrair os poços do quadrante
 router.post('/:id/extract-pocos', auth, analiseController.extractPocos);

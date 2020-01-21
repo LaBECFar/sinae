@@ -2,6 +2,8 @@
     <div>
         <b-alert :show="msg.text" :v-show="msg.text" :variant=msg.type>
             {{ msg.text }}
+
+            <b-button @click="back()" variant="secondary">Voltar</b-button>
         </b-alert>
 
         <h4>Quadrante {{ quadrante }}</h4>
@@ -94,6 +96,10 @@ export default {
     },  
     methods: {   
         
+        back() {
+            this.$router.push(`/analise/${this.analiseCodigo}/`)
+        },
+
         alterarRaio() {
             this.renderCircles()
         },

@@ -48,7 +48,6 @@ export const apiAnalise = {
   },  
 
   listarAnalises (experimentoCodigo) {
-    console.log(experimentoCodigo)
     return new Promise((resolve, reject) => {
       config.api.get(`/analise/?experimentoCodigo=${experimentoCodigo}`)
         .then(resp => {
@@ -81,6 +80,19 @@ export const apiAnalise = {
   },
 
   getCsvExportLink(analiseId){
+    /*
+    return new Promise((resolve, reject) => {
+      console.log('a')
+      config.api.get(`/analise/${analiseId}/download-csv`)
+        .then(resp => {
+            console.log('a')
+            resolve(resp.data)
+        })
+        .catch(e => {
+            reject(e)
+        })
+    })*/
+
     return `${config.URL_API}/analise/${analiseId}/download-csv`
   },
 

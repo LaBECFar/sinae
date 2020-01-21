@@ -73,6 +73,14 @@ const router = new Router({
 					}
 				},
 				{
+					path: 'analise/:id/editar',
+					name: 'analiseEditar',
+					component: () => import( /* webpackChunkName: "locationEdit" */ './views/analise/Editar.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+				{
 					path: 'analise/:analiseCodigo/quadrante/:quadrante',
 					name: 'analiseDetalhesQuadrante',
 					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/DetalhesQuadrante.vue'),

@@ -135,9 +135,15 @@ const analiseController = {
                     return res.status(404).send()
                 }
 
+                /** 
+                 * @todo validar se o usuário que está atualizando o experimento
+                 * é o mesmo que criou o experimento.
+                */
+
                 var dataColeta = req.body.dataColeta
+
                 if(dataColeta){
-                    dataColeta = moment(dataColeta).toDate()
+                    dataColeta = moment(dataColeta, "DD/MM/YYYY").toDate()
                 }
 
                 analise.placa = req.body.placa

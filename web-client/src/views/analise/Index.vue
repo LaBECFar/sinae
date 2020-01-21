@@ -8,12 +8,7 @@
                 Analises do Experimento <strong>{{experimentoCodigo}}</strong>
             </h2>
         </b-col>
-        <b-col class="text-right">
-            <b-button to="/experimento/novo" variant="success" class="mr-2">
-                <v-icon name="plus"></v-icon>
-                Novo
-            </b-button>    
-        </b-col>
+
     </b-row>
     <b-row>
         <b-col>            
@@ -39,15 +34,15 @@
             <v-icon name="align-justify"></v-icon>
             Detalhes
         </b-button>
-      
-        <b-button variant="primary" size="sm" @click="editarExperimento(row.item)" class="mr-2">
+
+<!--      
+        <b-button variant="primary" size="sm" @click="editarAnalise(row.item)" class="mr-2">
             <v-icon name="edit-2"></v-icon>
             Editar
         </b-button>
-
-        <b-button variant="danger" size="sm" @click="removerExperimento(row.item)" class="mr-2">
+-->
+        <b-button variant="danger" size="sm" @click="removerAnalise(row.item)" class="mr-2">
             <v-icon name="trash"></v-icon>
-            Remover
         </b-button>
       </template>        
 
@@ -109,15 +104,15 @@ export default {
     },
     methods: {
      
-        editarExperimento (experimento) {
-            this.$router.push(`/experimento/${experimento._id}/editar`)
+        editarAnalise (experimento) {
+            this.$router.push(`/analise/${experimento._id}/editar`)
         },
      
         detalhesAnalise (analise) {
             this.$router.push(`/analise/${analise._id}`)
         },
 
-        removerExperimento(experimento) {
+        removerAnalise(experimento) {
             this.$swal.fire({
                 title: 'Tem certeza?',
                 text: "Você não poderá desfazer isso ok!",
@@ -162,7 +157,7 @@ export default {
 
 <style>
     .analiseIndexActions {
-        width: 400px;
+        width: 250px;
         text-align: center;
     }
 </style>

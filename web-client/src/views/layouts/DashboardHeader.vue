@@ -1,7 +1,9 @@
 <template>
     <header id="header" style="min-height:75px">
-        <div class="float-left logo-container"><em>SINAE</em></div>        
-        <b-button style="margin-right:10px" class="float-right" @click="logout()" variant="light">
+        <div class="float-left logo-container">
+            <em>SINAE</em>
+        </div>
+        <b-button style="margin-right:15px; margin-top:5px" class="float-right" @click="logout()" variant="light">
             <v-icon style="font-weight: bolder" name="x"></v-icon>
         </b-button>
     </header>
@@ -27,7 +29,7 @@ export default {
 }
 #header {
     background-color: #2c3e50;
-    border-bottom: 15px solid #e5e5e5;
+    border-bottom: 5px solid #e5e5e5;
     padding-top: 5px;
     padding-left: 10px;
     color: #fff;

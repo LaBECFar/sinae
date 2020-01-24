@@ -7,6 +7,7 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_main.*
@@ -33,16 +34,31 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupRecycler()
 
         btn_novo_experimento.setOnClickListener {
             novoExperimento()
         }
+    }
 
-        setupRecycler()
+
+    override fun onResume() {
+        super.onResume()
 
         lifecycleScope.launch {
             experimentos = dao.getExperimentos()
             mAdapter.atualizar(experimentos.toMutableList())
+            toggleRecyclerVisibility(experimentos.isEmpty())
+        }
+    }
+
+    private fun toggleRecyclerVisibility(isVisible: Boolean) {
+        if (!isVisible) {
+            empty_view.visibility = TextView.GONE
+            recyclerview.visibility = TextView.VISIBLE
+        } else {
+            recyclerview.visibility = TextView.GONE
+            empty_view.visibility = TextView.VISIBLE
         }
     }
 
@@ -146,6 +162,7 @@ class MainActivity : AppCompatActivity() {
 
             mAdapter.removerItem(experimento)
             mAdapter.notifyItemRemoved(pos)
+            toggleRecyclerVisibility(mAdapter.itemCount <= 0)
         }
     }
 

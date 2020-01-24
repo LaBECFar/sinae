@@ -50,6 +50,7 @@
     <string name="upload">Upload</string>
     <string name="board">Placa</string>
     <string name="board_value">Placa: %s</string>
+    <string name="no_experiments">Nenhum experimento cadastrado</string>
     <string name="no_analisis">Nenhuma análise cadastrada nesse experimento</string>
     <string name="no_frames">Nenhum frame vinculado a essa análise</string>
     <string name="api_port">Porta da API</string>

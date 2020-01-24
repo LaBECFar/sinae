@@ -83,7 +83,7 @@
     <b-row  align-v="center" align-h="between">
         <b-col>
             <h4>Exportação</h4>
-            <b-alert variant="warning" :show="analise.framesProcessados != analise.framesTotal">O botão de exportação só sera habilitado após a extração de todos os poços</b-alert>
+            <b-alert variant="warning" :show="analise.framesProcessados != analise.framesTotal">O botão de exportação o arquivo para o cellprofiler só será habilitado após a extração de todos os poços</b-alert>
             <b-alert variant="info" :show="analise.framesProcessados == analise.framesTotal">Você já pode exportar os dados dos poços clicando no botão abaixo</b-alert>
             <b-button variant="primary" @click="exportCsv()" :disabled="analise.framesProcessados != analise.framesTotal">Exportar CSV</b-button>
         </b-col>

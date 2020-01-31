@@ -135,7 +135,23 @@ export default {
         },
 
         exportCsv(){
-            window.open(this.csvExportLink, '_blank');
+            let inputvalue = "/usr/uploads/experimentos"
+
+            this.$swal.fire({
+                title: 'Diretório dos experimentos',
+                text: "Digite o caminho para o diretório dos experimentos, onde os poços baixados estão localizados",
+                input: 'text',
+                inputValue: inputvalue,
+                showCancelButton: true,
+                confirmButtonText: 'Baixar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.value) {
+                    let url = this.csvExportLink+'?dir='+result.value
+                    window.open(url, '_blank');
+                }
+            })
+            
         }
     },
     created() {        

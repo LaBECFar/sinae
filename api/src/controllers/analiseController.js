@@ -340,6 +340,9 @@ const analiseController = {
             search.analiseId = req.params.id
         }
 
+        // diretório onde os poços estão localizados na maquina do solicitante
+        let dir = req.params.dir || req.query.dir || req.body.dir
+
         frameModel.find( search, {
                 tempoMilis: 1,
                 pocos: 1,
@@ -371,10 +374,16 @@ const analiseController = {
                         }
 
                         frame.pocos.forEach((poco) => {
+                            let link = poco.url
+
+                            if(dir){
+                                link = link.replace('/usr/uploads/experimentos', dir)
+                            }
+
                             if (fs.existsSync(poco.url)) {
                                 let item = {
                                     i: count,
-                                    file: poco.url,
+                                    file: link,
                                     miliseconds: frame.tempoMilis,
                                     previousPoco: previousPoco,
                                     firstPoco: isFirst,

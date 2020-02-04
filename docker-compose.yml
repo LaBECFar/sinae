@@ -17,33 +17,35 @@ services:
     hostname: rest-api-sinae
     container_name: rest-api-sinae
     depends_on: ["mongo"]
-    build: ./
+    build: ./api
     command: npm run dev
     ports:
       - "3000:3000"
     volumes:
-      - ./:/usr/app
-      - /usr/uploads:/usr/uploads
+      - ./api:/usr/app
+      - c:/uploads:/usr/uploads
     networks:
       - express-mongo-network-sinae
     healthcheck:
         test: ["CMD", "curl", "-f", "http://mongo:27017"]
         interval: 30s
         timeout: 10s
-        retries: 5           
-#  web-app:
-#    hostname: web-app
-#    container_name: web-app
-#    depends_on: ["rest-api"]
-#    logging:
-#      driver: none
-#    build: ./web-app
-#    ports:
-#      - "8081:80"
-#    networks:
-#      - express-mongo-network      
+        retries: 5               
+  web-client:
+    hostname: web-client
+    container_name: web-client
+    depends_on: ["rest-api-sinae"]
+    logging:
+      driver: none
+    build: ./web-client
+    command: npm run build
+    ports:
+      - "8081:80"
+    networks:
+      - express-mongo-network-sinae
 networks: 
     express-mongo-network-sinae:
       driver: bridge
+
 volumes:
     mongodata:

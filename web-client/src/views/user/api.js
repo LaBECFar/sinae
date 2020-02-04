@@ -25,7 +25,17 @@ export const apiUsuario = {
 					resolve(resp.data)
 				})
 				.catch((e) => {
-					reject(new Error(`Erro ao fazer login ${e}`))
+                    let errorMsg = "Não foi possível fazer login, verifique sua conexão e tente novamente"
+
+                    if(e.response && e.response.data){
+                        const {error, message} = e.response.data
+
+                        if(error){
+                            errorMsg = message
+                        }
+                    }
+                    
+					reject(new Error(errorMsg))
 				})
 		})
 	},

@@ -63,7 +63,7 @@ export default {
                     }
                 })
                 .catch(e => {
-                    this.msg.text = `Erro ao atualizar o experimento ${e}`;
+                    this.msg = e.message
                 });
         }
     },

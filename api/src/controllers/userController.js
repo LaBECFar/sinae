@@ -29,7 +29,7 @@ const userController = {
                 });
 
             } else {
-                return res.status(401).json({ error: true, message: "Senha inválida" });
+                return res.status(422).json({ error: true, message: "Senha inválida" });
             }
         })
     },

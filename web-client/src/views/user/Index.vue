@@ -114,7 +114,7 @@ export default {
                             this.refresh()
                         })
                         .catch(e => {
-                            //console.log(e)
+                            console.log(e)
                         })
                 }
             })
@@ -130,6 +130,7 @@ export default {
                 })
                 .catch(e => {
                     this.isBusy = false
+                    console.log(e)
                 })
         }
     },

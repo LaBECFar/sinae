@@ -23,7 +23,7 @@ services:
       - "3000:3000"
     volumes:
       - ./api:/usr/app
-      - c:/uploads:/usr/uploads
+      - /usr/uploads:/usr/uploads
     networks:
       - express-mongo-network-sinae
     healthcheck:
@@ -35,8 +35,6 @@ services:
     hostname: web-client
     container_name: web-client
     depends_on: ["rest-api-sinae"]
-    logging:
-      driver: none
     build: ./web-client
     ports:
       - "8081:80"

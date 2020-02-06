@@ -29,6 +29,7 @@
 
 <script>
 import { apiUsuario } from "./api";
+import { config } from '../../config'
 
 export default {
     name: "login",
@@ -59,7 +60,8 @@ export default {
                 .login(this.form.email, this.form.password)
                 .then(data => {
                     if (data.success) {
-                        this.$router.push("/experimento");
+                        // this.$router.push("/experimento");
+                        window.location = config.URL_APP
                     }
                 })
                 .catch(e => {

@@ -17,6 +17,11 @@ npm run build
 
 cd ..
 
+cd api
+npm install
+
+cd .. 
+
 docker-compose build
 
 docker-compose up

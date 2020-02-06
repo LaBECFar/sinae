@@ -113,9 +113,6 @@ export default {
                         .then(() => {
                             this.refresh()
                         })
-                        .catch(e => {
-                            console.log(e)
-                        })
                 }
             })
         },
@@ -128,9 +125,8 @@ export default {
                     this.items = data
                     this.isBusy = false
                 })
-                .catch(e => {
+                .catch(() => {
                     this.isBusy = false
-                    console.log(e)
                 })
         }
     },

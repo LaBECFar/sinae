@@ -12,10 +12,11 @@ cecho(){
 
 # Build Web Client
 cd web-client
-sudo npm run build
+npm install
+npm run build
 
 cd ..
 
-sudo docker-compose build
+docker-compose build
 
-sudo docker-compose up
+docker-compose up

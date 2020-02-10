@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -50,4 +51,8 @@ fun Activity.hideKeyboard() {
 fun Context.hideKeyboard(view: View) {
      val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
      inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun EditText.customMask(mask: String) {
+     addTextChangedListener(MaskEditText(this, mask))
 }

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.api.AnaliseClient
 import br.com.webgenium.sinae.custom.TOAST_ERROR
+import br.com.webgenium.sinae.custom.customMask
 import br.com.webgenium.sinae.custom.hideKeyboard
 import br.com.webgenium.sinae.custom.toast
 import br.com.webgenium.sinae.model.Analise
@@ -77,16 +78,34 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             }
         }
 
-        // Clicando em campos com tempo levara o video até o momento
+
+        setupQuadrants()
+    }
+
+    // Mascarar os campos no formato de tempo 00:00
+    // Clicando em campos com tempo levara o video até o momento
+    private fun setupQuadrants(){
+        // Q1
+        q1_inicio.customMask("##:##")
+        q1_fim.customMask("##:##")
         q1_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
         q1_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
 
+        // Q2
+        q2_inicio.customMask("##:##")
+        q2_fim.customMask("##:##")
         q2_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
         q2_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
 
+        // Q3
+        q3_inicio.customMask("##:##")
+        q3_fim.customMask("##:##")
         q3_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
         q3_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
 
+        // Q4
+        q4_inicio.customMask("##:##")
+        q4_fim.customMask("##:##")
         q4_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
         q4_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
     }

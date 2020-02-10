@@ -1,95 +1,312 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="15dp"
+    android:orientation="vertical"
     tools:context=".ConfiguracoesActivity">
 
-    <LinearLayout
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_weight="1"
+        app:layout_constraintBottom_toTopOf="@id/btn_save">
 
-        <!-- API URL -->
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/api_url"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="15dp">
 
-        <EditText
-            android:id="@+id/et_url"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/backgroundInput"
-            android:importantForAutofill="no"
-            android:inputType="textUri"
-            android:padding="10dp"
-            android:text="http://192.168.0.1"
-            tools:ignore="HardcodedText" />
-
-        <!-- API PORT -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/api_port"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/et_port"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/backgroundInput"
-            android:importantForAutofill="no"
-            android:inputType="number"
-            android:padding="10dp"
-            android:text="3000"
-            tools:ignore="HardcodedText" />
+            <!-- API URL -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/api_url"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            <EditText
+                android:id="@+id/et_url"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/backgroundInput"
+                android:importantForAutofill="no"
+                android:inputType="textUri"
+                android:padding="10dp"
+                android:text="http://192.168.0.1"
+                tools:ignore="HardcodedText" />
 
 
-        <!-- Frames por segundo (FPS) -->
+            <!-- API PORT -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/api_port"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            <EditText
+                android:id="@+id/et_port"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/backgroundInput"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:padding="10dp"
+                android:text="3000"
+                tools:ignore="HardcodedText" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/frames_per_second"
-            android:textSize="12sp"
-            android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/et_fps"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:background="@color/backgroundInput"
-            android:importantForAutofill="no"
-            android:inputType="number"
-            android:padding="10dp"
-            android:text="1"
-            tools:ignore="HardcodedText" />
+            <!-- Frames por segundo (FPS) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/frames_per_second"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            <EditText
+                android:id="@+id/et_fps"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@color/backgroundInput"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:padding="10dp"
+                android:text="1"
+                tools:ignore="HardcodedText" />
 
-    </LinearLayout>
+
+            <!-- Quadrantes -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/quadrants"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="3dp"/>
+            <LinearLayout
+                android:id="@+id/wrap_quadrantes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Q1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="20dp"
+                        android:text="@string/q1"
+                        android:textAlignment="center"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/q1_inicio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/start"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q1_inicio"/>
+
+                    <EditText
+                        android:id="@+id/q1_fim"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/end"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q1_fim"/>
+
+                </LinearLayout>
+
+                <!-- Q2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="20dp"
+                        android:text="@string/q2"
+                        android:textAlignment="center"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/q2_inicio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/start"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q2_inicio" />
+
+                    <EditText
+                        android:id="@+id/q2_fim"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/end"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q2_fim" />
+
+                </LinearLayout>
+
+                <!-- Q3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="20dp"
+                        android:text="@string/q3"
+                        android:textAlignment="center"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/q3_inicio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/start"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q3_inicio"/>
+
+                    <EditText
+                        android:id="@+id/q3_fim"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/end"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q3_fim"/>
+
+                </LinearLayout>
+
+                <!-- Q4 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="20dp"
+                        android:text="@string/q4"
+                        android:textAlignment="center"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/q4_inicio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/start"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q4_inicio"/>
+
+                    <EditText
+                        android:id="@+id/q4_fim"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@color/backgroundInput"
+                        android:hint="@string/end"
+                        android:importantForAutofill="no"
+                        android:inputType="datetime"
+                        android:padding="10dp"
+                        android:textSize="12sp"
+                        android:tag="q4_fim"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
 
     <Button
         android:id="@+id/btn_save"
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="55dp"
+        android:layout_weight="0"
         android:text="@string/save"
         android:textAllCaps="true"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

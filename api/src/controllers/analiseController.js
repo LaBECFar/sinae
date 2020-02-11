@@ -310,7 +310,7 @@ const analiseController = {
                     Image: 'frame_processor',
                     Cmd: startupParameters,
                     HostConfig: {
-                        NetworkMode: "api_express-mongo-network-sinae",
+                        NetworkMode: "sinae_express-mongo-network-sinae",
                         AutoRemove: true,
                         Binds: [
                             `/usr/uploads:/usr/uploads`

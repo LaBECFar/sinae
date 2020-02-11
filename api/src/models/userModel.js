@@ -33,6 +33,37 @@ const userSchema = new Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+
+    pocosPosition: {
+        radius: {
+            type: Number,
+            default: 40
+        },
+
+        q1: [{
+            top: Number,
+            left: Number,
+            nome: String
+        }],
+
+        q2: [{
+            top: Number,
+            left: Number,
+            nome: String
+        }],
+
+        q3: [{
+            top: Number,
+            left: Number,
+            nome: String
+        }],
+        
+        q4: [{
+            top: Number,
+            left: Number,
+            nome: String
+        }]
     }
 },{
     timestamps: true

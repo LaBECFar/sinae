@@ -14,9 +14,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.webgenium.sinae.api.AnaliseClient
-import br.com.webgenium.sinae.custom.TOAST_ERROR
-import br.com.webgenium.sinae.custom.hideKeyboard
-import br.com.webgenium.sinae.custom.toast
+import br.com.webgenium.sinae.custom.*
 import br.com.webgenium.sinae.model.Analise
 import br.com.webgenium.sinae.model.Frame
 import br.com.webgenium.sinae.database.*
@@ -51,6 +49,8 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     private var player: SimpleExoPlayer? = null
 
+    private var quadrants : ArrayList<EditText> = arrayListOf()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,20 +77,37 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             }
         }
 
-        // Clicando em campos com tempo levara o video até o momento
-        q1_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
-        q1_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+        quadrants = arrayListOf(q1_inicio, q1_fim, q2_inicio, q2_fim, q3_inicio, q3_fim, q4_inicio, q4_fim)
+        setupQuadrants()
 
-        q2_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
-        q2_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
-
-        q3_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
-        q3_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
-
-        q4_inicio.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
-        q4_fim.setOnFocusChangeListener { v, hasFocus -> if(hasFocus) onEdtTextFocused(v as EditText) }
+        btn_import_quadrants.setOnClickListener {
+            importDefaultQuadrantsTime()
+        }
     }
 
+    // Mascarar os campos no formato de tempo 00:00
+    // Clicando em campos com tempo levara o video até o momento
+    private fun setupQuadrants(){
+        quadrants.forEach {
+            it.customMask("##:##")
+            it.setOnFocusChangeListener { v, hasFocus -> if (hasFocus) onEdtTextFocused(v as EditText) }
+        }
+    }
+
+    private fun importDefaultQuadrantsTime() {
+        val sharedPreference = SharedPreference(this)
+
+        quadrants.forEach {
+            val tag = it.tag.toString()
+            val valor = sharedPreference.getValueString(tag)
+
+            valor?.let { v ->
+                if(v.isNotEmpty()){
+                    it.setText(valor)
+                }
+            }
+        }
+    }
 
     private fun validation(): Boolean {
         val duracaoVideo = playerview.player.duration
@@ -109,6 +126,8 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         duracaoVideo: Long
     ): Boolean {
         var isValid = true
+        inicioEdt.error = null
+        fimEdt.error = null
 
         if (inicioEdt.text.isEmpty()) {
             isValid = false
@@ -128,10 +147,12 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 isValid = false
                 inicioEdt.error = getString(R.string.invalid_value)
             }
+
             if (fim > duracaoVideo) {
                 isValid = false
                 fimEdt.error = getString(R.string.invalid_value)
             }
+
             if (inicio > fim) {
                 isValid = false
                 fimEdt.error = getString(R.string.finalvalue_must_be_bigger)
@@ -142,17 +163,9 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     private fun removeFocus() {
-        q1_inicio.clearFocus()
-        q1_fim.clearFocus()
-
-        q2_inicio.clearFocus()
-        q2_fim.clearFocus()
-
-        q3_inicio.clearFocus()
-        q3_fim.clearFocus()
-
-        q4_inicio.clearFocus()
-        q4_fim.clearFocus()
+        quadrants.forEach {
+            it.clearFocus()
+        }
     }
 
     // Salva o experimento no banco de dados

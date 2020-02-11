@@ -110,7 +110,7 @@ const userController = {
                     return res.status(404).send()
                 }
 
-                const {name, email, password, isAdmin} = req.body
+                const {name, email, password, isAdmin, pocosPosition} = req.body
 
                 if(name){
                     user.name = name
@@ -126,6 +126,16 @@ const userController = {
 
                 if(password){
                     user.password = userModel.cryptoPass(password)
+                }
+
+                if(pocosPosition){
+                    const {q1, q2, q3, q4, radius} = pocosPosition
+
+                    if(q1) { user.pocosPosition.q1 = q1 }
+                    if(q2) { user.pocosPosition.q2 = q2 }
+                    if(q3) { user.pocosPosition.q3 = q3 }
+                    if(q4) { user.pocosPosition.q4 = q4 }
+                    if(radius) { user.pocosPosition.radius = radius }
                 }
 
                 user.save(function (err, user) {

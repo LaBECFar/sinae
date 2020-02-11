@@ -152,8 +152,32 @@ export default {
         },
 
 
-        enviar: function()  {
+        isCirclePositionValid(circle){
+            let leftBoundarie = circle.left <= 0
+            let topBoundarie = circle.top <= 0
+            let bottomBoundarie = (circle.top+2*this.radius >= this.min_height)
+            let rightBoundarie = (circle.left+2*this.radius >= this.min_width)
+            return leftBoundarie || topBoundarie || bottomBoundarie || rightBoundarie
+        },
 
+        checkCirclePosition(circle){
+            if ( this.isCirclePositionValid(circle) ) {
+                this.msg.text = `O poço ${circle.nome} está fora da área da imagem`
+                this.msg.type = "danger"
+                circle.stroke = "#dd0000"
+                circle.fill = "#ff0000"
+                this.renderCircles()
+                return false;
+            } else {
+                this.msg.text = false
+                circle.stroke = this.stroke
+                circle.fill = this.fill
+                this.renderCircles()
+            }
+            return true
+        },
+
+        enviar: function()  {
             let myImg = document.getElementById("img_frame");
 
             let realWidth = myImg.naturalWidth;
@@ -166,21 +190,8 @@ export default {
             for (let i = 0; i < this.circles.length; i++) {
                 let circle = this.circles[i]
             
-                if (
-                        circle.top <= 0 || 
-                        circle.left <= 0 || 
-                        (circle.top+2*this.radius >= this.min_height) ||
-                        (circle.left+2*this.radius >= this.min_width)
-                    ) {
-                    this.msg.text = `O poço ${circle.nome} está fora da área da imagem`
-                    this.msg.type = "danger"
-                    console.log(this.circles[i])
-                    this.circles[i].stroke = "#ff0000"
-                    this.renderCircles()
-                    return false;
-                } else {
-                    this.circles[i].stroke = "#ffFFFF"
-                    this.renderCircles()
+                if(!this.checkCirclePosition(circle)) {
+                    return false
                 }
 
                 let y = parseInt((circle.top / this.min_width) * realWidth) + aux_radio
@@ -240,7 +251,6 @@ export default {
         },
 
         renderCircles() {
-
             this.canvas.selection = false; // disable group selection
             this.canvas.clear()
 
@@ -248,32 +258,57 @@ export default {
 
             for (let i = 0; i < t; i++) {
                 let circle = this.circles[i]
-                
-                let stroke = this.stroke;
-                let fill = this.fill;
-
-                if (circle.stroke) {
-                    stroke = circle.stroke;
-                    fill = circle.stroke
-                }
-
-                let c = new fabric.Circle({
-                    id: i,
-                    fill: fill,
-                    stroke: stroke,
-                    opacity: 0.5,
-                    top: circle.top,
-                    left: circle.left,
-                    radius: this.radius,
-                    hasControls: false
-                });
-                this.canvas.add(c);
+                let c = this.createCircle(circle, i)
+                this.canvas.add(c)
             }
 
             this.canvas.renderAll();
         },
 
+        createCircle(circle, id) {
+            let stroke = this.stroke
+            let fill = this.fill
+
+            if (circle.stroke) {
+                stroke = circle.stroke || stroke
+                fill = circle.fill || fill
+            }
+
+            let c = new fabric.Circle({
+                id: id,
+                fill: fill,
+                stroke: stroke,
+                opacity: 0.5,
+                top: circle.top,
+                left: circle.left,
+                radius: this.radius,
+                hasControls: false
+            });
+
+            return c
+        },
+
         nameCircles() {
+            /*let nomes = []
+            let q1 = ["D02", "C02", "B02", "D03", "C03", "B03", "D04", "C04", "B04", "D05", "C05", "B05", "D06", "C06", "B06"]
+            let q2 = ["D07", "C07", "B07", "D08","C08", "B08", "D09", "C09", "B09", "D10", "C10", "B10", "D11", "C11", "B11"]
+            let q3 = ["D02", "C02", "B02", "D03", "C03", "B03", "D04", "C04", "B04", "D05", "C05", "B05", "D06", "C06", "B06"]
+            let q4 = ["D02", "C02", "B02", "D03", "C03", "B03", "D04", "C04", "B04", "D05", "C05", "B05", "D06", "C06", "B06"]
+
+            if(this.quadrante == 1){
+                nomes = q1
+            } else if(this.quadrante == 2) {
+                nomes = q2
+            } else if(this.quadrante == 3) {
+                nomes = q3
+            } else if(this.quadrante == 4) {
+                nomes = q4
+            }
+
+            this.circles.forEach(circle, index => {
+                circle.name = q1[index]
+            });*/
+
             if (this.quadrante == 1) {
                 this.circles[0].nome = "D02"
                 this.circles[1].nome = "C02"
@@ -383,6 +418,7 @@ export default {
                         let id = parseInt(options.target.id)
                         that.circles[id].top = parseInt(options.target.top)
                         that.circles[id].left = parseInt(options.target.left)
+                        that.checkCirclePosition(that.circles[id])
                     });  
 
                     this.renderCircles()

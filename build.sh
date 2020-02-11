@@ -10,6 +10,22 @@ cecho(){
     printf "${!1}${2} ${NC}\n"
 }
 
+# create tmp folder
+if [ ! -d "/usr/uploads" ] 
+then    
+    sudo mkdir "/usr/uploads"
+    sudo chmod 777 -R "/usr/uploads"
+    echo "Directory /usr/uploads created."
+fi
+
+# create tmp folder
+if [ ! -d "/usr/uploads/tmp" ] 
+then
+    sudo mkdir "/usr/uploads/tmp"
+    sudo chmod 777 -R "/usr/uploads/tmp"
+    echo "Directory /usr/uploads/tmp created."
+fi
+
 # Build Web Client
 cd web-client
 npm install

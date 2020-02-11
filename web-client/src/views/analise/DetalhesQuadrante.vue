@@ -45,6 +45,7 @@
 <script>
 
 import {apiAnalise} from './api'
+import {apiUsuario} from '../user/api'
 import {apiFrame} from '../frame/api'
 import { fabric } from 'fabric';
 
@@ -120,6 +121,37 @@ export default {
             this.renderCircles()
         },
 
+        atualizarPosicaoPocos(){
+            let userid = localStorage.getItem('userid')
+
+            if(!userid){
+                //apiUsuario.logout()
+                //this.$router.push("/#/login")
+                console.log("no userid")
+                return false
+            }
+
+            let user = {
+                _id: userid,
+                pocosPosition: {
+                    radius: this.radius
+                }
+            }
+
+            user.pocosPosition["q"+this.quadrante] = this.circles
+            
+            apiUsuario.atualizarUsuario(user)
+                .then((user) => {
+                    if(user){
+                        console.log(user)
+                    }
+                })
+                .catch(() => {
+                    console.log("Não foi possível salvar as posições dos poços")
+                })
+        },
+
+
         enviar: function()  {
 
             let myImg = document.getElementById("img_frame");
@@ -142,7 +174,13 @@ export default {
                     ) {
                     this.msg.text = `O poço ${circle.nome} está fora da área da imagem`
                     this.msg.type = "danger"
+                    console.log(this.circles[i])
+                    this.circles[i].stroke = "#ff0000"
+                    this.renderCircles()
                     return false;
+                } else {
+                    this.circles[i].stroke = "#ffFFFF"
+                    this.renderCircles()
                 }
 
                 let y = parseInt((circle.top / this.min_width) * realWidth) + aux_radio
@@ -161,6 +199,8 @@ export default {
                 raio: aux_radio,
                 pocos: aux_circle
             }
+
+            this.atualizarPosicaoPocos()
 
             apiAnalise.extractPocos(this.analiseCodigo, dados)
                 .then((data) => {
@@ -209,10 +249,18 @@ export default {
             for (let i = 0; i < t; i++) {
                 let circle = this.circles[i]
                 
+                let stroke = this.stroke;
+                let fill = this.fill;
+
+                if (circle.stroke) {
+                    stroke = circle.stroke;
+                    fill = circle.stroke
+                }
+
                 let c = new fabric.Circle({
                     id: i,
-                    fill: this.fill,
-                    stroke: this.stroke,
+                    fill: fill,
+                    stroke: stroke,
                     opacity: 0.5,
                     top: circle.top,
                     left: circle.left,
@@ -223,6 +271,80 @@ export default {
             }
 
             this.canvas.renderAll();
+        },
+
+        nameCircles() {
+            if (this.quadrante == 1) {
+                this.circles[0].nome = "D02"
+                this.circles[1].nome = "C02"
+                this.circles[2].nome = "B02"
+                this.circles[3].nome = "D03"
+                this.circles[4].nome = "C03"
+                this.circles[5].nome = "B03"
+                this.circles[6].nome = "D04"
+                this.circles[7].nome = "C04"
+                this.circles[8].nome = "B04"
+                this.circles[9].nome = "D05"
+                this.circles[10].nome = "C05"
+                this.circles[11].nome = "B05"            
+                this.circles[12].nome = "D06"
+                this.circles[13].nome = "C06"
+                this.circles[14].nome = "B06"
+            }
+
+            if (this.quadrante == 2) {
+                this.circles[0].nome = "D07"
+                this.circles[1].nome = "C07"
+                this.circles[2].nome = "B07"
+                this.circles[3].nome = "D08"
+                this.circles[4].nome = "C08"
+                this.circles[5].nome = "B08"
+                this.circles[6].nome = "D09"
+                this.circles[7].nome = "C09"
+                this.circles[8].nome = "B09"
+                this.circles[9].nome = "D10"
+                this.circles[10].nome = "C10"
+                this.circles[11].nome = "B10"            
+                this.circles[12].nome = "D11"
+                this.circles[13].nome = "C11"
+                this.circles[14].nome = "B11"
+            }
+
+            if (this.quadrante == 3) {
+                this.circles[0].nome = "G07"
+                this.circles[1].nome = "F07"
+                this.circles[2].nome = "E07"
+                this.circles[3].nome = "G08"
+                this.circles[4].nome = "F08"
+                this.circles[5].nome = "E08"
+                this.circles[6].nome = "G09"
+                this.circles[7].nome = "F09"
+                this.circles[8].nome = "E09"
+                this.circles[9].nome = "G10"
+                this.circles[10].nome = "F10"
+                this.circles[11].nome = "E10"            
+                this.circles[12].nome = "G11"
+                this.circles[13].nome = "F11"
+                this.circles[14].nome = "E11"
+            }
+
+            if (this.quadrante == 4) {
+                this.circles[0].nome = "G02"
+                this.circles[1].nome = "F02"
+                this.circles[2].nome = "E02"
+                this.circles[3].nome = "G03"
+                this.circles[4].nome = "F03"
+                this.circles[5].nome = "E03"
+                this.circles[6].nome = "G04"
+                this.circles[7].nome = "F04"
+                this.circles[8].nome = "E04"
+                this.circles[9].nome = "G05"
+                this.circles[10].nome = "F05"
+                this.circles[11].nome = "E05"            
+                this.circles[12].nome = "G06"
+                this.circles[13].nome = "F06"
+                this.circles[14].nome = "E06"
+            }
         }
     },
 
@@ -230,92 +352,42 @@ export default {
 
         this.analiseCodigo = this.$route.params.analiseCodigo
         this.quadrante = this.$route.params.quadrante
-
-        if (this.quadrante == 1) {
-            this.circles[0].nome = "B02"
-            this.circles[1].nome = "C02"
-            this.circles[2].nome = "D02"
-            this.circles[3].nome = "B03"
-            this.circles[4].nome = "C03"
-            this.circles[5].nome = "D03"
-            this.circles[6].nome = "B04"
-            this.circles[7].nome = "C04"
-            this.circles[8].nome = "D04"
-            this.circles[9].nome = "B05"
-            this.circles[10].nome = "C05"
-            this.circles[11].nome = "D05"            
-            this.circles[12].nome = "B06"
-            this.circles[13].nome = "C06"
-            this.circles[14].nome = "D06"
-        }
-
-        if (this.quadrante == 2) {
-            this.circles[0].nome = "B07"
-            this.circles[1].nome = "C07"
-            this.circles[2].nome = "D07"
-            this.circles[3].nome = "B08"
-            this.circles[4].nome = "C08"
-            this.circles[5].nome = "D08"
-            this.circles[6].nome = "B09"
-            this.circles[7].nome = "C09"
-            this.circles[8].nome = "D09"
-            this.circles[9].nome = "B10"
-            this.circles[10].nome = "C10"
-            this.circles[11].nome = "D10"            
-            this.circles[12].nome = "B11"
-            this.circles[13].nome = "C11"
-            this.circles[14].nome = "D11"
-        }
-
-        if (this.quadrante == 3) {
-            this.circles[0].nome = "E07"
-            this.circles[1].nome = "F07"
-            this.circles[2].nome = "G07"
-            this.circles[3].nome = "E08"
-            this.circles[4].nome = "F08"
-            this.circles[5].nome = "G08"
-            this.circles[6].nome = "E09"
-            this.circles[7].nome = "F09"
-            this.circles[8].nome = "G09"
-            this.circles[9].nome = "E10"
-            this.circles[10].nome = "F10"
-            this.circles[11].nome = "G10"            
-            this.circles[12].nome = "E11"
-            this.circles[13].nome = "F11"
-            this.circles[14].nome = "G11"
-        }
-
-        if (this.quadrante == 4) {
-            this.circles[0].nome = "E02"
-            this.circles[1].nome = "F02"
-            this.circles[2].nome = "G02"
-            this.circles[3].nome = "E03"
-            this.circles[4].nome = "F03"
-            this.circles[5].nome = "G03"
-            this.circles[6].nome = "E04"
-            this.circles[7].nome = "F04"
-            this.circles[8].nome = "G04"
-            this.circles[9].nome = "E05"
-            this.circles[10].nome = "F05"
-            this.circles[11].nome = "G05"            
-            this.circles[12].nome = "E06"
-            this.circles[13].nome = "F06"
-            this.circles[14].nome = "G06"
-        }
-
+        
+        //this.nameCircles()
         this.refresh()
     },
+    
 
     mounted() {
-        this.ref = this.$refs.can;
-        this.canvas = new fabric.Canvas(this.ref);
-        let that = this
-        this.canvas.on('object:moved', function(options) {
-            let id = parseInt(options.target.id)
-            that.circles[id].top = parseInt(options.target.top)
-            that.circles[id].left = parseInt(options.target.left)
-        });        
-        this.renderCircles()
+        let userid = localStorage.getItem('userid')
+
+        if(userid){
+            apiUsuario.getUsuario(userid)
+                .then((usuario) => {
+                    if(usuario.pocosPosition) {
+                        let circles = usuario.pocosPosition['q'+this.quadrante]
+                        if(circles && circles.length > 0){
+                            this.circles = circles
+                        }
+                        if(usuario.pocosPosition.radius){
+                            this.radius = usuario.pocosPosition.radius
+                        }
+                    }
+
+                    this.nameCircles()
+
+                    this.ref = this.$refs.can;
+                    this.canvas = new fabric.Canvas(this.ref);
+                    let that = this
+                    this.canvas.on('object:moved', function(options) {
+                        let id = parseInt(options.target.id)
+                        that.circles[id].top = parseInt(options.target.top)
+                        that.circles[id].left = parseInt(options.target.left)
+                    });  
+
+                    this.renderCircles()
+                })
+        }
     }
 };
 </script>

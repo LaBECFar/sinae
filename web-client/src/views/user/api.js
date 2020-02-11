@@ -120,7 +120,7 @@ export const apiUsuario = {
                     resolve(resp.data);
                 })
                 .catch(e => {
-                    reject(new Error(`Erro ao atualizar o Experimento ${e}.`));
+                    reject(new Error(`Erro ao atualizar o Usuário ${e}.`));
                 });
         });
     },

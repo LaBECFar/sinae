@@ -11,6 +11,7 @@ cecho(){
 }
 
 # create tmp folder
+echo "Checando pastas!"
 if [ ! -d "/usr/uploads" ] 
 then    
     sudo mkdir "/usr/uploads"

@@ -36,6 +36,9 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import org.beyka.tiffbitmapfactory.CompressionScheme
+import org.beyka.tiffbitmapfactory.Orientation
+import org.beyka.tiffbitmapfactory.TiffSaver
 
 
 class NovaAnaliseVideoActivity : AppCompatActivity() {
@@ -342,21 +345,47 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         val analisisDir = File(file, "${frame.analiseId}")
         analisisDir.mkdir()
 
-        // Arquivo em que a imagem sera salva
-        file = File(analisisDir, "${frame.filename}.jpg")
+        // JPG/PNG file
+        // file = bitmapToJpg(bmp, analisisDir, frame)
+
+        // BMP file
+        // file = bitmapToBmp(bmp, analisisDir, frame)
+
+        // TIFF file
+        file = bitmapToTiff(bmp, analisisDir, frame)
+
+        return Uri.parse(file.absolutePath)
+    }
+
+    private fun bitmapToTiff(bmp: Bitmap, dir: File, frame: Frame): File {
+        val file = File(dir, "${frame.filename}.tif")
+        var options = TiffSaver.SaveOptions()
+        options.compressionScheme = CompressionScheme.NONE
+        options.orientation = Orientation.TOP_LEFT
+        options.author = "LaBECFar"
+        TiffSaver.appendBitmap(file.absolutePath, bmp, options)
+        return file
+    }
+
+    private fun bitmapToJpg(bmp: Bitmap, dir: File, frame: Frame) : File {
+        val file = File(dir, "${frame.filename}.jpg")
 
         try {
             val stream: OutputStream = FileOutputStream(file)
-            bmp.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
-        } catch (e: IOException) { // Catch the exception
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
-        // Return the saved image uri
-        return Uri.parse(file.absolutePath)
+        return file
+    }
 
+    private fun bitmapToBmp(bmp: Bitmap, dir: File, frame: Frame): File {
+        val file = File(dir, "${frame.filename}.bmp")
+        AndroidBmpUtil.save(bmp, file.absolutePath)
+        return file
     }
 
     // Converte os valores digitados nos EditTexts para uma lista de strings

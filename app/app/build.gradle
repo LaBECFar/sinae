@@ -64,6 +64,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
 
+    compile 'com.github.beyka:androidtiffbitmapfactory:0.9.8.7'
+
 //    def uploadServiceVersion = "4.0.0-rc1"
 //    implementation "net.gotev:uploadservice:$uploadServiceVersion"
 }

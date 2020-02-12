@@ -106,9 +106,12 @@ const frameController = {
                 return res.status(500).json({ error: true,message: errorMsg, success: false });
             }
 
-            if(file.type !== 'image/jpeg' && file.type !== 'image/png'){
+            let permitedTypes = ['image/jpeg', 'image/png', 'image/bmp', 'image/x-ms-bmp', 'image/tiff']
+
+            if(permitedTypes.indexOf(file.type) <= -1){
                 let errorMsg = 'Tipo de arquivo não permitido'
-                return res.status(500).json({ error: true, message: errorMsg, success: false });
+                console.log("Tentativa de upload não permitido: " + file.type)
+                return res.status(415).json({ error: true, message: errorMsg, success: false });
             }
 
             if(!fs.existsSync(oldpath)){

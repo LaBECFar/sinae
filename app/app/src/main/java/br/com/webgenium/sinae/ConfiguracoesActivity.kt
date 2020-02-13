@@ -35,6 +35,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
         loadUrl()
         loadPort()
         loadFps()
+        loadFiletype()
         loadQuadrants()
     }
 
@@ -58,6 +59,19 @@ class ConfiguracoesActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadFiletype() {
+        val types = resources.getStringArray(R.array.filetypes)
+        val filetype = sharedPreference.getValueString("filetype")
+
+        types.forEachIndexed  { index, item ->
+            if(item == filetype) {
+                et_filetype.setSelection(index)
+                return
+            }
+        }
+
+    }
+
     private fun loadPort() {
         val port = sharedPreference.getValueString("api_port")
         if (port != null) {
@@ -79,8 +93,9 @@ class ConfiguracoesActivity : AppCompatActivity() {
         val isUrlSaved = saveUrl()
         val isFpsSaved = saveFps()
         val isQuadrantsSaved = saveQuadrants()
+        val isFiletypeSaved = saveFiletype()
 
-        if(isPortSaved && isUrlSaved && isFpsSaved && isQuadrantsSaved){
+        if(isPortSaved && isUrlSaved && isFpsSaved && isQuadrantsSaved && isFiletypeSaved){
             toast(getString(R.string.config_saved), TOAST_SUCCESS)
         } else {
             toast(getString(R.string.config_invalid), TOAST_ERROR)
@@ -106,6 +121,12 @@ class ConfiguracoesActivity : AppCompatActivity() {
         }
 
         return false
+    }
+
+    private fun saveFiletype(): Boolean {
+        var filetype = et_filetype.selectedItem.toString()
+        sharedPreference.save("filetype", filetype)
+        return true
     }
 
     private fun saveUrl() : Boolean {

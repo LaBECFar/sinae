@@ -340,21 +340,22 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         val analisisDir = File(file, "${frame.analiseId}")
         analisisDir.mkdir()
 
-        // JPG/PNG file
-        // file = bitmapToJpg(bmp, analisisDir, frame)
+        val filetype = SharedPreference(this).getValueString("filetype")
 
-        // BMP file
-        file = bitmapToBmp(bmp, analisisDir, frame)
-
-        // TIFF file
-        //file = bitmapToTiff(bmp, analisisDir, frame)
+        file = if(filetype == "TIFF") {
+            bitmapToTiff(bmp, analisisDir, frame)
+        } else if (filetype == "BMP") {
+            bitmapToBmp(bmp, analisisDir, frame)
+        } else {
+            bitmapToPng(bmp, analisisDir, frame)
+        }
 
         return Uri.parse(file.absolutePath)
     }
 
     private fun bitmapToTiff(bmp: Bitmap, dir: File, frame: Frame): File {
         val file = File(dir, "${frame.filename}.tif")
-        var options = TiffSaver.SaveOptions()
+        val options = TiffSaver.SaveOptions()
         options.compressionScheme = CompressionScheme.NONE
         options.orientation = Orientation.TOP_LEFT
         options.author = "LaBECFar"
@@ -362,12 +363,12 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         return file
     }
 
-    private fun bitmapToJpg(bmp: Bitmap, dir: File, frame: Frame) : File {
+    private fun bitmapToPng(bmp: Bitmap, dir: File, frame: Frame) : File {
         val file = File(dir, "${frame.filename}.jpg")
 
         try {
             val stream: OutputStream = FileOutputStream(file)
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
             stream.flush()
             stream.close()
         } catch (e: IOException) {

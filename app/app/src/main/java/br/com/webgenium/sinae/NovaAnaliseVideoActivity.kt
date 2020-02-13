@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
@@ -44,14 +45,10 @@ import org.beyka.tiffbitmapfactory.TiffSaver
 class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     private var videoUri: Uri? = null
-
     private lateinit var analise: Analise
-
     private val db: AppDatabase by lazy { AppDatabase(this) }
     private val dao: AppDao by lazy { db.dao() }
-
     private var player: SimpleExoPlayer? = null
-
     private var quadrants : ArrayList<EditText> = arrayListOf()
 
 
@@ -445,7 +442,6 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         val t = time.split(":")
         val min = t[0].toLong()
         val sec = t[1].toLong()
-
         return ((min * 60) + sec) * 1000
     }
 
@@ -466,8 +462,8 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        releasePlayer()
         super.onPause()
+        releasePlayer()
     }
 
     override fun onResume() {
@@ -482,18 +478,22 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             player = ExoPlayerFactory.newSimpleInstance(this)
             playerview.player = player
         }
-        val dataSourceFactory: DataSource.Factory =
-            DefaultDataSourceFactory(this, Util.getUserAgent(this, "SINAE"))
-        val videoSource: MediaSource =
-            ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri)
+        val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(this, Util.getUserAgent(this, "SINAE"))
+        val videoSource: MediaSource = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri)
         player?.prepare(videoSource)
+        player?.volume = 0f
     }
 
     private fun releasePlayer() {
-        if (player != null) {
-            player?.release()
-            player = null
+        player?.let {
+            try {
+                it.stop()
+                it.release()
+            } catch (e: Exception) {
+                Log.e("Error", "Erro em releasePlayer()")
+            }
         }
+        player = null
     }
 
 

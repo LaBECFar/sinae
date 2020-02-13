@@ -4,11 +4,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -454,11 +452,17 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
 
     // Abre uma tela para o usuário selecionar o video desejado
     private fun selecionarVideo() {
-        val galleryIntent = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        )
-        startActivityForResult(galleryIntent, SELECT_VIDEO_REQUEST)
+//        val galleryIntent = Intent(
+//            Intent.ACTION_PICK,
+//            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+//        )
+//        startActivityForResult(galleryIntent, SELECT_VIDEO_REQUEST)
+
+        intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "*/*"
+        startActivityForResult(intent, SELECT_VIDEO_REQUEST)
+
+
     }
 
     override fun onPause() {
@@ -504,8 +508,20 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         if (requestCode == SELECT_VIDEO_REQUEST && resultCode == RESULT_OK) {
             if (data != null) {
                 try {
-                    data.data?.let {
-                        videoUri = it
+                    val selectedMedia: Uri? = data.data
+                    //Log.d("teste", selectedMedia.toString())
+
+                    selectedMedia?.let {
+                        val mime: String? = contentResolver?.getType(it)
+
+                        mime?.let { type ->
+                            if (type.toLowerCase().contains("video")) {
+                                videoUri = it
+                            } else {
+                                finish()
+                                toast("Tipo de arquivo inválido", TOAST_ERROR)
+                            }
+                        }
                     }
                 } catch (e: IOException) {
                     toast(getString(R.string.select_video_error), TOAST_ERROR)

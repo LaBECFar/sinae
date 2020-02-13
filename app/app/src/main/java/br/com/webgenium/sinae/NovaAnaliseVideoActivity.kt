@@ -346,10 +346,10 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         // file = bitmapToJpg(bmp, analisisDir, frame)
 
         // BMP file
-        // file = bitmapToBmp(bmp, analisisDir, frame)
+        file = bitmapToBmp(bmp, analisisDir, frame)
 
         // TIFF file
-        file = bitmapToTiff(bmp, analisisDir, frame)
+        //file = bitmapToTiff(bmp, analisisDir, frame)
 
         return Uri.parse(file.absolutePath)
     }

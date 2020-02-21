@@ -7,6 +7,7 @@ import os
 
 # run 
 # sudo python process.py 1 40 5e11f5add6f73000247d162e 1 55 60 2 136 60 3 220 60 4 55 142 5 136 142 6 220 142 7 55 225 8 136 225 9 220 225 10 55 310 11 136 310 12 220 310 13 50 395 14 136 395 15 215 395
+# docker build . -t frame_processor
 
 # parametros
 # 1 - quadrante
@@ -166,7 +167,7 @@ for frame in frames:
         # get only the inside pixels
         fg = cv2.bitwise_or(img, img, mask=mask)
         mask = cv2.bitwise_not(mask)
-        background = np.full(img.shape, 255, dtype=np.uint8)
+        background = np.full(img.shape, 0, dtype=np.uint8)
         bk = cv2.bitwise_or(background, background, mask=mask)
         img_final = cv2.bitwise_or(fg, bk)
 

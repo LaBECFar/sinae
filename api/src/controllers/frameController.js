@@ -3,6 +3,8 @@ const analiseModel = require("../models/analiseModel")
 
 const fs = require("fs")
 const formidable = require('formidable')
+const Jimp = require("jimp") 
+var path = require('path')
 
 const frameController = {
 
@@ -42,16 +44,45 @@ const frameController = {
     
     getImage: (req, res, next) => {
         let id = req.params.id;
-
+                
         frameModel.findById(id)
             .then(frame => {
                 base64 = "";
-                console.log(frame['url'])
+                
                 if (fs.existsSync(frame['url'])) {
-                    var bitmap = fs.readFileSync(frame['url'])
-                    base64 = "data:image/png;base64,".concat(new Buffer(bitmap).toString('base64'))                
+                    var bitmap = "";     
+                    if (path.extname(frame['url']) == '.tif'){
+                        console.log("1")
+                        return Jimp.read(frame['url'], function (err, file) {
+                            if (err) {
+                                console.log(err)
+                            } else {
+                              //console.log(file)
+                              //file.write("/usr/uploads/tmp/aux.png")
+                              //bitmap = fs.readFileSync("/usr/uploads/tmp/aux.png")
+                              base64 = "data:image/png;base64,".concat(new Buffer(file.bitmap.data).toString('base64'))                
+                              return res.json(base64);              
+                            }
+                          }) 
+
+                        /*
+                        Jimp.read("file.tiff", function (err, file) {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            file.write("/new-image.jpg")
+                        }
+                        })*/ 
+                    } else {
+                        console.log("2")
+                        bitmap = fs.readFileSync(frame['url'])
+                        base64 = "data:image/png;base64,".concat(new Buffer(bitmap).toString('base64'))                
+                        return res.json(base64);
+                    }
+                } else {
+                    console.log("Imagem não localizada")
+                    return res.status(404).json({ msg: "Imagem não localizada"});
                 }
-                return res.json(base64);
             })
             .catch(err => {
                 return res.status(422).send(err.errors);

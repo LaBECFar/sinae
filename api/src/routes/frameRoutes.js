@@ -8,7 +8,7 @@ const frameController = require('../controllers/frameController')
 router.get('/', auth, frameController.list);
 
 // imagem em base64
-router.get('/image/:id', auth, frameController.getImage);
+router.get('/image/:id', frameController.getImage);
 
 // detalhes
 router.get('/:id', auth, frameController.get);

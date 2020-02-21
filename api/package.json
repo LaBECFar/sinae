@@ -20,6 +20,7 @@
     "express": "^4.17.1",
     "formidable": "^1.2.1",
     "get-docker-host": "^1.0.3",
+    "jimp": "^0.9.3",
     "json2csv": "^4.5.4",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",

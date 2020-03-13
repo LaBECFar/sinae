@@ -5,6 +5,9 @@ const fs = require("fs")
 const formidable = require('formidable')
 const Jimp = require("jimp") 
 var path = require('path')
+const crypto = require('crypto')
+
+const { exec } = require("child_process");
 
 const frameController = {
 
@@ -46,35 +49,26 @@ const frameController = {
         let id = req.params.id;
                 
         frameModel.findById(id)
-            .then(frame => {
-                base64 = "";
-                
+            .then(async (frame) => {
+                base64 = "";                
                 if (fs.existsSync(frame['url'])) {
                     var bitmap = "";     
-                    if (path.extname(frame['url']) == '.tif'){
-                        console.log("1")
-                        return Jimp.read(frame['url'], function (err, file) {
+                    if (path.extname(frame['url']) == '.tif'){                        
+                        return await Jimp.read(frame['url'], function (err, file) {
                             if (err) {
                                 console.log(err)
                             } else {
-                              //console.log(file)
-                              //file.write("/usr/uploads/tmp/aux.png")
-                              //bitmap = fs.readFileSync("/usr/uploads/tmp/aux.png")
-                              base64 = "data:image/png;base64,".concat(new Buffer(file.bitmap.data).toString('base64'))                
-                              return res.json(base64);              
+                              let hash = crypto.createHash('md5').update(frame['url']).digest("hex")
+                              aux_name = `/usr/uploads/tmp/${hash}_aux.png`
+                              file.write(aux_name)
+                              setTimeout(() => {                                  
+                                  bitmap = fs.readFileSync(aux_name)                                  
+                                  base64 = "data:image/png;base64,".concat(new Buffer(bitmap).toString('base64'))                                 
+                                  return res.json(base64);
+                              }, 500);
                             }
-                          }) 
-
-                        /*
-                        Jimp.read("file.tiff", function (err, file) {
-                        if (err) {
-                            console.log(err)
-                        } else {
-                            file.write("/new-image.jpg")
-                        }
-                        })*/ 
+                          })
                     } else {
-                        console.log("2")
                         bitmap = fs.readFileSync(frame['url'])
                         base64 = "data:image/png;base64,".concat(new Buffer(bitmap).toString('base64'))                
                         return res.json(base64);
@@ -165,7 +159,21 @@ const frameController = {
         
                     fs.rename(oldpath, targetpath, (err) => {
                         if (err) throw err;
-        
+
+                        // se for tif então temos que remover o alfa
+                        // usando o convert Q1_1000.tif -alpha off Q1_1000.tif 
+                        exec(`convert ${targetpath} -alpha off ${targetpath}`, (error, stdout, stderr) => {
+                            if (error) {
+                                console.log(`error: ${error.message}`);
+                                return;
+                            }
+                            if (stderr) {
+                                console.log(`stderr: ${stderr}`);
+                                return;
+                            }
+                            console.log(`stdout: ${stdout}`);
+                        });
+
                         const frame = new frameModel({
                             tempoMilis: tempoMilis,
                             url: targetpath,
@@ -184,13 +192,9 @@ const frameController = {
                 })
                 .catch(err => {
                     return res.status(422).send(err.errors);
-                });  
-            
-            
+                });
         }
-
     },
-
     
     put: (req, res, next) => {
         var id = req.params.id;

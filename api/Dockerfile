@@ -8,6 +8,8 @@ RUN npm install
 
 COPY ./* ./
 
+RUN apk --update add imagemagick
+
 # EXPOSE 8080
 
 # CMD ["nodemon", "app.js"]

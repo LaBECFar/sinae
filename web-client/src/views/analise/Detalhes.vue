@@ -113,7 +113,8 @@ export default {
             },
             framesDownloadLink: '',
             pocosDownloadLink: '',
-            csvExportLink: ''
+            csvExportLink: '',
+            apiInterval: null
         }
     },
     methods: {     
@@ -152,16 +153,38 @@ export default {
                 }
             })
             
+        },
+
+        checkPocosExtraidos() {
+            if(this.analise) {
+                if(this.analise.framesTotal != this.analise.framesProcessados){
+                    // console.log("Verificando extração...")
+                    this.refresh()
+                } else {
+                    clearInterval(this.apiInterval)
+                }
+            }
         }
     },
+
     created() {        
         this.analiseCodigo = this.$route.params.analiseCodigo
         this.framesDownloadLink = apiAnalise.getFramesDownloadLink(this.analiseCodigo)
         this.pocosDownloadLink = apiAnalise.getPocosDownloadLink(this.analiseCodigo)
         this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo)
+        this.apiInterval = setInterval(this.checkPocosExtraidos, 2000)
 
         this.refresh()
+        //this.checkPocosExtraidos()  
+    },
+
+    beforeDestroy() {
+        if(this.apiInterval != null){
+            clearInterval(this.apiInterval)
+            this.apiInterval = null
+        }
     }
+    
 }
 </script>
 

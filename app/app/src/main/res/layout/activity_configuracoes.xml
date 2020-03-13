@@ -11,8 +11,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_weight="1"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/btn_save">
 
         <LinearLayout
@@ -28,6 +28,7 @@
                 android:text="@string/api_url"
                 android:textSize="12sp"
                 android:textStyle="bold" />
+
             <EditText
                 android:id="@+id/et_url"
                 style="@style/Widget.AppCompat.EditText"
@@ -50,6 +51,7 @@
                 android:text="@string/api_port"
                 android:textSize="12sp"
                 android:textStyle="bold" />
+
             <EditText
                 android:id="@+id/et_port"
                 style="@style/Widget.AppCompat.EditText"
@@ -72,12 +74,14 @@
                 android:text="@string/frames_per_second"
                 android:textSize="12sp"
                 android:textStyle="bold" />
+
             <EditText
                 android:id="@+id/et_fps"
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
+                android:layout_marginBottom="10dp"
                 android:background="@color/backgroundInput"
                 android:importantForAutofill="no"
                 android:inputType="number"
@@ -86,15 +90,35 @@
                 tools:ignore="HardcodedText" />
 
 
+            <!-- Filetype -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/frame_file_format"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/et_filetype"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:background="@color/backgroundInput"
+                android:entries="@array/filetypes"
+                android:padding="10dp"
+                android:prompt="@string/file_format" />
+
+
             <!-- Quadrantes -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="3dp"
                 android:text="@string/quadrants"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="3dp"/>
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/wrap_quadrantes"
                 android:layout_width="match_parent"
@@ -129,8 +153,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q1_inicio"/>
+                        android:tag="q1_inicio"
+                        android:textSize="12sp" />
 
                     <EditText
                         android:id="@+id/q1_fim"
@@ -143,8 +167,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q1_fim"/>
+                        android:tag="q1_fim"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -176,8 +200,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q2_inicio" />
+                        android:tag="q2_inicio"
+                        android:textSize="12sp" />
 
                     <EditText
                         android:id="@+id/q2_fim"
@@ -190,8 +214,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q2_fim" />
+                        android:tag="q2_fim"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -223,8 +247,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q3_inicio"/>
+                        android:tag="q3_inicio"
+                        android:textSize="12sp" />
 
                     <EditText
                         android:id="@+id/q3_fim"
@@ -237,8 +261,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q3_fim"/>
+                        android:tag="q3_fim"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -270,8 +294,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q4_inicio"/>
+                        android:tag="q4_inicio"
+                        android:textSize="12sp" />
 
                     <EditText
                         android:id="@+id/q4_fim"
@@ -284,8 +308,8 @@
                         android:importantForAutofill="no"
                         android:inputType="datetime"
                         android:padding="10dp"
-                        android:textSize="12sp"
-                        android:tag="q4_fim"/>
+                        android:tag="q4_fim"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -301,12 +325,12 @@
         style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="55dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
         android:layout_weight="0"
         android:text="@string/save"
         android:textAllCaps="true"
-        android:textSize="14sp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="15dp"/>
+        android:textSize="14sp" />
 
 </LinearLayout>

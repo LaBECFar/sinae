@@ -79,4 +79,11 @@
     <string name="date_format">dd/MM/yyyy</string>
     <string name="quadrants">Quadrantes</string>
     <string name="import_default_quadrants">Importar Padrão</string>
+    <string name="file_format">Formato de arquivos</string>
+    <string name="frame_file_format">Formato de arquivo dos frames</string>
+    <string-array name="filetypes">
+        <item>PNG</item>
+        <item>BMP</item>
+        <item>TIFF</item>
+    </string-array>
 </resources>

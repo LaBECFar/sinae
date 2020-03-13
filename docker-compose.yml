@@ -40,6 +40,8 @@ services:
       - "8081:80"
     networks:
       - express-mongo-network-sinae
+    logging:
+      driver: none
 networks: 
     express-mongo-network-sinae:
       driver: bridge

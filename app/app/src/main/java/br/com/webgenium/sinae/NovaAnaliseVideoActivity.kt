@@ -346,6 +346,8 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
             bitmapToTiff(bmp, analisisDir, frame)
         } else if (filetype == "BMP") {
             bitmapToBmp(bmp, analisisDir, frame)
+        } else if (filetype == "JPG") {
+            bitmapToJpg(bmp, analisisDir, frame)
         } else {
             bitmapToPng(bmp, analisisDir, frame)
         }
@@ -364,11 +366,26 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     }
 
     private fun bitmapToPng(bmp: Bitmap, dir: File, frame: Frame) : File {
-        val file = File(dir, "${frame.filename}.jpg")
+        val file = File(dir, "${frame.filename}.png")
 
         try {
             val stream: OutputStream = FileOutputStream(file)
             bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return file
+    }
+
+    private fun bitmapToJpg(bmp: Bitmap, dir: File, frame: Frame) : File {
+        val file = File(dir, "${frame.filename}.jpg")
+
+        try {
+            val stream: OutputStream = FileOutputStream(file)
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
         } catch (e: IOException) {

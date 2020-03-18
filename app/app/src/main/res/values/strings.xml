@@ -83,6 +83,7 @@
     <string name="frame_file_format">Formato de arquivo dos frames</string>
     <string-array name="filetypes">
         <item>PNG</item>
+        <item>JPG</item>
         <item>BMP</item>
         <item>TIFF</item>
     </string-array>

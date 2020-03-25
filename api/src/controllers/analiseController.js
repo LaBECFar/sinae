@@ -432,7 +432,7 @@ const analiseController = {
                 }]
 
 
-                const json2csvParser = new Parser({ fields, quote: '', delimiter: ';' });
+                const json2csvParser = new Parser({ fields, quote: '', delimiter: ',' });
                 const csv = json2csvParser.parse(data);
                 
                 analiseModel.findById(search.analiseId)

@@ -389,7 +389,6 @@ const analiseController = {
 
                             if (fs.existsSync(poco.url)) {
                                 let item = {
-                                    i: count,
                                     file: link,
                                     miliseconds: frame.tempoMilis,
                                     previousPoco: previousPoco,
@@ -407,10 +406,8 @@ const analiseController = {
 
 
                 // value: nome do atributo do objeto e label: nome da coluna no arquivo csv
-                const fields = [{
-                        label: 'i',
-                        value: 'i'
-                    },{
+                const fields = [
+                    {
                         label: 'File_name',
                         value: 'file'
                     },
@@ -438,7 +435,7 @@ const analiseController = {
                 analiseModel.findById(search.analiseId)
                     .then(analise => {
                         res.attachment(analise.experimentoCodigo + '_' + analise.tempo + '.csv');
-                        return res.status(200).send(csv.substr(1))
+                        return res.status(200).send(csv)
                     }).catch(err => {
                         return res.status(422).send(err.errors);
                     });                    

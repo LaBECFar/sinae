@@ -147,10 +147,13 @@ export default {
                 confirmButtonText: 'Baixar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
+                let url = this.csvExportLink+'?dir='
+                
                 if (result.value) {
-                    let url = this.csvExportLink+'?dir='+result.value
-                    window.open(url, '_blank');
+                    url += result.value
                 }
+
+                window.open(url, '_blank');
             })
             
         },
@@ -172,10 +175,13 @@ export default {
         this.framesDownloadLink = apiAnalise.getFramesDownloadLink(this.analiseCodigo)
         this.pocosDownloadLink = apiAnalise.getPocosDownloadLink(this.analiseCodigo)
         this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo)
-        this.apiInterval = setInterval(this.checkPocosExtraidos, 2000)
-
+        
         this.refresh()
         //this.checkPocosExtraidos()  
+    },
+
+    mounted () {
+        this.apiInterval = setInterval(this.checkPocosExtraidos, 2000)
     },
 
     beforeDestroy() {

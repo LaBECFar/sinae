@@ -373,11 +373,18 @@ const analiseController = {
                             previousPoco = previousFrame.tempoMilis
                         }
 
+                        // o primeiro frames (poços) não deve possuir um Previous_number
+                        if(isFirst){
+                            previousPoco = ''
+                        }
+
                         frame.pocos.forEach((poco) => {
                             let link = poco.url
 
                             if(dir){
                                 link = link.replace('/usr/uploads/experimentos', dir)
+                            } else {
+                                link = link.split('\\').pop().split('/').pop() // remove path, restando apenas o nome do arquivo
                             }
 
                             if (fs.existsSync(poco.url)) {

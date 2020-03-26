@@ -56,22 +56,22 @@
     <b-row>
         <b-col>            
                 <strong>Q1: </strong>
-                <span>{{ analise.frameQuadrante[1].qtd }}</span> / <span>{{ analise.frameQuadrante[1].processados }}</span> 
+                <span>{{ analise.frameQuadrante[1].qtd }}</span> / <span v-bind:class="{ 'q-processados':true, 'yellow-fade': yellowFade[1] }">{{ analise.frameQuadrante[1].processados }}</span> 
                 <br/>
         </b-col>
         <b-col>            
                 <strong>Q2: </strong>
-                <span>{{ analise.frameQuadrante[2].qtd }}</span> / <span>{{ analise.frameQuadrante[2].processados }}</span> 
+                <span>{{ analise.frameQuadrante[2].qtd }}</span> / <span v-bind:class="{ 'q-processados':true, 'yellow-fade': yellowFade[2] }">{{ analise.frameQuadrante[2].processados }}</span> 
                 <br/>
         </b-col>
         <b-col>            
                 <strong>Q3: </strong>
-                <span>{{ analise.frameQuadrante[3].qtd }}</span> / <span>{{ analise.frameQuadrante[3].processados }}</span> 
+                <span>{{ analise.frameQuadrante[3].qtd }}</span> / <span v-bind:class="{ 'q-processados':true, 'yellow-fade': yellowFade[3] }">{{ analise.frameQuadrante[3].processados }}</span> 
                 <br/>
         </b-col>
         <b-col>            
                 <strong>Q4: </strong>
-                <span>{{ analise.frameQuadrante[4].qtd }}</span> / <span>{{ analise.frameQuadrante[4].processados }}</span> 
+                <span>{{ analise.frameQuadrante[4].qtd }}</span> / <span v-bind:class="{ 'q-processados':true, 'yellow-fade': yellowFade[4] }">{{ analise.frameQuadrante[4].processados }}</span> 
                 <br/>
         </b-col>
     </b-row>
@@ -113,9 +113,30 @@ export default {
             framesDownloadLink: '',
             pocosDownloadLink: '',
             csvExportLink: '',
-            apiInterval: null
+            apiInterval: null,
+            yellowFade: [false, false, false, false, false]
         }
     },
+
+    watch: {
+        "analise.frameQuadrante": function(newVal, oldVal){
+            if(newVal && oldVal){
+                for(let i=1; i<oldVal.length; i++){
+                    if(oldVal[i] && newVal[i]){
+                        if(oldVal[i].processados != newVal[i].processados){
+                            this.yellowFade[i] = false
+                            this.yellowFade[i] = true
+                            setTimeout(() => {
+                                this.yellowFade[i] = false
+                            }, 1500)
+                        }
+                    }
+                }
+            }
+        }
+
+    },
+
     methods: {     
         detalhesQuadrante(quadrante) {
             if(quadrante){
@@ -164,7 +185,6 @@ export default {
         checkPocosExtraidos() {
             if(this.analise) {
                 if(this.analise.framesTotal != this.analise.framesProcessados){
-                    // console.log("Verificando extração...")
                     this.refresh()
                 } else {
                     clearInterval(this.apiInterval)
@@ -198,5 +218,21 @@ export default {
 </script>
 
 <style>
-    .link-download {margin-left:10px;}
+.link-download {margin-left:10px;}
+
+@keyframes yellowfade {
+    from {  
+        background: yellow;
+        box-shadow: -1px -1px 3px 6px yellow;
+    }
+    to { 
+        background: transparent;
+        box-shadow: -1px -1px 3px 6px transparent;
+    }
+}
+.yellow-fade {
+    animation-name: yellowfade;
+    animation-duration: 1.5s;
+    border-radius: 2px;
+}
 </style>

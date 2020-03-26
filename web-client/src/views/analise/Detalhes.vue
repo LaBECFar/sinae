@@ -58,26 +58,25 @@
                 <strong>Q1: </strong>
                 <span>{{ analise.frameQuadrante[1].qtd }}</span> / <span>{{ analise.frameQuadrante[1].processados }}</span> 
                 <br/>
-                <b-button @click="detalhesQuadrante(1)" variant="secondary">Extrair Poços</b-button>                
         </b-col>
         <b-col>            
                 <strong>Q2: </strong>
                 <span>{{ analise.frameQuadrante[2].qtd }}</span> / <span>{{ analise.frameQuadrante[2].processados }}</span> 
                 <br/>
-                <b-button @click="detalhesQuadrante(2)" variant="secondary">Extrair Poços</b-button>                
         </b-col>
         <b-col>            
                 <strong>Q3: </strong>
                 <span>{{ analise.frameQuadrante[3].qtd }}</span> / <span>{{ analise.frameQuadrante[3].processados }}</span> 
                 <br/>
-                <b-button @click="detalhesQuadrante(3)" variant="secondary">Extrair Poços</b-button>                
         </b-col>
         <b-col>            
                 <strong>Q4: </strong>
                 <span>{{ analise.frameQuadrante[4].qtd }}</span> / <span>{{ analise.frameQuadrante[4].processados }}</span> 
                 <br/>
-                <b-button @click="detalhesQuadrante(4)" variant="secondary">Extrair Poços</b-button>                
         </b-col>
+    </b-row>
+    <b-row>
+        <b-col><b-button @click="detalhesQuadrante()" variant="secondary">Extrair Poços de Quadrantes</b-button></b-col>
     </b-row>
     <hr>
     <b-row  align-v="center" align-h="between">
@@ -119,7 +118,11 @@ export default {
     },
     methods: {     
         detalhesQuadrante(quadrante) {
-            this.$router.push(`/analise/${this.analise._id}/quadrante/${quadrante}`)
+            if(quadrante){
+                this.$router.push(`/analise/${this.analise._id}/quadrante/${quadrante}`)
+            } else {
+                this.$router.push(`/analise/${this.analise._id}/quadrantes`)
+            }
         },
         refresh() {
             this.isBusy = true
@@ -129,8 +132,8 @@ export default {
                     this.analise = data
                     this.isBusy = false
                 })
-                .catch(e => {
-                    console.log(e)
+                .catch(() => {
+                    //console.log(e)
                     this.isBusy = false
                 })
         },

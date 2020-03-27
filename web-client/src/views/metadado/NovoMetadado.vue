@@ -31,7 +31,7 @@
 					<b-button type="submit" variant="primary">Salvar</b-button>
 				</b-col>
 				<b-col class="text-right">
-					<b-button to="/experimento" variant="secondary">
+					<b-button to="/metadado" variant="secondary">
 						Voltar
 					</b-button>
 				</b-col>

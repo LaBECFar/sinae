@@ -77,7 +77,16 @@ const router = new Router({
 				{
 					path: 'metadado/novo',
 					name: 'metadadoNovo',
-					component: () => import( /* webpackChunkName: "metadadoNovo" */ './views/metadado/NovoMetadado.vue'),
+					component: () => import( /* webpackChunkName: "metadadoNovo" */ './views/metadado/Novo.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
+					path: 'metadado/:id/editar',
+					name: 'metadadoEditar',
+					component: () => import( /* webpackChunkName: "metadadoEditar" */ './views/metadado/Editar.vue'),
 					meta: {
 						middleware: auth
 					}

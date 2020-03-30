@@ -68,7 +68,7 @@ export default {
         
         onSubmit(evt) {
             evt.preventDefault()
-            apiAnalise.atualizAranalise(this.form)
+            apiAnalise.atualizarAnalise(this.form)
                 .then(() => {
                     this.msg.text = "Análise atualizada"
                     this.msg.type = "success"

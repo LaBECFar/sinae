@@ -1,58 +1,79 @@
-const mongoose = require('mongoose');
-const frameModel = require("./frameModel")
+const mongoose = require("mongoose");
+const frameModel = require("./frameModel");
 
 var Schema = mongoose.Schema;
 
-const analisesSchema = new Schema({
-    'placa': {
-        type: String,
-        required: true
-    },
+const analisesSchema = new Schema(
+	{
+		placa: {
+			type: String,
+			required: true
+		},
 
-    'fps' : {
-        type: Number,
-        required: true,
-        default: 1
-    },
+		fps: {
+			type: Number,
+			required: true,
+			default: 1
+		},
 
-    'tempo': {
-        type: String,
-        required: true
-    },
+		tempo: {
+			type: String,
+			required: true
+		},
 
-    'experimentoCodigo' : {
-		type: String,
-		required: true
-    },
-    
-    'dataColeta' : {
-        type: Date,
-        required: true
-    }
-},{
-    timestamps: true
-});
+		experimentoCodigo: {
+			type: String,
+			required: true
+		},
 
+		dataColeta: {
+			type: Date,
+			required: true
+		},
 
+		metadados: [
+			{
+				pocoNome: {
+					type: String,
+					required: true
+				},
 
-analisesSchema.methods.deleteFrames = function(removeFiles = true) { 
+				campos: [
+					{
+						nome: {
+							type: String,
+							required: true
+						},
 
-    if(removeFiles) {
-        const dir = `/usr/uploads/experimentos/${this.experimentoCodigo}/${this.placa}/${this.tempo}`
-        const fs = require('fs')
-        const rmdir = require('rimraf');
-                
-        // remove diretório onde ficam os arquivos da analise
-        if( fs.existsSync(dir) ) {
-            rmdir(dir, function(error){
-                if(error) console.log(error)
-            })
-        }
-    }
+						valor: {
+							type: String
+						}
+					}
+				]
+			}
+		]
+	},
+	{
+		timestamps: true
+	}
+);
 
-    // remove todos os frames dessa analise do banco de dados
-    frameModel.deleteMany({ analiseId: this._id })
+analisesSchema.methods.deleteFrames = function(removeFiles = true) {
+	if (removeFiles) {
+		const dir = `/usr/uploads/experimentos/${this.experimentoCodigo}/${this.placa}/${this.tempo}`;
+		const fs = require("fs");
+		const rmdir = require("rimraf");
 
-}
+		// remove diretório onde ficam os arquivos da analise
+		if (fs.existsSync(dir)) {
+			rmdir(dir, function(error) {
+				if (error) console.log(error);
+			});
+		}
+	}
 
-module.exports = mongoose.model('analise', analisesSchema);
+	// remove todos os frames dessa analise do banco de dados
+	frameModel.deleteMany({ analiseId: this._id });
+};
+
+module.exports = mongoose.model("analise", analisesSchema);

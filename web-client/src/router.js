@@ -119,7 +119,15 @@ const router = new Router({
 				{
 					path: 'analise/:analiseCodigo/quadrantes',
 					name: 'analiseQuadrantes',
-					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/Quadrantes.vue'),
+					component: () => import( /* webpackChunkName: "analiseQuadrantes" */ './views/analise/Quadrantes.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+				{
+					path: 'analise/:analiseCodigo/metadados',
+					name: 'analiseMetadados',
+					component: () => import( /* webpackChunkName: "analiseMetadados" */ './views/analise/Metadados.vue'),
 					meta: {
 						middleware: auth
 					}

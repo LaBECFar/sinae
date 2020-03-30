@@ -105,7 +105,8 @@ const analiseController = {
             fps: req.body.fps,
             experimentoCodigo: req.body.experimentoCodigo,
             placa: req.body.placa,
-            dataColeta: dataColeta
+            dataColeta: dataColeta,
+            metadados: []
         })
 
         analise.save((err, analise) => {
@@ -146,11 +147,12 @@ const analiseController = {
                     dataColeta = moment(dataColeta, "DD/MM/YYYY").toDate()
                 }
 
-                analise.placa = req.body.placa
-                analise.tempo = req.body.tempo
-                analise.fps = req.body.fps
-                analise.dataColeta = dataColeta
-                analise.experimentoCodigo = req.body.experimentoCodigo
+                if(typeof req.body.placa !== 'undefined') analise.placa = req.body.placa
+                if(typeof req.body.tempo !== 'undefined') analise.tempo = req.body.tempo
+                if(typeof req.body.fps !== 'undefined') analise.fps = req.body.fps
+                if(typeof req.body.dataColeta !== 'undefined') analise.dataColeta = dataColeta
+                if(typeof req.body.experimentoCodigo !== 'undefined') analise.experimentoCodigo = req.body.experimentoCodigo
+                if(typeof req.body.metadados !== 'undefined') analise.metadados = req.body.metadados
 
                 analise.save(function (err, analise) {
                     if (err) {

@@ -21,7 +21,14 @@
 				</div>
 			</div>
 
-			<b-button variant="primary" v-on:click="save">Salvar Metadados</b-button>
+			<div class="head-actions">
+				<b-button variant="primary" v-on:click="save">
+					Salvar Metadados
+				</b-button>
+				<b-button variant="secondary" v-on:click="back">
+					Voltar
+				</b-button>
+			</div>
 		</div>
 
 		<b-alert :show="msg.text" :v-show="msg.text" :variant="msg.type">
@@ -46,6 +53,7 @@
 					v-on:click="btnAdicionar()"
 					variant="primary"
 					:disabled="selectedPocos.length == 0"
+					size="sm"
 				>
 					Adicionar Metadado
 				</b-button>
@@ -60,6 +68,7 @@
 						size="sm"
 						v-show="selectedPocos.length > 0"
 						v-on:click="selectedPocos = []"
+						variant="link"
 					>
 						Remover seleção
 					</b-button>
@@ -90,6 +99,9 @@
 					item-title="nome"
 					v-bind:items="this.metadados"
 					v-on:select="addMetadado"
+					empty="Nenhum tipo de metadado cadastrado no sistema"
+					v-bind:emptyAction="newMetadadoType"
+					emptyActionText="Cadastrar"
 				/>
 			</div>
 		</div>
@@ -122,9 +134,9 @@ export default {
 			},
 			showListSelector: false,
 			msg: {
-                text: false,
-                type: ''
-            }
+				text: false,
+				type: ""
+			}
 		};
 	},
 
@@ -308,6 +320,14 @@ export default {
 					this.msg.text = `Erro ao atualizar a análise ${e}`;
 					this.msg.type = "danger";
 				});
+		},
+
+		back() {
+			this.$router.push(`/analise/${this.analiseCodigo}/`);
+		},
+
+		newMetadadoType() {
+			this.$router.push(`/metadado/novo`);
 		}
 	}
 };
@@ -406,5 +426,9 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
+}
+
+.head-actions .btn {
+	margin-left: 10px;
 }
 </style>

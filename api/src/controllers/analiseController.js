@@ -105,8 +105,7 @@ const analiseController = {
             fps: req.body.fps,
             experimentoCodigo: req.body.experimentoCodigo,
             placa: req.body.placa,
-            dataColeta: dataColeta,
-            metadados: []
+            dataColeta: dataColeta
         })
 
         analise.save((err, analise) => {
@@ -152,7 +151,6 @@ const analiseController = {
                 if(typeof req.body.fps !== 'undefined') analise.fps = req.body.fps
                 if(typeof req.body.dataColeta !== 'undefined') analise.dataColeta = dataColeta
                 if(typeof req.body.experimentoCodigo !== 'undefined') analise.experimentoCodigo = req.body.experimentoCodigo
-                if(typeof req.body.metadados !== 'undefined') analise.metadados = req.body.metadados
 
                 analise.save(function (err, analise) {
                     if (err) {

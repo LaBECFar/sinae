@@ -1,22 +1,17 @@
 <template>
-	<div class="analise-metadados">
+	<div class="placa-metadados">
 		<div class="content-head">
 			<div>
-				<h1>Metadados da Análise</h1>
+				<h1>Metadados da Placa</h1>
 				<div class="detalhes">
 					<div class="dado">
-						<strong>Experimento:</strong>
-						{{ analise.experimentoCodigo }}
-					</div>
-
-					<div class="dado">
 						<strong>Placa:</strong>
-						{{ analise.placa }}
+						{{ placa.label }}
 					</div>
 
-					<div class="dado">
-						<strong>Tempo:</strong>
-						{{ analise.tempo }}
+					<div class="dado" v-show="placa.experimentoCodigo">
+						<strong>Experimento:</strong>
+						{{ placa.experimentoCodigo }}
 					</div>
 				</div>
 			</div>
@@ -31,32 +26,53 @@
 			</div>
 		</div>
 
-		<b-alert :show="msg.text" :v-show="msg.text" :variant="msg.type">
+		<b-alert :show="msg.text" :variant="msg.type">
 			{{ msg.text }}
 		</b-alert>
 
 		<b-row>
 			<b-col md="auto">
-				<div class="pocos">
-					<PocosQuadrante
-						v-for="(quadrante, index) in quadrantes"
-						:key="index"
-						v-bind:quadrante="index + 1"
-						v-bind:pocos="quadrante"
-						v-bind:selected="selectedPocos"
-					/>
-				</div>
+				<PocosPlaca
+					v-bind:pocos="pocos"
+					v-bind:selected="selectedPocos"
+				/>
 			</b-col>
 
 			<b-col>
-				<b-button
-					v-on:click="btnAdicionar()"
-					variant="primary"
-					:disabled="selectedPocos.length == 0"
-					size="sm"
-				>
-					Adicionar Metadado
-				</b-button>
+				<div class="selected-actions">
+					<b-button
+						v-on:click="btnAdicionar()"
+						variant="primary"
+						:disabled="selectedPocos.length == 0"
+						size="sm"
+					>
+						Adicionar
+					</b-button>
+
+					<div class="clipboard float-right">
+
+						<b-button
+							v-on:click="btnCopiar()"
+							variant="secondary"
+							:disabled="selectedPocos.length != 1"
+							size="sm"
+							:class="{ copied: clipboard.action == 'copy' }"
+						>
+							{{ clipboard.action == "copy" ? "Copiado" : "Copiar" }}
+						</b-button>
+
+						<b-button
+							v-on:click="btnColar()"
+							variant="secondary"
+							:disabled="selectedPocos.length <= 0 || clipboard.metadados.length <= 0"
+							size="sm"
+							:class="{ pasted: clipboard.action == 'paste' }"
+						>
+							{{ clipboard.action == "paste" ? "Colado" : "Colar" }}
+						</b-button>
+					</div>
+				</div>
+
 				<hr />
 				<div class="info-selecionados">
 					<div>
@@ -89,6 +105,16 @@
 				</div>
 			</b-col>
 		</b-row>
+		<hr>
+		<b-row>
+			<b-col>
+				<h3>Exportação</h3>
+				<b-button variant="primary">Exportar</b-button>
+			</b-col>
+		</b-row>
+
+
+
 		<div class="selector-modal" v-show="showListSelector">
 			<div class="selector-wrapper">
 				<h3>
@@ -97,7 +123,7 @@
 				</h3>
 				<ListSelector
 					item-title="nome"
-					v-bind:items="this.metadados"
+					v-bind:items="this.tiposMetadados"
 					v-on:select="addMetadado"
 					empty="Nenhum tipo de metadado cadastrado no sistema"
 					v-bind:emptyAction="newMetadadoType"
@@ -109,30 +135,34 @@
 </template>
 
 <script>
-import { apiAnalise } from "./api";
-import { apiMetadado } from "../metadado/api";
+import { apiPlaca } from "./api";
+import { apiTipoMetadado } from "../tipo-metadado/api";
 import PocoMetadados from "../../components/metadado/PocoMetadados";
-import PocosQuadrante from "../../components/metadado/PocosQuadrante";
+import PocosPlaca from "../../components/metadado/PocosPlaca";
 import ListSelector from "../../components/ListSelector";
 
 export default {
-	name: "AnaliseMetadados",
+	name: "PlacaMetadados",
 
 	components: {
 		PocoMetadados: PocoMetadados,
-		PocosQuadrante: PocosQuadrante,
+		PocosPlaca: PocosPlaca,
 		ListSelector: ListSelector
 	},
 
 	data() {
 		return {
-			quadrantes: [],
+			pocos: [],
 			selectedPocos: [],
-			metadados: [],
-			analise: {
-				metadados: []
+			tiposMetadados: [],
+			placa: {
+				pocos: []
 			},
 			showListSelector: false,
+			clipboard: {
+				action: null,
+				metadados: []
+			},
 			msg: {
 				text: false,
 				type: ""
@@ -141,15 +171,43 @@ export default {
 	},
 
 	created() {
-		this.analiseCodigo = this.$route.params.analiseCodigo;
-		this.initAnalise();
-		this.initQuadrantes();
+		this.placaId = this.$route.params.id;
+		this.initPlaca();
+		this.initPocos();
 		this.loadMetadados();
 	},
 
 	methods: {
 		btnAdicionar() {
 			this.showListSelector = true;
+		},
+
+		btnCopiar() {
+			let pocosSelecionados = this.placa.pocos.filter(obj => {
+				return this.selectedPocos.indexOf(obj.nome) > -1;
+			});
+
+			let metadados = [];
+			pocosSelecionados.forEach(p => {
+				metadados.push(...p.metadados);
+			});
+
+			this.clipboard.metadados = metadados;
+			this.clipboard.action = "copy";
+			setTimeout(() => {
+				this.clipboard.action = null;
+			}, 1000);
+		},
+
+		btnColar() {
+			this.clipboard.metadados.forEach(metadado => {
+				this.addMetadadoPocos(this.selectedPocos, metadado);
+			});
+
+			this.clipboard.action = "paste";
+			setTimeout(() => {
+				this.clipboard.action = null;
+			}, 1000);
 		},
 
 		addMetadado(metadado) {
@@ -174,173 +232,106 @@ export default {
 		},
 
 		getMetadados: function(pocoNome) {
-			let metadados = this.analise.metadados.find(item => {
-				return item.pocoNome == pocoNome;
+			let pocos = this.placa.pocos.find(poco => {
+				return poco.nome == pocoNome;
 			});
 
-			return metadados ? metadados.campos : [];
+			return pocos ? pocos.metadados : [];
 		},
 
 		addMetadadoPocos: function(pocos, metadado) {
 			pocos.forEach(poco => {
-				let existingMetadado = this.analise.metadados.find(item => {
-					return item.pocoNome == poco;
+				let existingPoco = this.placa.pocos.find(existingPoco => {
+					return existingPoco.nome == poco;
 				});
 
-				if (!existingMetadado) {
-					let metadados = {
-						pocoNome: poco,
-						campos: [metadado]
+				if (!existingPoco) {
+					let novoPoco = {
+						nome: poco,
+						metadados: [metadado]
 					};
 
-					this.analise.metadados.push(metadados);
+					this.placa.pocos.push(novoPoco);
 				} else {
-					let campoIndex = existingMetadado.campos.findIndex(
-						campo => {
-							return campo.nome == metadado.nome;
+					let tipoIndex = existingPoco.metadados.findIndex(
+						existingTipo => {
+							return existingTipo.nome == metadado.nome;
 						}
 					);
 
-					if (campoIndex < 0) {
-						existingMetadado.campos.push(metadado);
+					if (tipoIndex < 0) {
+						existingPoco.metadados.push(metadado);
 					} else {
-						existingMetadado.campos.splice(campoIndex, 1);
-						existingMetadado.campos.push(metadado);
+						existingPoco.metadados.splice(tipoIndex, 1);
+						existingPoco.metadados.push(metadado);
 					}
 				}
 			});
 		},
 
 		loadMetadados() {
-			apiMetadado
-				.listarMetadados()
+			apiTipoMetadado
+				.listarTiposMetadado()
 				.then(data => {
-					this.metadados = data;
+					this.tiposMetadados = data;
 				})
 				.catch(e => {
 					console.log(e);
 				});
 		},
 
-		initAnalise() {
-			apiAnalise
-				.getAnalise(this.analiseCodigo)
+		initPlaca() {
+			apiPlaca
+				.getPlaca(this.placaId)
 				.then(data => {
-					this.analise = data;
+					this.placa = data;
 				})
 				.catch(() => {
 					this.isBusy = false;
 				});
 		},
 
-		initQuadrantes() {
-			let q1 = [
-				"D02",
-				"C02",
-				"B02",
-				"D03",
-				"C03",
-				"B03",
-				"D04",
-				"C04",
-				"B04",
-				"D05",
-				"C05",
-				"B05",
-				"D06",
-				"C06",
-				"B06"
-			];
-			let q2 = [
-				"D07",
-				"C07",
-				"B07",
-				"D08",
-				"C08",
-				"B08",
-				"D09",
-				"C09",
-				"B09",
-				"D10",
-				"C10",
-				"B10",
-				"D11",
-				"C11",
-				"B11"
-			];
-			let q3 = [
-				"F07",
-				"G07",
-				"E07",
-				"G08",
-				"F08",
-				"E08",
-				"G09",
-				"F09",
-				"E09",
-				"G10",
-				"F10",
-				"E10",
-				"G11",
-				"F11",
-				"E11"
-			];
-			let q4 = [
-				"G02",
-				"F02",
-				"E02",
-				"G03",
-				"F03",
-				"E03",
-				"G04",
-				"F04",
-				"E04",
-				"G05",
-				"F05",
-				"E05",
-				"G06",
-				"F06",
-				"E06"
-			];
+		initPocos() {
+			let columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
+			let all = [];
 
-			this.quadrantes = [q1, q2, q3, q4];
+			columns.forEach(elem => {
+				for (let i = 1; i <= 12; i++) {
+					all.push(elem + i);
+				}
+			});
+
+			this.pocos = all;
 		},
 
 		save() {
-			apiAnalise
-				.atualizarAnalise({
-					_id: this.analise._id,
-					metadados: this.analise.metadados
+			apiPlaca
+				.atualizarPlaca({
+					_id: this.placa._id,
+					pocos: this.placa.pocos
 				})
 				.then(() => {
-					this.msg.text = "Análise atualizada";
+					this.msg.text = "Placa atualizada";
 					this.msg.type = "success";
 				})
 				.catch(e => {
-					this.msg.text = `Erro ao atualizar a análise ${e}`;
+					this.msg.text = `Erro ao atualizar a placa ${e}`;
 					this.msg.type = "danger";
 				});
 		},
 
 		back() {
-			this.$router.push(`/analise/${this.analiseCodigo}/`);
+			this.$router.push(`/placa`);
 		},
 
 		newMetadadoType() {
-			this.$router.push(`/metadado/novo`);
+			this.$router.push(`/tipo-metadado/novo`);
 		}
 	}
 };
 </script>
 
 <style scoped>
-.pocos {
-	margin: 0 -2%;
-	max-width: 550px;
-	display: flex;
-	flex-wrap: wrap;
-}
-
 .detalhes {
 	display: flex;
 	margin-bottom: 30px;
@@ -430,5 +421,21 @@ export default {
 
 .head-actions .btn {
 	margin-left: 10px;
+}
+.selected-actions .btn {
+	margin-right: 8px;
+	position: relative;
+	outline: none;
+	box-shadow: none;
+}
+.clipboard .btn {
+	font-size: 14px;
+	line-height: 27px;
+	min-width: 80px;
+}
+.clipboard .btn.copied, .clipboard .btn.pasted {
+	border-color: #54a668;
+	background: #54a668;
+	color: #fff;
 }
 </style>

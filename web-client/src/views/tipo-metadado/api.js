@@ -1,58 +1,58 @@
 import { config } from "../../config";
 
-export const apiMetadado = {
-    novoMetadado(metadado) {
-        if (!metadado) {
+export const apiTipoMetadado = {
+    novoTipoMetadado(tipo) {
+        if (!tipo) {
             return Promise.reject(new Error("Dados não informados."));
         }
         return new Promise((resolve, reject) => {
             config.api
-                .post(`/metadado/`, metadado)
+                .post(`/tipo-metadado/`, tipo)
                 .then(resp => {
                     resolve(resp.data);
                 })
                 .catch(e => {
-                    reject(new Error(`Erro ao criar o metadado ${e}`));
+                    reject(new Error(`Erro ao criar o tipo de metadado ${e}`));
                 });
         });
     },
 
-    atualizarMetadado(metadado) {
-        if (!metadado) {
+    atualizarTipoMetadado(tipo) {
+        if (!tipo) {
             return Promise.reject(new Error("Dados não informados."));
         }
         return new Promise((resolve, reject) => {
             config.api
-                .put(`/metadado/${metadado._id}`, metadado)
+                .put(`/tipo-metadado/${tipo._id}`, tipo)
                 .then(resp => {
                     resolve(resp.data);
                 })
                 .catch(e => {
-                    reject(new Error(`Erro ao atualizar o metadado ${e}.`));
+                    reject(new Error(`Erro ao atualizar o tipo de metadado ${e}.`));
                 });
         });
     },
 
-    removerMetadado(metadadoId) {
-        if (!metadadoId) {
+    removerTipoMetadado(id) {
+        if (!id) {
             return Promise.reject(new Error("Dados não informados."));
         }
         return new Promise((resolve, reject) => {
             config.api
-                .delete(`/metadado/${metadadoId}`)
+                .delete(`/tipo-metadado/${id}`)
                 .then(resp => {
                     resolve(resp.data);
                 })
                 .catch(e => {
-                    reject(new Error(`Erro ao remover o metadado ${e}`));
+                    reject(new Error(`Erro ao remover o tipo de metadado ${e}`));
                 });
         });
     },
 
-    listarMetadados() {
+    listarTiposMetadado() {
 		return new Promise((resolve, reject) => {
             config.api
-                .get(`/metadado/`)
+                .get(`/tipo-metadado/`)
                 .then(resp => {
                     resolve(resp.data);
                 })
@@ -62,10 +62,10 @@ export const apiMetadado = {
         });
     },
 
-    getMetadado(metadadoId) {
+    getTipoMetadado(id) {
         return new Promise((resolve, reject) => {
             config.api
-                .get(`/metadado/${metadadoId}`)
+                .get(`/tipo-metadado/${id}`)
                 .then(resp => {
                     resolve(resp.data);
                 })

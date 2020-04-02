@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-const metadadosSchema = new Schema(
+const tipoMetadadoSchema = new Schema(
 	{
 		nome: {
 			type: String,
@@ -18,4 +18,4 @@ const metadadosSchema = new Schema(
 	}
 );
 
-module.exports = mongoose.model("metadado", metadadosSchema);
+module.exports = mongoose.model("tipoMetadado", tipoMetadadoSchema);

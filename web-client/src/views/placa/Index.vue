@@ -4,12 +4,12 @@
 		<b-row>
 			<b-col>
 				<h2>
-					<v-icon style="width: 32px;" name="tag"></v-icon>
-					Metadados
+					<v-icon style="width: 32px;" name="grid"></v-icon>
+					Placas
 				</h2>
 			</b-col>
 			<b-col class="text-right">
-				<b-button to="/metadado/novo" variant="success" class="mr-2">
+				<b-button to="/placa/novo" variant="success" class="mr-2">
 					<v-icon name="plus"></v-icon>
 					Novo
 				</b-button>
@@ -39,12 +39,22 @@
 				</span>
 			</template>
 
+			<template v-slot:cell(experimentoCodigo)="data">
+				{{ data.item.experimentoCodigo || "-" }}
+			</template>
+
 			<template v-slot:cell(actions)="row">
+				<b-button variant="success" size="sm" v-on:click="metadadosPlaca(row.item)" class="mr-2">
+					<v-icon name="tag"></v-icon>
+					Metadados
+				</b-button>
+				
 				<b-button
 					variant="primary"
 					size="sm"
-					@click="editarMetadado(row.item)"
+					@click="editarPlaca(row.item)"
 					class="mr-2"
+					title="Editar"
 				>
 					<v-icon name="edit-2"></v-icon>
 				</b-button>
@@ -52,8 +62,9 @@
 				<b-button
 					variant="danger"
 					size="sm"
-					@click="removerMetadado(row.item)"
+					@click="removerPlaca(row.item)"
 					class="mr-2"
+					title="Remover"
 				>
 					<v-icon name="trash"></v-icon>
 				</b-button>
@@ -66,7 +77,7 @@
 		</b-table>
 
 		<b-alert variant="secondary" class="text-center" :show="!items.length">
-			Ainda não existem metadados cadastrados
+			Ainda não existem placas cadastradas
 		</b-alert>
 
 		<b-row>
@@ -78,12 +89,12 @@
 </template>
 
 <script>
-import { apiMetadado } from "./api";
+import { apiPlaca } from "./api";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 
 export default {
-	name: "MetadadoIndex",
+	name: "PlacaIndex",
 	components: { Loading },
 	data() {
 		return {
@@ -91,17 +102,17 @@ export default {
 			isLoading: false,
 			fields: [
 				{
-					key: "nome",
-					label: "Nome"
+					key: "label",
+					label: "Label"
 				},
 				{
-					key: "descricao",
-					label: "Descrição"
+					key: "experimentoCodigo",
+					label: "Experimento"
 				},
 				{
 					key: "actions",
 					label: "Ações",
-					class: "metadadoIndexActions"
+					class: "placaIndexActions"
 				}
 			],
 			items: [],
@@ -112,24 +123,28 @@ export default {
 		};
 	},
 	methods: {
-		editarMetadado(metadado) {
-			this.$router.push(`/metadado/${metadado._id}/editar`);
+		metadadosPlaca(placa){
+			this.$router.push(`/placa/${placa._id}/metadados`);
 		},
 
-		removerMetadado(metadado) {
+		editarPlaca(placa) {
+			this.$router.push(`/placa/${placa._id}/editar`);
+		},
+
+		removerPlaca(placa) {
 			this.$swal
 				.fire({
 					title: "Tem certeza?",
 					text: "Você não poderá desfazer isso ok!",
 					type: "warning",
 					showCancelButton: true,
-					confirmButtonText: "Sim, remover metadado!",
+					confirmButtonText: "Sim, remover!",
 					cancelButtonText: "Cancelar"
 				})
 				.then(result => {
 					if (result.value) {
-						apiMetadado
-							.removerMetadado(metadado._id)
+						apiPlaca
+							.removerPlaca(placa._id)
 							.then(() => {
 								this.refresh();
 							})
@@ -143,14 +158,13 @@ export default {
 		refresh() {
 			this.isBusy = true;
 			this.isLoading = false;
-			apiMetadado
-				.listarMetadados()
+			apiPlaca
+				.listarPlacas()
 				.then(data => {
 					this.items = data;
 					this.isBusy = false;
 				})
-				.catch(e => {
-					console.log(e);
+				.catch(function() {
 					this.isBusy = false;
 				});
 		}
@@ -162,7 +176,7 @@ export default {
 </script>
 
 <style>
-.metadadoIndexActions {
+.placaIndexActions {
 	width: 300px;
 	text-align: center;
 }

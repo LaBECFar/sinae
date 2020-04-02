@@ -29,29 +29,7 @@ const analisesSchema = new Schema(
 		dataColeta: {
 			type: Date,
 			required: true
-		},
-
-		metadados: [
-			{
-				pocoNome: {
-					type: String,
-					required: true
-				},
-
-				campos: [
-					{
-						nome: {
-							type: String,
-							required: true
-						},
-
-						valor: {
-							type: String
-						}
-					}
-				]
-			}
-		]
+		}
 	},
 	{
 		timestamps: true

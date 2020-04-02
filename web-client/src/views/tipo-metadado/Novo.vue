@@ -31,7 +31,7 @@
 					<b-button type="submit" variant="primary">Salvar</b-button>
 				</b-col>
 				<b-col class="text-right">
-					<b-button to="/metadado" variant="secondary">
+					<b-button to="/tipo-metadado" variant="secondary">
 						Voltar
 					</b-button>
 				</b-col>
@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import { apiMetadado } from "./api";
+import { apiTipoMetadado } from "./api";
 
 export default {
-	name: "novoMetadado",
+	name: "novoTipoMetadado",
 	data() {
 		return {
 			form: {
@@ -60,14 +60,14 @@ export default {
 	methods: {
 		onSubmit(evt) {
 			evt.preventDefault();
-			apiMetadado
-				.novoMetadado(this.form)
+			apiTipoMetadado
+				.novoTipoMetadado(this.form)
 				.then(() => {
-					this.msg.text = "Metadado salvo";
+					this.msg.text = "Tipo de Metadado salvo";
 					this.msg.type = "success";
 				})
 				.catch(e => {
-					this.msg.text = `Erro ao salvar o metadado ${e}`;
+					this.msg.text = `Erro ao salvar o tipo de metadado ${e}`;
 					this.msg.type = "danger";
 				});
 		}

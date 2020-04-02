@@ -66,27 +66,63 @@ const router = new Router({
 				},
 
 				{
-					path: 'metadado',
-					name: 'metadadoIndex',
-					component: () => import( /* webpackChunkName: "metadadoIndex" */ './views/metadado/Index.vue'),
+					path: 'placa',
+					name: 'placaIndex',
+					component: () => import( /* webpackChunkName: "placaIndex" */ './views/placa/Index.vue'),
 					meta: {
 						middleware: auth
 					}
 				},
 
 				{
-					path: 'metadado/novo',
-					name: 'metadadoNovo',
-					component: () => import( /* webpackChunkName: "metadadoNovo" */ './views/metadado/Novo.vue'),
+					path: 'placa/novo',
+					name: 'placaNovo',
+					component: () => import( /* webpackChunkName: "placaNovo" */ './views/placa/Novo.vue'),
 					meta: {
 						middleware: auth
 					}
 				},
 
 				{
-					path: 'metadado/:id/editar',
-					name: 'metadadoEditar',
-					component: () => import( /* webpackChunkName: "metadadoEditar" */ './views/metadado/Editar.vue'),
+					path: 'placa/:id/editar',
+					name: 'placaEditar',
+					component: () => import( /* webpackChunkName: "placaEditar" */ './views/placa/Editar.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
+					path: 'placa/:id/metadados',
+					name: 'placaMetadados',
+					component: () => import( /* webpackChunkName: "placaMetadados" */ './views/placa/Metadados.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
+					path: 'tipo-metadado',
+					name: 'tipoMetadadoIndex',
+					component: () => import( /* webpackChunkName: "tipoMetadadoIndex" */ './views/tipo-metadado/Index.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
+					path: 'tipo-metadado/novo',
+					name: 'tipoMetadadoNovo',
+					component: () => import( /* webpackChunkName: "tipoMetadadoNovo" */ './views/tipo-metadado/Novo.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
+					path: 'tipo-metadado/:id/editar',
+					name: 'tipoMetadadoEditar',
+					component: () => import( /* webpackChunkName: "tipoMetadadoEditar" */ './views/tipo-metadado/Editar.vue'),
 					meta: {
 						middleware: auth
 					}
@@ -120,14 +156,6 @@ const router = new Router({
 					path: 'analise/:analiseCodigo/quadrantes',
 					name: 'analiseQuadrantes',
 					component: () => import( /* webpackChunkName: "analiseQuadrantes" */ './views/analise/Quadrantes.vue'),
-					meta: {
-						middleware: auth
-					}
-				},
-				{
-					path: 'analise/:analiseCodigo/metadados',
-					name: 'analiseMetadados',
-					component: () => import( /* webpackChunkName: "analiseMetadados" */ './views/analise/Metadados.vue'),
 					meta: {
 						middleware: auth
 					}

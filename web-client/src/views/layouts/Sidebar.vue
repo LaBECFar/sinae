@@ -22,13 +22,25 @@
 								- Novo
 							</router-link>
 						</li>
+					</ul>
+				</li>
+				<li>
+					<v-icon name="tag"></v-icon>
+					Metadados
+					<ul class="sub-menu">
 						<li>
-							<router-link to="/metadado">
-								- Metadados
+							<router-link to="/tipo-metadado">
+								- Tipos
+							</router-link>
+						</li>
+						<li>
+							<router-link to="/placa">
+								- Placas
 							</router-link>
 						</li>
 					</ul>
 				</li>
+
 				<li v-if="isAdmin">
 					<v-icon name="users"></v-icon>
 					Usuários

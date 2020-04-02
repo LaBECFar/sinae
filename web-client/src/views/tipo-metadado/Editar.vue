@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h2>Editar Metadado</h2>
+		<h2>Editar Tipo de Metadado</h2>
 
 		<b-alert :show="msg.text" :v-show="msg.text" :variant="msg.type">
 			{{ msg.text }}
@@ -33,7 +33,7 @@
 					<b-button type="submit" variant="primary">Salvar</b-button>
 				</b-col>
 				<b-col class="text-right">
-					<b-button to="/metadado" variant="secondary">
+					<b-button to="/tipo-metadado" variant="secondary">
 						Voltar
 					</b-button>
 				</b-col>
@@ -43,10 +43,10 @@
 </template>
 
 <script>
-import { apiMetadado } from "./api";
+import { apiTipoMetadado } from "./api";
 
 export default {
-	name: "editarMetadado",
+	name: "editarTipoMetadado",
 	data() {
 		return {
 			form: {
@@ -64,19 +64,19 @@ export default {
 	methods: {
 		onSubmit(evt) {
 			evt.preventDefault();
-			apiMetadado
-				.atualizarMetadado(this.form)
+			apiTipoMetadado
+				.atualizarTipoMetadado(this.form)
 				.then(() => {
-					this.msg.text = "Metadado atualizado";
+					this.msg.text = "Tipo de metadado atualizado";
 					this.msg.type = "success";
 				})
 				.catch(e => {
-					this.msg.text = `Erro ao atualizar o metadado ${e}`;
+					this.msg.text = `Erro ao atualizar o tipo de metadado ${e}`;
 					this.msg.type = "danger";
 				});
 		},
 		refresh() {
-			apiMetadado.getMetadado(this.$route.params.id).then(ret => {
+			apiTipoMetadado.getTipoMetadado(this.$route.params.id).then(ret => {
 				this.form = ret;
 			});
 		}

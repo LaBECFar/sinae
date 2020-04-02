@@ -73,5 +73,9 @@ export const apiPlaca = {
                     reject(e);
                 });
         });
-    }
+    },
+
+    getCsvMetadadosLink(id) {
+		return `${config.URL_API}/placa/${id}/export-metadados`;
+	}
 };

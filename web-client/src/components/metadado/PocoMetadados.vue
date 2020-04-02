@@ -47,7 +47,7 @@ export default {
 	background: #ddd;
 	border-radius: 20px;
 	color: #222;
-	margin: 0 10px 10px 0px;
+	margin: 0 6px 10px 0px;
 	position: relative;
 }
 

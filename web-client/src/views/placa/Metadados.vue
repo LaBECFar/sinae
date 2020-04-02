@@ -108,12 +108,19 @@
 		<hr>
 		<b-row>
 			<b-col>
-				<h3>Exportação</h3>
-				<b-button variant="primary">Exportar</b-button>
+				<b-card title="Exportação">
+					<b-card-text>
+						Você pode exportar os metadados dos poços em formato CSV
+					</b-card-text>
+
+					<b-button variant="primary" @click="exportarMetadadosCsv()">
+						Exportar Metadados
+					</b-button>
+				</b-card>
 			</b-col>
 		</b-row>
 
-
+		<br>
 
 		<div class="selector-modal" v-show="showListSelector">
 			<div class="selector-wrapper">
@@ -178,6 +185,10 @@ export default {
 	},
 
 	methods: {
+		exportarMetadadosCsv() {
+			let url = apiPlaca.getCsvMetadadosLink(this.placaId)
+			window.open(url, "_blank");
+		},
 		btnAdicionar() {
 			this.showListSelector = true;
 		},

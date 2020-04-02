@@ -146,17 +146,7 @@
 				</b-card>
 			</b-col>
 
-			<b-col>
-				<b-card title="Metadados">
-					<b-card-text>
-						Você pode adicionar metadados nos poços dessa analise
-					</b-card-text>
-
-					<b-button variant="secondary" @click="metadados()">
-						Gerenciar Metadados
-					</b-button>
-				</b-card>
-			</b-col>
+			
 
 			<b-col>
 				<b-card title="Exportação">
@@ -197,6 +187,7 @@
 				</b-card>
 			</b-col>
 
+			<b-col></b-col>
 			<b-col></b-col>
 		</b-row>
 	</div>

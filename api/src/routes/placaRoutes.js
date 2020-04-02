@@ -6,6 +6,9 @@ const placaController = require("../controllers/placaController");
 // detalhes por id
 router.get("/:id", auth, placaController.get);
 
+// csv metadados por id
+router.get("/:id/export-metadados", placaController.exportCsvMetadados);
+
 // cadastro
 router.post("/", auth, placaController.post);
 

@@ -105,7 +105,8 @@ li:hover {
 	font-size: 18px;
 }
 .empty-list .btn {
-	margin-top: 15px;
+	display:block;
+	margin: 15px auto 0;
 }
 .search-box {
 	padding:10px;

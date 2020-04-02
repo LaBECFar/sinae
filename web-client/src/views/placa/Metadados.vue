@@ -17,8 +17,11 @@
 			</div>
 
 			<div class="head-actions">
+				<b-button variant="light" v-on:click="btnImport">
+					Importar
+				</b-button>
 				<b-button variant="primary" v-on:click="save">
-					Salvar Metadados
+					Salvar
 				</b-button>
 				<b-button variant="secondary" v-on:click="back">
 					Voltar
@@ -50,7 +53,6 @@
 					</b-button>
 
 					<div class="clipboard float-right">
-
 						<b-button
 							v-on:click="btnCopiar()"
 							variant="secondary"
@@ -58,17 +60,26 @@
 							size="sm"
 							:class="{ copied: clipboard.action == 'copy' }"
 						>
-							{{ clipboard.action == "copy" ? "Copiado" : "Copiar" }}
+							{{
+								clipboard.action == "copy"
+									? "Copiado"
+									: "Copiar"
+							}}
 						</b-button>
 
 						<b-button
 							v-on:click="btnColar()"
 							variant="secondary"
-							:disabled="selectedPocos.length <= 0 || clipboard.metadados.length <= 0"
+							:disabled="
+								selectedPocos.length <= 0 ||
+									clipboard.metadados.length <= 0
+							"
 							size="sm"
 							:class="{ pasted: clipboard.action == 'paste' }"
 						>
-							{{ clipboard.action == "paste" ? "Colado" : "Colar" }}
+							{{
+								clipboard.action == "paste" ? "Colado" : "Colar"
+							}}
 						</b-button>
 					</div>
 				</div>
@@ -84,7 +95,7 @@
 						size="sm"
 						v-show="selectedPocos.length > 0"
 						v-on:click="selectedPocos = []"
-						variant="link"
+						variant="light"
 					>
 						Remover seleção
 					</b-button>
@@ -105,7 +116,7 @@
 				</div>
 			</b-col>
 		</b-row>
-		<hr>
+		<hr />
 		<b-row>
 			<b-col>
 				<b-card title="Exportação">
@@ -113,28 +124,26 @@
 						Você pode exportar os metadados dos poços em formato CSV
 					</b-card-text>
 
-					<b-button variant="primary" @click="exportarMetadadosCsv()">
+					<b-button variant="primary" @click="exportarMetadadosCsv()" class="width-auto">
 						Exportar Metadados
 					</b-button>
 				</b-card>
 			</b-col>
+			<b-col></b-col>
+			<b-col></b-col>
 		</b-row>
 
-		<br>
+		<br />
 
-		<div class="selector-modal" v-show="showListSelector">
+		<div class="selector-modal" v-show="listSelector.show">
 			<div class="selector-wrapper">
 				<h3>
-					Selecione um Metadado
-					<button v-on:click="showListSelector = false">X</button>
+					{{ listSelector.title }}
+					<button v-on:click="listSelector.show = false">X</button>
 				</h3>
 				<ListSelector
-					item-title="nome"
-					v-bind:items="this.tiposMetadados"
-					v-on:select="addMetadado"
-					empty="Nenhum tipo de metadado cadastrado no sistema"
-					v-bind:emptyAction="newMetadadoType"
-					emptyActionText="Cadastrar"
+					v-bind:model="listSelector"
+					v-on:select="listSelector.onSelect"
 				/>
 			</div>
 		</div>
@@ -173,6 +182,16 @@ export default {
 			msg: {
 				text: false,
 				type: ""
+			},
+			listSelector: {
+				title: "",
+				itemTitle: "",
+				show: false,
+				items: [],
+				empty: "",
+				emptyAction: null,
+				emptyActionText: "Concluir",
+				onSelect: () => {}
 			}
 		};
 	},
@@ -186,11 +205,21 @@ export default {
 
 	methods: {
 		exportarMetadadosCsv() {
-			let url = apiPlaca.getCsvMetadadosLink(this.placaId)
+			let url = apiPlaca.getCsvMetadadosLink(this.placaId);
 			window.open(url, "_blank");
 		},
+
 		btnAdicionar() {
-			this.showListSelector = true;
+			this.listSelector = {
+				title: "Selecione um tipo de metadado",
+				itemTitle: "nome",
+				show: true,
+				items: this.tiposMetadados,
+				empty: "Nenhum tipo de metadado cadastrado no sistema",
+				emptyAction: this.newMetadadoType,
+				emptyActionText: "Cadastrar",
+				onSelect: this.addMetadado
+			};
 		},
 
 		btnCopiar() {
@@ -222,6 +251,8 @@ export default {
 		},
 
 		addMetadado(metadado) {
+			this.listSelector.show = false;
+
 			this.$swal
 				.fire({
 					title: metadado.nome,
@@ -238,7 +269,6 @@ export default {
 							valor: result.value
 						});
 					}
-					this.showListSelector = false;
 				});
 		},
 
@@ -315,6 +345,57 @@ export default {
 			this.pocos = all;
 		},
 
+		importPocos(placa) {
+			this.listSelector.show = false
+
+			this.$swal
+				.fire({
+					icon: "warning",
+					title: "Importar de " + placa.label,
+					text:
+						"As informações atuais serão sobrescritas, tem certeza que deseja continuar?",
+					showCancelButton: true,
+					confirmButtonText: "Confirmar",
+					cancelButtonText: "Cancelar"
+				})
+				.then(result => {
+					if (result.value) {
+						this.placa.pocos = placa.pocos;
+
+						this.$swal.fire(
+							"Importado!",
+							"Os metadados foram importados com sucesso.",
+							"success"
+						);
+					}
+				});
+		},
+
+		btnImport() {
+			apiPlaca
+				.listarPlacas()
+				.then(data => {
+					let placas = data.filter((placa) =>  {
+						placa.titulo = placa.label + (placa.experimentoCodigo ? " ("+placa.experimentoCodigo+")" : '')
+						return placa._id != this.placaId
+					})
+
+					this.listSelector = {
+						items: placas,
+						title: "Selecione uma placa para copiar",
+						itemTitle: "titulo",
+						show: true,
+						empty: "Nenhuma placa cadastrada no sistema",
+						emptyAction: this.newPlaca,
+						emptyActionText: "Cadastrar",
+						onSelect: this.importPocos
+					};
+				})
+				.catch(e => {
+					console.log(e);
+				});
+		},
+
 		save() {
 			apiPlaca
 				.atualizarPlaca({
@@ -337,6 +418,10 @@ export default {
 
 		newMetadadoType() {
 			this.$router.push(`/tipo-metadado/novo`);
+		},
+
+		newPlaca() {
+			this.$router.push(`/placa/novo`);
 		}
 	}
 };
@@ -357,7 +442,9 @@ export default {
 	display: flex;
 	justify-content: space-between;
 }
-
+.info-selecionados > .btn {
+	font-size: 14px;
+}
 .selecionados {
 	margin-top: 10px;
 }
@@ -444,9 +531,11 @@ export default {
 	line-height: 27px;
 	min-width: 80px;
 }
-.clipboard .btn.copied, .clipboard .btn.pasted {
+.clipboard .btn.copied,
+.clipboard .btn.pasted {
 	border-color: #54a668;
 	background: #54a668;
 	color: #fff;
 }
+
 </style>

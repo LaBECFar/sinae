@@ -6,9 +6,6 @@ const placaController = require("../controllers/placaController");
 // detalhes por id
 router.get("/:id", auth, placaController.get);
 
-// csv metadados por id
-router.get("/:id/export-metadados", placaController.exportCsvMetadados);
-
 // cadastro
 router.post("/", auth, placaController.post);
 
@@ -20,5 +17,8 @@ router.put("/:id", auth, placaController.put);
 
 // remover
 router.delete("/:id", auth, placaController.delete);
+
+// csv metadados por id
+router.get("/:id/export-metadados", placaController.exportCsvMetadados);
 
 module.exports = router;

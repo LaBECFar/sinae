@@ -30,8 +30,8 @@ const placaController = {
 		const placa = new placaModel({
 			label: req.body.label,
 			experimentoCodigo: req.body.experimentoCodigo,
-			pocos: req.body.pocos
-		});
+			pocos: req.body.pocos || []
+		})
 
 		placa.save((err, placa) => {
 			if (err) {

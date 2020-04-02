@@ -1,23 +1,33 @@
 <template>
 	<div>
-		<ul class="list-selector" v-show="items.length > 0">
+		<div class="search-box" v-show="list.items.length > 10">
+			<input
+				type="text"
+				placeholder="Pesquisar"
+				class="search"
+				v-model="search"
+			/>
+		</div>
+
+		<ul class="list-selector" v-show="list.items.length > 0">
 			<li
-				v-for="(item, index) in items"
+				v-for="(item, index) in list.items"
 				:key="index"
 				v-on:click="select(item)"
+				v-show="item[list.itemTitle].toLowerCase().indexOf(search) > -1"
 			>
-				{{ item[itemTitle] }}
+				{{ item[list.itemTitle] }}
 			</li>
 		</ul>
-		<p class="empty-list" v-show="items.length <= 0">
-			{{ emptyText }}
+		<p class="empty-list" v-show="list.items.length <= 0">
+			{{ list.empty }}
 			<b-button
 				size="sm"
 				variant="secondary"
-				v-on:click="emptyAction"
-				v-show="emptyAction"
+				v-on:click="list.emptyAction"
+				v-show="list.emptyAction"
 			>
-				{{ emptyActionText || "Adicionar" }}
+				{{ list.emptyActionText }}
 			</b-button>
 		</p>
 	</div>
@@ -25,7 +35,14 @@
 
 <script>
 export default {
-	props: ["items", "itemTitle", "empty", "emptyAction", "emptyActionText"],
+	props: [
+		"items",
+		"itemTitle",
+		"empty",
+		"emptyAction",
+		"emptyActionText",
+		"model"
+	],
 
 	methods: {
 		select(item) {
@@ -33,10 +50,24 @@ export default {
 		}
 	},
 
+	computed: {
+		list() {
+			return (
+				this.model || {
+					items: this.items || [],
+					itemTitle: this.itemTitle || "",
+					empty: this.empty || "Nenhum item na lista",
+					emptyAction: this.emptyAction || null,
+					emptyActionText: this.emptyActionText || "Adicionar"
+				}
+			);
+		}
+	},
+
 	data() {
 		return {
-			emptyText: this.empty || "Nenhum item na lista"
-		};
+			search: ""
+		}
 	}
 };
 </script>
@@ -49,7 +80,7 @@ ul {
 }
 
 li {
-	padding: 10px 20px;
+	padding: 15px 20px;
 	transition: background-color 0.3s;
 	cursor: pointer;
 }
@@ -75,5 +106,21 @@ li:hover {
 }
 .empty-list .btn {
 	margin-top: 15px;
+}
+.search-box {
+	padding:10px;
+	border-bottom:1px solid #ddd;
+}
+.search {
+	display: block;
+    font-family: inherit;
+    background: #eee;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid #ddd;
+    outline: none;
+    border-radius: 30px;
+    line-height: 1;
 }
 </style>

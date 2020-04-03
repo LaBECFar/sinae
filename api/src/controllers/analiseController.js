@@ -1,9 +1,10 @@
 const analiseModel = require("../models/analiseModel")
 const moment = require('moment')
 const frameModel = require("../models/frameModel")
+const placaModel = require("../models/placaModel")
 const fs = require("fs")
-var archiver = require('archiver')
-var path = require('path')
+const archiver = require('archiver')
+const path = require('path')
 const d = require("../util/dockerApi")
 const { Parser } = require('json2csv');
 
@@ -108,6 +109,25 @@ const analiseController = {
             dataColeta: dataColeta
         })
 
+        placaModel.find({ experimentoCodigo: analise.experimentoCodigo, label: analise.placa })
+            .then(placas => {
+                if(placas.length <= 0){
+                    const placa = new placaModel({
+                        experimentoCodigo: analise.experimentoCodigo,
+                        label: analise.placa,
+                        pocos: []
+                    })
+
+                    placa.save((err, placa) => {
+                        if (err) {
+                            console.log('Erro ao criar placa automaticamente. '+ err)
+                        }
+                    })
+                }
+            }).catch(err => {
+                console.log('Erro ao criar placa automaticamente. ')
+            });  
+
         analise.save((err, analise) => {
             if (err) {
                 return res.status(500).json({
@@ -126,6 +146,7 @@ const analiseController = {
     
     put: (req, res, next) => {
         var id = req.params.id;
+        const that = this
 
         analiseModel.findById(id)
             .populate('analises')
@@ -146,11 +167,32 @@ const analiseController = {
                     dataColeta = moment(dataColeta, "DD/MM/YYYY").toDate()
                 }
 
-                if(typeof req.body.placa !== 'undefined') analise.placa = req.body.placa
                 if(typeof req.body.tempo !== 'undefined') analise.tempo = req.body.tempo
                 if(typeof req.body.fps !== 'undefined') analise.fps = req.body.fps
                 if(typeof req.body.dataColeta !== 'undefined') analise.dataColeta = dataColeta
                 if(typeof req.body.experimentoCodigo !== 'undefined') analise.experimentoCodigo = req.body.experimentoCodigo
+                
+                if(typeof req.body.placa !== 'undefined') {
+                    analise.placa = req.body.placa 
+                    placaModel.find({ experimentoCodigo: analise.experimentoCodigo, label: analise.placa })
+                        .then(placas => {
+                            if(placas.length <= 0){
+                                const placa = new placaModel({
+                                    experimentoCodigo: analise.experimentoCodigo,
+                                    label: analise.placa,
+                                    pocos: []
+                                })
+
+                                placa.save((err, placa) => {
+                                    if (err) {
+                                        console.log('Erro ao criar placa automaticamente. '+ err)
+                                    }
+                                })
+                            }
+                        }).catch(err => {
+                            console.log('Erro ao criar placa automaticamente. ')
+                        });  
+                }
 
                 analise.save(function (err, analise) {
                     if (err) {

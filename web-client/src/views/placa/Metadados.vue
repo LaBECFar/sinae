@@ -108,7 +108,10 @@
 						:key="i"
 					>
 						<h5>{{ poco.nome }}</h5>
-						<PocoMetadados v-bind:poco="poco" />
+						<PocoMetadados
+							v-bind:poco="poco"
+							v-on:remove="removeMetadado"
+						/>
 					</div>
 				</div>
 			</b-col>
@@ -117,14 +120,20 @@
 		<b-row>
 			<b-col>
 				<b-card title="Exportação">
-					<b-card-text>
+					<b-card-text v-show="isSaved">
 						Você pode exportar os metadados dos poços em formato CSV
+					</b-card-text>
+
+					<b-card-text v-show="!isSaved" class="alert alert-warning">
+						Foram feitas modificações nos metadados, salve antes de
+						continuar
 					</b-card-text>
 
 					<b-button
 						variant="primary"
 						@click="exportarMetadadosCsv()"
 						class="width-auto"
+						:disabled="!isSaved"
 					>
 						Exportar Metadados
 					</b-button>
@@ -152,11 +161,11 @@
 </template>
 
 <script>
-import { apiPlaca } from "./api";
-import { apiTipoMetadado } from "../tipo-metadado/api";
-import PocoMetadados from "../../components/metadado/PocoMetadados";
-import PocosPlaca from "../../components/metadado/PocosPlaca";
-import ListSelector from "../../components/ListSelector";
+import { apiPlaca } from "./api"
+import { apiTipoMetadado } from "../tipo-metadado/api"
+import PocoMetadados from "../../components/metadado/PocoMetadados"
+import PocosPlaca from "../../components/metadado/PocosPlaca"
+import ListSelector from "../../components/ListSelector"
 
 export default {
 	name: "PlacaMetadados",
@@ -192,19 +201,20 @@ export default {
 				emptyActionText: "Concluir",
 				onSelect: () => {},
 			},
-		};
+			isSaved: true,
+		}
 	},
 
 	created() {
-		this.placaId = this.$route.params.id;
-		this.initPlaca();
-		this.loadMetadados();
+		this.placaId = this.$route.params.id
+		this.initPlaca()
+		this.loadMetadados()
 	},
 
 	methods: {
 		exportarMetadadosCsv() {
-			let url = apiPlaca.getCsvMetadadosLink(this.placaId);
-			window.open(url, "_blank");
+			let url = apiPlaca.getCsvMetadadosLink(this.placaId)
+			window.open(url, "_blank")
 		},
 
 		btnAdicionar() {
@@ -217,35 +227,37 @@ export default {
 				emptyAction: this.newMetadadoType,
 				emptyActionText: "Cadastrar",
 				onSelect: this.addMetadado,
-			};
+			}
 		},
 
 		btnCopiar() {
-			let metadados = [];
+			let metadados = []
 			this.selectedPocos.forEach((poco) => {
-				metadados.push(...poco.metadados);
-			});
+				metadados.push(...poco.metadados)
+			})
 
-			this.clipboard.metadados = metadados;
-			this.clipboard.action = "copy";
+			this.clipboard.metadados = metadados
+			this.clipboard.action = "copy"
 			setTimeout(() => {
-				this.clipboard.action = null;
-			}, 1000);
+				this.clipboard.action = null
+			}, 1000)
 		},
 
 		btnColar() {
 			this.clipboard.metadados.forEach((metadado) => {
-				this.addMetadadoPocos(this.selectedPocos, metadado);
-			});
+				this.addMetadadoPocos(this.selectedPocos, metadado)
+			})
 
-			this.clipboard.action = "paste";
+			this.clipboard.action = "paste"
 			setTimeout(() => {
-				this.clipboard.action = null;
-			}, 1000);
+				this.clipboard.action = null
+			}, 1000)
+
+			this.isSaved = false
 		},
 
 		addMetadado(metadado) {
-			this.listSelector.show = false;
+			this.listSelector.show = false
 
 			this.$swal
 				.fire({
@@ -261,89 +273,106 @@ export default {
 						this.addMetadadoPocos(this.selectedPocos, {
 							nome: metadado.nome,
 							valor: result.value,
-						});
+						})
 					}
-				});
+				})
+		},
+
+		removeMetadado: function (params) {
+			let { pocoNome, metadadoNome } = params
+
+			let poco = this.placa.pocos.find((item) => item.nome == pocoNome)
+			if (poco) {
+				let metadadoIndex = poco.metadados.findIndex(
+					(item) => item.nome == metadadoNome
+				)
+
+				if (metadadoIndex > -1) {
+					poco.metadados.splice(metadadoIndex, 1)
+					this.isSaved = false
+				}
+			}
 		},
 
 		addMetadadoPocos: function (pocos, metadado) {
 			pocos.forEach((poco) => {
 				let existingPoco = this.placa.pocos.find(
 					(existingPoco) => existingPoco.nome == poco.nome
-				);
+				)
 
 				if (!existingPoco) {
 					// novo poço
 					this.placa.pocos.push({
 						nome: poco,
 						metadados: [metadado],
-					});
+					})
 				} else {
 					let tipoIndex = existingPoco.metadados.findIndex(
 						(existingTipo) => existingTipo.nome == metadado.nome
-					);
+					)
 
 					if (tipoIndex < 0) {
-						existingPoco.metadados.push(metadado);
+						existingPoco.metadados.push(metadado)
 					} else {
-						existingPoco.metadados.splice(tipoIndex, 1);
-						existingPoco.metadados.push(metadado);
+						existingPoco.metadados.splice(tipoIndex, 1)
+						existingPoco.metadados.push(metadado)
 					}
 				}
-			});
+			})
+			this.isSaved = false
 		},
 
 		loadMetadados() {
 			apiTipoMetadado
 				.listarTiposMetadado()
 				.then((data) => {
-					this.tiposMetadados = data;
+					this.tiposMetadados = data
 				})
 				.catch((e) => {
-					console.log(e);
-				});
+					console.log(e)
+				})
 		},
 
 		initPlaca() {
 			apiPlaca
 				.getPlaca(this.placaId)
 				.then((data) => {
-					this.placa = data;
-					this.initEsquema();
+					this.placa = data
+					this.initEsquema()
 				})
 				.catch(() => {
-					this.isBusy = false;
-				});
+					this.isBusy = false
+				})
 		},
 
 		initEsquema() {
-			let columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
-			let all = [];
+			let columns = ["A", "B", "C", "D", "E", "F", "G", "H"]
+			let all = []
 
 			columns.forEach((elem) => {
 				for (let i = 1; i <= 12; i++) {
-					let name = elem + i;
+					let name = elem + i
 
 					let exists = this.placa.pocos.find(
 						(item) => item.nome == name
-					);
+					)
 
 					if (exists) {
-						all.push(exists);
+						all.push(exists)
 					} else {
 						all.push({
 							nome: name,
 							metadados: [],
-						});
+						})
 					}
 				}
-			});
+			})
 
-			this.placa.pocos = all;
+			this.placa.pocos = all
 		},
 
 		importPocos(placa) {
-			this.listSelector.show = false;
+			this.listSelector.show = false
 
 			this.$swal
 				.fire({
@@ -357,15 +386,17 @@ export default {
 				})
 				.then((result) => {
 					if (result.value) {
-						this.placa.pocos = placa.pocos;
+						this.placa.pocos = placa.pocos
 
 						this.$swal.fire(
 							"Importado!",
 							"Os metadados foram importados com sucesso.",
 							"success"
-						);
+						)
+
+						this.isSaved = false
 					}
-				});
+				})
 		},
 
 		btnImport() {
@@ -377,9 +408,9 @@ export default {
 							placa.label +
 							(placa.experimentoCodigo
 								? " (" + placa.experimentoCodigo + ")"
-								: "");
-						return placa._id != this.placaId;
-					});
+								: "")
+						return placa._id != this.placaId
+					})
 
 					this.listSelector = {
 						items: placas,
@@ -390,11 +421,11 @@ export default {
 						emptyAction: this.newPlaca,
 						emptyActionText: "Cadastrar",
 						onSelect: this.importPocos,
-					};
+					}
 				})
 				.catch((e) => {
-					console.log(e);
-				});
+					console.log(e)
+				})
 		},
 
 		save() {
@@ -404,28 +435,29 @@ export default {
 					pocos: this.placa.pocos,
 				})
 				.then(() => {
-					this.msg.text = "Placa atualizada";
-					this.msg.type = "success";
+					this.msg.text = "Placa atualizada"
+					this.msg.type = "success"
+					this.isSaved = true
 				})
 				.catch((e) => {
-					this.msg.text = `Erro ao atualizar a placa ${e}`;
-					this.msg.type = "danger";
-				});
+					this.msg.text = `Erro ao atualizar a placa ${e}`
+					this.msg.type = "danger"
+				})
 		},
 
 		back() {
-			this.$router.push(`/placa`);
+			this.$router.push(`/placa`)
 		},
 
 		newMetadadoType() {
-			this.$router.push(`/tipo-metadado/novo`);
+			this.$router.push(`/tipo-metadado/novo`)
 		},
 
 		newPlaca() {
-			this.$router.push(`/placa/novo`);
+			this.$router.push(`/placa/novo`)
 		},
 	},
-};
+}
 </script>
 
 <style scoped>
@@ -544,7 +576,7 @@ export default {
 	background-color: #52b1d6;
 	font-size: 16px;
 	color: #fff;
-	border:none;
+	border: none;
 	padding: 8px 15px;
 }
 </style>

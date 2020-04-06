@@ -24,16 +24,16 @@ export default {
 		toggle: function (poco) {
 			let index = this.selected.findIndex(
 				(item) => item.nome == poco.nome
-			);
+			)
 
 			if (index < 0) {
-				this.selected.push(poco);
+				this.selected.push(poco)
 			} else {
-				this.selected.splice(index, 1);
+				this.selected.splice(index, 1)
 			}
 		},
 	},
-};
+}
 </script>
 
 <style scoped>

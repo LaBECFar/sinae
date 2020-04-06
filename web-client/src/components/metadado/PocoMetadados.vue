@@ -1,10 +1,10 @@
 <template>
 	<div
 		class="metadados"
-		:class="{ hasChild: metadados && metadados.length > 0 }"
+		:class="{ hasChild: poco.metadados && poco.metadados.length > 0 }"
 	>
 		<div
-			v-for="(campo, index) in metadados"
+			v-for="(campo, index) in poco.metadados"
 			:key="index"
 			class="metadado"
 			v-on:click="remove(index)"
@@ -18,11 +18,11 @@
 
 <script>
 export default {
-	props: ["pocoNome", "metadados"],
+	props: ["poco"],
 
 	methods: {
 		remove(index) {
-			this.metadados.splice(index, 1);
+			this.poco.metadados.splice(index, 1);
 		}
 	}
 };

@@ -109,19 +109,21 @@ const placaController = {
 				let items = []
 
 				placa.pocos.forEach(poco => {
-					let item = {}
-					item['Experiment'] = placa.experimentoCodigo || 'EMPTY'
-					item['Plate'] = placa.label
-					item['Well'] = poco.nome
+					if(poco.metadados.length > 0){
+						let item = {}
+						item['Experiment'] = placa.experimentoCodigo || 'EMPTY'
+						item['Plate'] = placa.label
+						item['Well'] = poco.nome
 
-					poco.metadados.forEach(metadado => {
-						if(fields.indexOf(metadado.nome) < 0){
-							fields.push(metadado.nome)
-						}
-						item[metadado.nome] = metadado.valor
-					})
+						poco.metadados.forEach(metadado => {
+							if(fields.indexOf(metadado.nome) < 0){
+								fields.push(metadado.nome)
+							}
+							item[metadado.nome] = metadado.valor
+						})
 
-					items.push(item)
+						items.push(item)
+					}
 				})
 
 				let fieldsCsv = []

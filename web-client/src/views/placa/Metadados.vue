@@ -36,9 +36,18 @@
 		<b-row>
 			<b-col md="auto">
 				<PocosPlaca
-					v-bind:pocos="pocos"
 					v-bind:selected="selectedPocos"
+					v-bind:pocos="placa.pocos"
 				/>
+				<b-button
+					size="sm"
+					:disabled="selectedPocos.length <= 0"
+					v-on:click="selectedPocos = []"
+					variant="info"
+					class="btn-unselect"
+				>
+					Remover seleção
+				</b-button>
 			</b-col>
 
 			<b-col>
@@ -72,7 +81,7 @@
 							variant="secondary"
 							:disabled="
 								selectedPocos.length <= 0 ||
-									clipboard.metadados.length <= 0
+								clipboard.metadados.length <= 0
 							"
 							size="sm"
 							:class="{ pasted: clipboard.action == 'paste' }"
@@ -90,28 +99,16 @@
 						<strong>Selecionados:</strong>
 						{{ selectedPocos.length }}
 					</div>
-
-					<b-button
-						size="sm"
-						v-show="selectedPocos.length > 0"
-						v-on:click="selectedPocos = []"
-						variant="light"
-					>
-						Remover seleção
-					</b-button>
 				</div>
 
 				<div class="selecionados">
 					<div
 						class="poco-selecionado"
-						v-for="(selectedPoco, i) in selectedPocos"
+						v-for="(poco, i) in selectedPocos"
 						:key="i"
 					>
-						<h5>{{ selectedPoco }}</h5>
-						<PocoMetadados
-							v-bind:poco="selectedPoco"
-							v-bind:metadados="getMetadados(selectedPoco)"
-						/>
+						<h5>{{ poco.nome }}</h5>
+						<PocoMetadados v-bind:poco="poco" />
 					</div>
 				</div>
 			</b-col>
@@ -124,7 +121,11 @@
 						Você pode exportar os metadados dos poços em formato CSV
 					</b-card-text>
 
-					<b-button variant="primary" @click="exportarMetadadosCsv()" class="width-auto">
+					<b-button
+						variant="primary"
+						@click="exportarMetadadosCsv()"
+						class="width-auto"
+					>
 						Exportar Metadados
 					</b-button>
 				</b-card>
@@ -163,25 +164,23 @@ export default {
 	components: {
 		PocoMetadados: PocoMetadados,
 		PocosPlaca: PocosPlaca,
-		ListSelector: ListSelector
+		ListSelector: ListSelector,
 	},
 
 	data() {
 		return {
-			pocos: [],
 			selectedPocos: [],
 			tiposMetadados: [],
 			placa: {
-				pocos: []
+				pocos: [],
 			},
-			showListSelector: false,
 			clipboard: {
 				action: null,
-				metadados: []
+				metadados: [],
 			},
 			msg: {
 				text: false,
-				type: ""
+				type: "",
 			},
 			listSelector: {
 				title: "",
@@ -191,15 +190,14 @@ export default {
 				empty: "",
 				emptyAction: null,
 				emptyActionText: "Concluir",
-				onSelect: () => {}
-			}
+				onSelect: () => {},
+			},
 		};
 	},
 
 	created() {
 		this.placaId = this.$route.params.id;
 		this.initPlaca();
-		this.initPocos();
 		this.loadMetadados();
 	},
 
@@ -218,18 +216,14 @@ export default {
 				empty: "Nenhum tipo de metadado cadastrado no sistema",
 				emptyAction: this.newMetadadoType,
 				emptyActionText: "Cadastrar",
-				onSelect: this.addMetadado
+				onSelect: this.addMetadado,
 			};
 		},
 
 		btnCopiar() {
-			let pocosSelecionados = this.placa.pocos.filter(obj => {
-				return this.selectedPocos.indexOf(obj.nome) > -1;
-			});
-
 			let metadados = [];
-			pocosSelecionados.forEach(p => {
-				metadados.push(...p.metadados);
+			this.selectedPocos.forEach((poco) => {
+				metadados.push(...poco.metadados);
 			});
 
 			this.clipboard.metadados = metadados;
@@ -240,7 +234,7 @@ export default {
 		},
 
 		btnColar() {
-			this.clipboard.metadados.forEach(metadado => {
+			this.clipboard.metadados.forEach((metadado) => {
 				this.addMetadadoPocos(this.selectedPocos, metadado);
 			});
 
@@ -260,44 +254,33 @@ export default {
 					input: "text",
 					showCancelButton: true,
 					confirmButtonText: "Adicionar",
-					cancelButtonText: "Cancelar"
+					cancelButtonText: "Cancelar",
 				})
-				.then(result => {
+				.then((result) => {
 					if (result.value) {
 						this.addMetadadoPocos(this.selectedPocos, {
 							nome: metadado.nome,
-							valor: result.value
+							valor: result.value,
 						});
 					}
 				});
 		},
 
-		getMetadados: function(pocoNome) {
-			let pocos = this.placa.pocos.find(poco => {
-				return poco.nome == pocoNome;
-			});
-
-			return pocos ? pocos.metadados : [];
-		},
-
-		addMetadadoPocos: function(pocos, metadado) {
-			pocos.forEach(poco => {
-				let existingPoco = this.placa.pocos.find(existingPoco => {
-					return existingPoco.nome == poco;
-				});
+		addMetadadoPocos: function (pocos, metadado) {
+			pocos.forEach((poco) => {
+				let existingPoco = this.placa.pocos.find(
+					(existingPoco) => existingPoco.nome == poco.nome
+				);
 
 				if (!existingPoco) {
-					let novoPoco = {
+					// novo poço
+					this.placa.pocos.push({
 						nome: poco,
-						metadados: [metadado]
-					};
-
-					this.placa.pocos.push(novoPoco);
+						metadados: [metadado],
+					});
 				} else {
 					let tipoIndex = existingPoco.metadados.findIndex(
-						existingTipo => {
-							return existingTipo.nome == metadado.nome;
-						}
+						(existingTipo) => existingTipo.nome == metadado.nome
 					);
 
 					if (tipoIndex < 0) {
@@ -313,10 +296,10 @@ export default {
 		loadMetadados() {
 			apiTipoMetadado
 				.listarTiposMetadado()
-				.then(data => {
+				.then((data) => {
 					this.tiposMetadados = data;
 				})
-				.catch(e => {
+				.catch((e) => {
 					console.log(e);
 				});
 		},
@@ -324,29 +307,43 @@ export default {
 		initPlaca() {
 			apiPlaca
 				.getPlaca(this.placaId)
-				.then(data => {
+				.then((data) => {
 					this.placa = data;
+					this.initEsquema();
 				})
 				.catch(() => {
 					this.isBusy = false;
 				});
 		},
 
-		initPocos() {
+		initEsquema() {
 			let columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
 			let all = [];
 
-			columns.forEach(elem => {
+			columns.forEach((elem) => {
 				for (let i = 1; i <= 12; i++) {
-					all.push(elem + i);
+					let name = elem + i;
+
+					let exists = this.placa.pocos.find(
+						(item) => item.nome == name
+					);
+
+					if (exists) {
+						all.push(exists);
+					} else {
+						all.push({
+							nome: name,
+							metadados: [],
+						});
+					}
 				}
 			});
 
-			this.pocos = all;
+			this.placa.pocos = all;
 		},
 
 		importPocos(placa) {
-			this.listSelector.show = false
+			this.listSelector.show = false;
 
 			this.$swal
 				.fire({
@@ -356,9 +353,9 @@ export default {
 						"As informações atuais serão sobrescritas, tem certeza que deseja continuar?",
 					showCancelButton: true,
 					confirmButtonText: "Confirmar",
-					cancelButtonText: "Cancelar"
+					cancelButtonText: "Cancelar",
 				})
-				.then(result => {
+				.then((result) => {
 					if (result.value) {
 						this.placa.pocos = placa.pocos;
 
@@ -374,11 +371,15 @@ export default {
 		btnImport() {
 			apiPlaca
 				.listarPlacas()
-				.then(data => {
-					let placas = data.filter((placa) =>  {
-						placa.titulo = placa.label + (placa.experimentoCodigo ? " ("+placa.experimentoCodigo+")" : '')
-						return placa._id != this.placaId
-					})
+				.then((data) => {
+					let placas = data.filter((placa) => {
+						placa.titulo =
+							placa.label +
+							(placa.experimentoCodigo
+								? " (" + placa.experimentoCodigo + ")"
+								: "");
+						return placa._id != this.placaId;
+					});
 
 					this.listSelector = {
 						items: placas,
@@ -388,10 +389,10 @@ export default {
 						empty: "Nenhuma placa cadastrada no sistema",
 						emptyAction: this.newPlaca,
 						emptyActionText: "Cadastrar",
-						onSelect: this.importPocos
+						onSelect: this.importPocos,
 					};
 				})
-				.catch(e => {
+				.catch((e) => {
 					console.log(e);
 				});
 		},
@@ -400,13 +401,13 @@ export default {
 			apiPlaca
 				.atualizarPlaca({
 					_id: this.placa._id,
-					pocos: this.placa.pocos
+					pocos: this.placa.pocos,
 				})
 				.then(() => {
 					this.msg.text = "Placa atualizada";
 					this.msg.type = "success";
 				})
-				.catch(e => {
+				.catch((e) => {
 					this.msg.text = `Erro ao atualizar a placa ${e}`;
 					this.msg.type = "danger";
 				});
@@ -422,8 +423,8 @@ export default {
 
 		newPlaca() {
 			this.$router.push(`/placa/novo`);
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -537,5 +538,13 @@ export default {
 	background: #54a668;
 	color: #fff;
 }
-
+.btn-unselect {
+	margin-top: 20px;
+	float: right;
+	background-color: #52b1d6;
+	font-size: 16px;
+	color: #fff;
+	border:none;
+	padding: 8px 15px;
+}
 </style>

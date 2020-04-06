@@ -3,13 +3,15 @@
 		<div
 			v-bind:class="{
 				poco: true,
-				selected: selected.indexOf(poco) >= 0
+				selected:
+					selected.findIndex((item) => poco.nome == item.nome) >= 0,
+				hasMetadado: poco.metadados.length > 0,
 			}"
 			v-for="(poco, index) in pocos"
 			v-on:click="toggle(poco)"
 			:key="index"
 		>
-			{{ poco }}
+			{{ poco.nome }}
 		</div>
 	</div>
 </template>
@@ -19,15 +21,18 @@ export default {
 	props: ["pocos", "selected"],
 
 	methods: {
-		toggle: function(poco) {
-			let index = this.selected.indexOf(poco);
+		toggle: function (poco) {
+			let index = this.selected.findIndex(
+				(item) => item.nome == poco.nome
+			);
+
 			if (index < 0) {
 				this.selected.push(poco);
 			} else {
 				this.selected.splice(index, 1);
 			}
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -36,7 +41,7 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	width: 795px;
-	margin:-3px -3px 0;
+	margin: -3px -3px 0;
 }
 .poco {
 	border: 1px solid #ddd;
@@ -50,6 +55,10 @@ export default {
 	background: #fff;
 	cursor: pointer;
 	transition: color 0.3s, background-color 0.3s, border-color 0.3s;
+}
+
+.poco.hasMetadado {
+	background: #ddd;
 }
 
 .poco.selected {

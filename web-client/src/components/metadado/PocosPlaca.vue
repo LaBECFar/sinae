@@ -1,5 +1,5 @@
 <template>
-	<div class="placa">
+	<div class="placa" v-if="pocos && pocos.length > 0">
 		<div
 			v-bind:class="{
 				poco: true,
@@ -10,8 +10,25 @@
 			v-for="(poco, index) in pocos"
 			v-on:click="toggle(poco)"
 			:key="index"
+			:id="'poco-index-' + index"
 		>
 			{{ poco.nome }}
+
+			<b-tooltip
+				v-if="poco.metadados.length > 0"
+				:target="'poco-index-' + index"
+				triggers="hover"
+				placement="bottom"
+				container="html"
+				variant="dark"
+				noninteractive
+			>
+				<ul>
+					<li v-for="(metadado, li) in poco.metadados" :key="li">
+						{{ metadado.nome }}
+					</li>
+				</ul>
+			</b-tooltip>
 		</div>
 	</div>
 </template>
@@ -69,5 +86,20 @@ export default {
 
 .poco:hover {
 	border-color: #aaa;
+}
+.tooltip-inner ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+.tooltip-inner li {
+	padding: 6px 0;
+	line-height: 1.2;
+	font-size: 14px;
+}
+
+.tooltip-inner li + li {
+	border-top: 1px solid #222;
 }
 </style>

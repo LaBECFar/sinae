@@ -154,18 +154,23 @@
 
 		<br />
 
-		<div class="selector-modal" v-show="listSelector.show">
-			<div class="selector-wrapper">
-				<h3>
-					{{ listSelector.title }}
-					<button v-on:click="listSelector.show = false">X</button>
-				</h3>
-				<ListSelector
-					v-bind:model="listSelector"
-					v-on:select="listSelector.onSelect"
-				/>
-			</div>
-		</div>
+		<b-modal
+			id="modal-lista"
+			:title="listSelector.title"
+			v-model="listSelector.show"
+			body-class="p-0"
+			header-bg-variant="dark"
+			header-text-variant="light"
+			hide-footer
+			no-enforce-focus
+			centered
+			static
+		>
+			<ListSelector
+				v-bind:model="listSelector"
+				v-on:select="listSelector.onSelect"
+			/>
+		</b-modal>
 	</div>
 </template>
 
@@ -264,17 +269,17 @@ export default {
 
 			this.isSaved = false
 		},
-		
-		unselectPoco(pocoNome){
-			const index = this.selectedPocos.findIndex(item => item.nome == pocoNome)
-			if(index > -1) {
+
+		unselectPoco(pocoNome) {
+			const index = this.selectedPocos.findIndex(
+				(item) => item.nome == pocoNome
+			)
+			if (index > -1) {
 				this.selectedPocos.splice(index, 1)
 			}
 		},
 
 		addMetadado(metadado) {
-			this.listSelector.show = false
-
 			this.$swal
 				.fire({
 					title: metadado.nome,
@@ -285,6 +290,7 @@ export default {
 					cancelButtonText: "Cancelar",
 				})
 				.then((result) => {
+					this.listSelector.show = false
 					if (result.value) {
 						this.addMetadadoPocos(this.selectedPocos, {
 							nome: metadado.nome,
@@ -388,8 +394,6 @@ export default {
 		},
 
 		importPocos(placa) {
-			this.listSelector.show = false
-
 			this.$swal
 				.fire({
 					icon: "warning",
@@ -404,11 +408,15 @@ export default {
 					if (result.value) {
 						this.placa.pocos = placa.pocos
 
-						this.$swal.fire(
-							"Importado!",
-							"Os metadados foram importados com sucesso.",
-							"success"
-						)
+						this.$swal
+							.fire(
+								"Importado!",
+								"Os metadados foram importados com sucesso.",
+								"success"
+							)
+							.then(() => {
+								this.listSelector.show = false
+							})
 
 						this.isSaved = false
 					}
@@ -518,64 +526,18 @@ export default {
 
 .poco-selecionado h5 .btn {
 	position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    line-height: 1;
-    padding: 0 10px;
-    color: #fff;
-    outline: none;
-    box-shadow: none;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	line-height: 1;
+	padding: 0 10px;
+	color: #fff;
+	outline: none;
+	box-shadow: none;
 }
 .poco-selecionado h5 .btn:hover {
 	background-color: #0001;
 }
-.selector-modal {
-	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	top: 0;
-	background: rgba(0, 0, 0, 0.5);
-	z-index: 10;
-}
-.selector-wrapper {
-	max-width: 500px;
-	background: #fff;
-	top: 50%;
-	left: 50%;
-	position: relative;
-	transform: translate(-50%, -50%);
-	max-height: 80vh;
-	box-shadow: 0 0px 15px rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
-	overflow-y: auto;
-}
-.selector-wrapper h3 {
-	background: #52b1d6;
-	color: #fff;
-	padding: 16px;
-	font-size: 20px;
-	margin: 0;
-	text-align: center;
-	font-weight: bold;
-	letter-spacing: 1px;
-}
-.selector-wrapper h3 button {
-	float: right;
-	background: none;
-	color: #fff;
-	border: none;
-	position: absolute;
-	right: 10px;
-	top: 16px;
-	font-size: 25px;
-	line-height: 1;
-	font-family: monospace;
-	outline: none;
-	box-shadow: none;
-}
-
 .content-head {
 	display: flex;
 	justify-content: space-between;

@@ -107,7 +107,16 @@
 						v-for="(poco, i) in selectedPocos"
 						:key="i"
 					>
-						<h5>{{ poco.nome }}</h5>
+						<h5>
+							{{ poco.nome }}
+							<button
+								v-on:click="unselectPoco(poco.nome)"
+								class="btn"
+								title="Remover seleção"
+							>
+								<v-icon name="x"></v-icon>
+							</button>
+						</h5>
 						<PocoMetadados
 							v-bind:poco="poco"
 							v-on:remove="removeMetadado"
@@ -254,6 +263,13 @@ export default {
 			}, 1000)
 
 			this.isSaved = false
+		},
+		
+		unselectPoco(pocoNome){
+			const index = this.selectedPocos.findIndex(item => item.nome == pocoNome)
+			if(index > -1) {
+				this.selectedPocos.splice(index, 1)
+			}
 		},
 
 		addMetadado(metadado) {
@@ -497,6 +513,22 @@ export default {
 	padding: 10px;
 	letter-spacing: 1px;
 	color: #fff;
+	position: relative;
+}
+
+.poco-selecionado h5 .btn {
+	position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    line-height: 1;
+    padding: 0 10px;
+    color: #fff;
+    outline: none;
+    box-shadow: none;
+}
+.poco-selecionado h5 .btn:hover {
+	background-color: #0001;
 }
 .selector-modal {
 	position: fixed;

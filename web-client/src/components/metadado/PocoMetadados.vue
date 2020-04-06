@@ -7,7 +7,7 @@
 			v-for="(campo, index) in poco.metadados"
 			:key="index"
 			class="metadado"
-			v-on:click="remove(poco.nome, campo.nome)"
+			v-on:click="removeMetadado(poco.nome, campo.nome)"
 			title="Remover Metadado"
 		>
 			<strong>{{ campo.nome }}:</strong>
@@ -21,7 +21,7 @@ export default {
 	props: ["poco"],
 
 	methods: {
-		remove(pocoNome, metadadoNome) {
+		removeMetadado(pocoNome, metadadoNome) {
 			this.$emit('remove', {pocoNome, metadadoNome})
 		}
 	}

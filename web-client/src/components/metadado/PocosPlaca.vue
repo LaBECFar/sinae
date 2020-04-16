@@ -76,6 +76,23 @@ export default {
 		}
 	},
 
+	watch: {
+		selected: function(newVal) {
+			if (newVal.length <= 0) {
+				this.selectedRows = []
+				this.selectedColumns = []
+			} else {
+				this.selectedRows.forEach(letter => {
+					this.checkRow(letter)
+				})
+
+				this.selectedColumns.forEach(number => {
+					this.checkColumn(number)
+				})
+			}
+		},
+	},
+
 	methods: {
 		toggle: function(poco) {
 			let index = this.selected.findIndex(
@@ -104,6 +121,27 @@ export default {
 			)
 			if (index > -1) {
 				this.selected.splice(index, 1)
+			}
+		},
+
+		checkRow(letter) {
+			let pocosRow = this.selected.filter(
+				(poco) => poco.nome.indexOf(letter) == 0
+			)
+			if (pocosRow.length < 12) {
+				const index = this.selectedRows.indexOf(letter)
+				this.selectedRows.splice(index, 1)
+			}
+		},
+
+		checkColumn(number) {
+			let pocosColumn = this.selected.filter(
+				(poco) => poco.nome == poco.nome[0] + number
+			)
+
+			if (pocosColumn.length < this.rows.length) {
+				let index = this.selectedColumns.findIndex(item => item == number)
+				this.selectedColumns.splice(index, 1)
 			}
 		},
 

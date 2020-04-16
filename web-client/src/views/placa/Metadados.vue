@@ -58,17 +58,22 @@
 						:disabled="selectedPocos.length == 0"
 						size="sm"
 					>
+						<v-icon name="plus"></v-icon>
 						Adicionar
 					</b-button>
 
-					<div class="clipboard float-right">
+					<div class="clipboard">
 						<b-button
 							v-on:click="btnCopiar()"
 							variant="secondary"
-							:disabled="selectedPocos.length != 1"
+							:disabled="
+								selectedPocos.length != 1 ||
+									selectedPocos[0].metadados.length < 1
+							"
 							size="sm"
 							:class="{ copied: clipboard.action == 'copy' }"
 						>
+							<v-icon name="clipboard"></v-icon>
 							{{
 								clipboard.action == "copy"
 									? "Copiado"
@@ -81,11 +86,12 @@
 							variant="secondary"
 							:disabled="
 								selectedPocos.length <= 0 ||
-								clipboard.metadados.length <= 0
+									clipboard.metadados.length <= 0
 							"
 							size="sm"
 							:class="{ pasted: clipboard.action == 'paste' }"
 						>
+							<v-icon name="file-text"></v-icon>
 							{{
 								clipboard.action == "paste" ? "Colado" : "Colar"
 							}}
@@ -300,7 +306,7 @@ export default {
 				})
 		},
 
-		removeMetadado: function (params) {
+		removeMetadado: function(params) {
 			let { pocoNome, metadadoNome } = params
 
 			let poco = this.placa.pocos.find((item) => item.nome == pocoNome)
@@ -316,7 +322,7 @@ export default {
 			}
 		},
 
-		addMetadadoPocos: function (pocos, metadado) {
+		addMetadadoPocos: function(pocos, metadado) {
 			pocos.forEach((poco) => {
 				let existingPoco = this.placa.pocos.find(
 					(existingPoco) => existingPoco.nome == poco.nome
@@ -547,6 +553,11 @@ export default {
 .head-actions .btn {
 	margin-left: 10px;
 }
+.selected-actions {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
 .selected-actions .btn {
 	margin-right: 8px;
 	position: relative;
@@ -572,5 +583,9 @@ export default {
 	color: #fff;
 	border: none;
 	padding: 8px 15px;
+}
+.btn .v-icon {
+	vertical-align: top;
+	margin-top: 2px;
 }
 </style>

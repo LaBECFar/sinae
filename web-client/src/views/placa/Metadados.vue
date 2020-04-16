@@ -35,6 +35,7 @@
 
 		<b-row>
 			<b-col md="auto">
+	
 				<PocosPlaca
 					v-bind:selected="selectedPocos"
 					v-bind:pocos="placa.pocos"

@@ -57,6 +57,7 @@
 						variant="primary"
 						:disabled="selectedPocos.length == 0"
 						size="sm"
+						title="Adiciona um metadado desejado em todos os poços selecionados"
 					>
 						<v-icon name="plus"></v-icon>
 						Adicionar
@@ -66,6 +67,7 @@
 						<b-button
 							v-on:click="btnCopiar()"
 							variant="secondary"
+							title="Copia os metadados do poço selecionado"
 							:disabled="
 								selectedPocos.length != 1 ||
 									selectedPocos[0].metadados.length < 1
@@ -84,6 +86,7 @@
 						<b-button
 							v-on:click="btnColar()"
 							variant="secondary"
+							title="Adiciona os metadados copiados em todos os poços selecionados"
 							:disabled="
 								selectedPocos.length <= 0 ||
 									clipboard.metadados.length <= 0

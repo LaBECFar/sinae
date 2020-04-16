@@ -25,7 +25,7 @@
 			>
 				<ul>
 					<li v-for="(metadado, li) in poco.metadados" :key="li">
-						{{ metadado.nome }}
+						{{ metadado.nome }}: <span class="valor">{{ metadado.valor }}</span>
 					</li>
 				</ul>
 			</b-tooltip>
@@ -91,6 +91,7 @@ export default {
 	padding: 0;
 	margin: 0;
 	list-style: none;
+	text-align: left;
 }
 
 .tooltip-inner li {
@@ -98,6 +99,8 @@ export default {
 	line-height: 1.2;
 	font-size: 14px;
 }
+
+.tooltip-inner li .valor {color:#9cfeff}
 
 .tooltip-inner li + li {
 	border-top: 1px solid #222;

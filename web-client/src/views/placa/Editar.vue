@@ -17,7 +17,7 @@
 			</b-form-group>
 
 			<b-form-group
-				label="Código do experimento (opcional):"
+				label="Código do experimento:"
 				label-for="experimentoCodigo"
 			>
 				<b-form-input

@@ -5,8 +5,7 @@ const tipoMetadadoSchema = new Schema(
 	{
 		nome: {
 			type: String,
-			required: true,
-			unique: true
+			required: true
 		},
 
 		descricao: {
@@ -20,6 +19,16 @@ const tipoMetadadoSchema = new Schema(
 	{
 		timestamps: true
 	}
-);
+)
 
-module.exports = mongoose.model("tipoMetadado", tipoMetadadoSchema);
+var tipoMetadadoModel = mongoose.model('tipoMetadado', tipoMetadadoSchema)
+
+// Dropping an Index in MongoDB (unique name)
+tipoMetadadoModel.collection.dropIndex('nome_1', function(err){
+	if(!err){
+		console.log("tipometadado index nome_1 removido.")
+	}
+})
+
+
+module.exports = tipoMetadadoModel;

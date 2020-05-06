@@ -3,8 +3,15 @@ const { Parser } = require('json2csv');
 
 const placaController = {
 	list: (req, res, next) => {
+
+		let filtros = {}
+		
+        if(req.user){
+            filtros.createdBy = req.user.userid
+		}
+
 		placaModel
-			.find()
+			.find(filtros)
 			.then(placas => {
 				return res.status(201).json(placas);
 			})
@@ -32,6 +39,10 @@ const placaController = {
 			experimentoCodigo: req.body.experimentoCodigo,
 			pocos: req.body.pocos || []
 		})
+
+		if(req.user){
+            placa.createdBy = req.user.userid
+        }
 
 		placa.save((err, placa) => {
 			if (err) {

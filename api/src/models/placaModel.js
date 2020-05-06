@@ -32,7 +32,11 @@ const placaSchema = new Schema(
 					}
 				]
 			}
-		]
+		],
+
+		createdBy : {
+			type: String
+		}
 	},
 	{
 		timestamps: true

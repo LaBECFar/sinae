@@ -2,8 +2,15 @@ const tipoMetadadoModel = require("../models/tipoMetadadoModel");
 
 const tipoMetadadoController = {
 	list: (req, res, next) => {
+
+		let filtros = {}
+
+        if(req.user){
+            filtros.createdBy = req.user.userid
+		}
+		
 		tipoMetadadoModel
-			.find()
+			.find(filtros)
 			.then(tiposMetadado => {
 				return res.status(201).json(tiposMetadado);
 			})
@@ -30,6 +37,10 @@ const tipoMetadadoController = {
 			nome: req.body.nome,
 			descricao: req.body.descricao
 		});
+
+		if(req.user){
+            tipoMetadado.createdBy = req.user.userid
+        }
 
 		tipoMetadado.save((err, tipoMetadado) => {
 			if (err) {

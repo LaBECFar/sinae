@@ -11,6 +11,10 @@ const tipoMetadadoSchema = new Schema(
 
 		descricao: {
 			type: String
+		},
+
+		createdBy: {
+			type: String
 		}
 	},
 	{

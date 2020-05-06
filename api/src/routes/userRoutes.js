@@ -6,6 +6,12 @@ const userController = require('../controllers/userController')
 // login usando json web token (jwt)
 router.post('/login', userController.login);
 
+// solicitar e-mail para redefinicao de senha
+router.post('/forgot-password', userController.forgotPassword);
+
+// solicitar e-mail para redefinicao de senha
+router.post('/change-password/:userid/:token', userController.changePassword);
+
 // listagem
 router.get('/', auth, userController.list);
 

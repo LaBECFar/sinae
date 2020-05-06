@@ -19,7 +19,7 @@
                 <b-form-input id="password" v-model="form.password" type="password" autocomplete="nope" aria-autocomplete="nope"/>
             </b-form-group>
 
-            <b-form-group>
+            <b-form-group v-if="isAdmin">
                 <b-form-checkbox v-model="form.isAdmin"
                     name="isAdmin"
                     value="true"
@@ -58,7 +58,8 @@ export default {
             msg: {
                 text: false,
                 type: ''
-            }
+            },
+            isAdmin: false
         }
     },
 
@@ -89,6 +90,7 @@ export default {
         }
     },
     created() {
+        this.isAdmin = localStorage.getItem('isAdmin')
         this.refresh()
     }
 }

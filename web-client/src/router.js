@@ -15,6 +15,19 @@ const router = new Router({
 		},
 
 		{
+			path: '/forgot-password',
+			name: 'forgotPassword',
+			component: () => import( /* webpackChunkName: "forgotPassword" */ './views/user/ForgotPassword.vue'),
+			children: [
+				{
+					path: 'change',
+					name: 'changePassword',
+					component: () => import( /* webpackChunkName: "changePassword" */ './views/user/ChangePassword.vue')
+				}
+			]
+		},
+
+		{
 			path: '/',
 			name: 'dashboard',
 			component: Dashboard,

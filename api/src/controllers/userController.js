@@ -199,69 +199,95 @@ const userController = {
 	},
 
 	getPasswordResetURL(user, token) {
-		return `${process.env.URL + process.env.PORT}/change-password/${
-			user._id
-		}/${token}`
+		const url = `${process.env.SITE_URL}:${process.env.SITE_PORT}`
+		const path = `/#/change-password/${user._id}/${token}`
+		return url + path
 	},
 
 	forgotPassword: async (req, res, next) => {
 		const { email } = req.body
 
-		let user
-		try {
-			user = await userModel.findOne({ email }).exec()
-		} catch (err) {
-			res.status(404).json("Nenhum usuário com esse e-mail")
-		}
-
-		const token = user.resetPasswordToken()
-		const url = this.getPasswordResetURL(user, token)
-		const emailTemplate = resetPasswordTemplate(user, url)
-
-		mailer.sendMail(emailTemplate, function (error, info) {
-			if (error) {
-				res.status(500).json(
-					"Erro ao enviar e-mail, por favor tente novamente ou entre em contato"
-				)
-			} else {
-				console.log("Email enviado: " + info.response)
+		userModel.findOne({ email }, (err, user) => {
+			if (!user) {
+				return res
+					.status(404)
+					.json({ error: true, message: "Usuário não encontrado" })
 			}
+
+			if (err) {
+				return res.status(422).send(err.errors)
+			}
+
+			const token = user.resetPasswordToken()
+			const url = userController.getPasswordResetURL(user, token)
+			const emailTemplate = resetPasswordTemplate(user, url)
+
+			mailer.sendMail(emailTemplate, function (error, info) {
+				if (error) {
+					return res.status(500).json({
+						message:
+							"Erro ao enviar e-mail, por favor tente novamente ou entre em contato",
+						error: err,
+						success: false,
+					})
+				} else {
+					console.log(
+						"Email de recuperação de senha enviado: " + user.email
+					)
+					return res.status(201).json({
+						success: true,
+						message: "E-mail de verificação enviado!",
+					})
+				}
+			})
 		})
 	},
 
 	changePassword: async (req, res, next) => {
-		const { userid, token } = req.params
-		const { password } = req.body
+		const { userid, token, password } = req.body
 
-		let user
-		try {
-			user = await userModel.findOne({ _id: userid }).exec()
-		} catch (err) {
-			res.status(404).json("Usuário inválido")
-		}
+		userModel.findOne({ _id: userid }, (err, user) => {
+			if (!user) {
+				let message = "Usuário não encontrado"
+				return res.status(404).json({ error: true, message })
+			}
 
-		const secret = user.password + "-" + user.createdAt
-		const payload = jwt.decode(token, secret)
+			if (err) {
+				return res.status(422).send(err.errors)
+			}
 
-		if (payload.userid === user._id) {
-			user.password = userModel.cryptoPass(password)
+			const secret = user.password + "-" + user.createdAt
 
-			user.save(function (err, user) {
-				if (err) {
-					return res.status(500).json({
-						message: "Erro ao atualizar usuário.",
-						error: err,
-						success: false,
-					})
-				}
-				return res
-					.status(201)
-					.json({
+			let payload
+			try {
+				payload = jwt.verify(token, secret)
+			} catch (error) {
+				let message = "Token inválido"
+				return res.status(404).json({ message, error })
+			}
+
+			if (user._id == payload.userid) {
+				user.password = userModel.cryptoPass(password)
+
+				user.save(function (err, user) {
+					if (err) {
+						return res.status(500).json({
+							message: "Erro ao atualizar usuário.",
+							error: err,
+							success: false,
+						})
+					}
+					return res.status(201).json({
 						success: true,
 						message: "Senha alterada com sucesso!",
 					})
-			})
-		}
+				})
+			} else {
+				let message =
+					"Token inválido, tente solicitar uma nova verificação"
+				return res.status(500).json({ message, error: true })
+			}
+		})
 	},
 }
 

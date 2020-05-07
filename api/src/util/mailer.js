@@ -17,8 +17,8 @@ const resetPasswordTemplate = (user, url) => {
 	const subject = "Redefinição de senha para SINAE"
 	const html = `
     <p>Recebemos uma solicitação para redefinir a sua senha no sistema SINAE do LaBECFar</p>
-    <p>Você pode usar o link abaixo para redefinir a sua senha:</p>
-    <a href=${url}>${url}</a>
+    <p>Você pode usar o link abaixo para redefinir sua senha:</p>
+    <a href="${url}">${url}</a>
     <p>Se você não usar esse link em 1 hora, o mesmo sera expirado.</p>
     <p>Se não foi você que fez essa solicitação, essa mensagem pode ser ignorada.</p>
     `

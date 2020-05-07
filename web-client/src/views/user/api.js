@@ -125,16 +125,22 @@ export const apiUsuario = {
 
 	forgotPassword(email) {
 		if (!email) {
-			return Promise.reject(new Error("E-mail não informados."))
+			return Promise.reject(new Error("E-mail não informado."))
 		}
 		return new Promise((resolve, reject) => {
 			config.api
-				.post(`/user/forgot-password`, email)
+				.post(`/user/forgot-password`, { email })
 				.then((resp) => {
 					resolve(resp.data)
 				})
 				.catch((e) => {
-					reject(new Error(`Erro ao redefinir senha ${e}`))
+					let msg = "Não foi possível solicitar a redefinição de senha"
+					
+					if(e.response && e.response.data && e.response.data.message){
+						msg = e.response.data.message
+					}
+
+					reject(new Error(msg))
 				})
 		})
 	},
@@ -148,12 +154,18 @@ export const apiUsuario = {
 		}
 		return new Promise((resolve, reject) => {
 			config.api
-				.post(`/user/change-password/${userid}/${token}`, password)
+				.post(`/user/change-password`, { userid, token, password })
 				.then((resp) => {
 					resolve(resp.data)
 				})
 				.catch((e) => {
-					reject(new Error(`Erro ao redefinir senha ${e}`))
+					let msg = "Erro ao alterar a senha"
+					
+					if(e.response && e.response.data && e.response.data.message){
+						msg = e.response.data.message
+					}
+
+					reject(new Error(msg))
 				})
 		})
 	},

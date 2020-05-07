@@ -10,7 +10,7 @@ router.post('/login', userController.login);
 router.post('/forgot-password', userController.forgotPassword);
 
 // solicitar e-mail para redefinicao de senha
-router.post('/change-password/:userid/:token', userController.changePassword);
+router.post('/change-password', userController.changePassword);
 
 // listagem
 router.get('/', auth, userController.list);

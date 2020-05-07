@@ -105,7 +105,7 @@ userSchema.methods.generateAuthToken = function () {
 
 userSchema.methods.resetPasswordToken = function () {
 	const secret = this.password + "-" + this.createdAt // guarantees the token only works once
-	const token = jwt.sign({ userid }, secret, { expiresIn: 3600 }) // 1 hora
+	const token = jwt.sign({ userid: this._id }, secret, { expiresIn: 3600 }) // 1 hora
 	return token
 }
 

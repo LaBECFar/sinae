@@ -1,61 +1,126 @@
 <template>
-	<div class="container" v-if="!mailSent">
-		<h1 class="text-center">Redefinir Senha</h1>
+	<div>
+		<div class="container" v-if="!changed">
+			<h1>Redefinir Senha</h1>
+			<p>Defina sua nova senha digitando-a nos campos abaixo.</p>
 
-		<p class="text-center">
-			Defina sua nova senha digitando-a nos campos abaixo.
-		</p>
+			<b-alert variant="danger" :show="msg.length > 0">{{ msg }}</b-alert>
 
-		<b-alert variant="danger" :show="msg.length > 0">{{ msg }}</b-alert>
+			<b-form @submit="onSubmit">
+				<b-form-group label="Nova Senha" label-for="password">
+					<b-form-input
+						id="password"
+						v-model="form.password"
+						type="password"
+						required
+					/>
+				</b-form-group>
 
-		<b-form @submit="onSubmit">
-			<b-form-group label="E-mail" label-for="email">
-				<b-form-input id="email" v-model="form.email" type="text" />
-			</b-form-group>
+				<b-form-group
+					label="Repita a nova senha"
+					label-for="confirm-password"
+				>
+					<b-form-input
+						id="confirm-password"
+						v-model="form.confirmPassword"
+						type="password"
+						required
+					/>
+				</b-form-group>
 
+				<div class="actions">
+					<b-button
+						type="submit"
+						variant="primary"
+						:disabled="loading"
+					>
+						Alterar senha
+					</b-button>
+
+					<b-spinner
+						variant="primary"
+						label="Spinning"
+						v-show="loading"
+					></b-spinner>
+				</div>
+			</b-form>
+		</div>
+
+		<div class="container" v-if="changed">
+			<h1>Senha alterada!</h1>
+			<p>
+				Sua senha foi alterada com sucesso, agora você pode fazer login
+				usando sua nova senha.
+			</p>
 			<div class="actions">
-				<b-button type="submit" variant="primary">
-					Enviar e-mail de verificação
+				<b-button type="button" variant="primary" v-on:click="loginPage()">
+					Página de Login
 				</b-button>
 			</div>
-		</b-form>
+		</div>
 	</div>
 </template>
 
 <script>
 import { apiUsuario } from "./api"
-//import { config } from "../../config"
 
 export default {
-	name: "forgotPassword",
+	name: "changePassword",
 	data() {
 		return {
 			msg: "",
 			form: {
-				email: "",
+				password: "",
+				confirmPassword: "",
+				token: "",
+				userid: "",
 			},
-			mailSent: false,
+			loading: false,
+			changed: false,
 		}
+	},
+	created() {
+		this.form.userid = this.$route.params.userid
+		this.form.token = this.$route.params.token
 	},
 	methods: {
 		onSubmit: function(event) {
 			event.preventDefault()
 
-			if (!this.form.email) {
-				this.msg = "E-mail inválido"
+			if (!this.form.password) {
+				this.msg = "Senha inválida"
 				return
 			}
 
+			if (this.form.password != this.form.confirmPassword) {
+				this.msg = "A senha deve ser a mesma nos dois campos"
+				return
+			}
+
+			if (!this.form.token || !this.form.userid) {
+				this.msg = "URL inválida, tente solicitar um novo e-mail de recuperação"
+				console.log(this.form.token)
+				return
+			}
+
+			const { userid, token, password } = this.form
+
 			apiUsuario
-				.forgotPassword(this.form.email)
+				.changePassword(userid, token, password)
 				.then((data) => {
 					if (data.success) {
-						this.mailSent = true
+						this.changed = true
 					}
+					this.loading = false
 				})
 				.catch((e) => {
 					this.msg = e.message
+					this.loading = false
 				})
+		},
+
+		loginPage() {
+			this.$router.push("/login")
 		},
 	},
 }
@@ -76,10 +141,12 @@ h1 {
 	min-height: 100vh;
 }
 p {
-	font-size: 14px;
+	font-size: 16px;
 }
 .actions {
-	text-align: center;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 #menu {
 	display: none;

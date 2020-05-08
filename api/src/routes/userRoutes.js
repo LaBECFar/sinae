@@ -12,6 +12,9 @@ router.post('/forgot-password', userController.forgotPassword);
 // solicitar e-mail para redefinicao de senha
 router.post('/change-password', userController.changePassword);
 
+// registro de usuário para front-end
+router.post('/register', userController.register);
+
 // listagem
 router.get('/', auth, userController.list);
 

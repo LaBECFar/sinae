@@ -22,11 +22,22 @@
 
 			<div class="actions">
 				<b-button type="submit" variant="primary">Fazer Login</b-button>
-				<b-button type="button" variant="link" v-on:click="resetPassword">
+				<b-button
+					type="button"
+					variant="link"
+					v-on:click="resetPassword"
+				>
 					Esqueceu a senha?
 				</b-button>
 			</div>
 		</b-form>
+
+		<div class="signup">
+			Não tem uma conta de acesso?
+			<b-button type="button" variant="link" v-on:click="register">
+				Registre-se aqui
+			</b-button>
+		</div>
 	</div>
 </template>
 
@@ -70,11 +81,15 @@ export default {
 				.catch((e) => {
 					this.msg = e.message
 				})
-        },
-        
-        resetPassword(){
-            this.$router.push("/forgot-password")
-        }
+		},
+
+		resetPassword() {
+			this.$router.push("/forgot-password")
+		},
+
+		register() {
+			this.$router.push("/register")
+		},
 	},
 	created() {
 		//this.refresh();
@@ -103,5 +118,20 @@ h1 {
 }
 #menu {
 	display: none;
+}
+
+.signup {
+	margin-top: 30px;
+    text-align: center;
+    padding: 10px;
+    background: #eee;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.signup .btn {
+	padding: 0;
+	margin-left:10px;
 }
 </style>

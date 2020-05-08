@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel")
 const { mailer, resetPasswordTemplate } = require("../util/mailer")
 const jwt = require("jsonwebtoken")
+const { check, validationResult } = require("express-validator")
 
 const userController = {
 	login: (req, res, next) => {
@@ -92,13 +93,20 @@ const userController = {
 	},
 
 	post: (req, res, next) => {
-		const { name, email, password } = req.body
+		const { name, email, password, isAdmin } = req.body
 
 		const user = new userModel({
 			name: name,
 			email: email,
 			password: userModel.cryptoPass(password),
 		})
+
+		if (isAdmin) {
+			if (req.user.isAdmin) {
+				// only admins can change any user isAdmin attribute
+				user.isAdmin = isAdmin
+			}
+		}
 
 		user.save((err, user) => {
 			if (err) {
@@ -115,73 +123,63 @@ const userController = {
 	put: (req, res, next) => {
 		var id = req.params.id
 
-		userModel
-			.findById(id)
-			//.populate('users')
-			//.exec()
-			.then((user) => {
-				if (!user) {
-					return res.status(404).send()
+		userModel.findById(id).then((user) => {
+			if (!user) {
+				return res.status(404).send()
+			}
+
+			const { name, email, password, isAdmin, pocosPosition } = req.body
+
+			if (name) {
+				user.name = name
+			}
+
+			if (email) {
+				user.email = email
+			}
+
+			if (isAdmin) {
+				if (req.user.isAdmin) {
+					// only admins can change any user isAdmin attribute
+					user.isAdmin = isAdmin
 				}
+			}
 
-				const {
-					name,
-					email,
-					password,
-					isAdmin,
-					pocosPosition,
-				} = req.body
+			if (password) {
+				user.password = userModel.cryptoPass(password)
+			}
 
-				if (name) {
-					user.name = name
+			if (pocosPosition) {
+				const { q1, q2, q3, q4, radius } = pocosPosition
+
+				if (q1) {
+					user.pocosPosition.q1 = q1
 				}
-
-				if (email) {
-					user.email = email
+				if (q2) {
+					user.pocosPosition.q2 = q2
 				}
-
-				if (isAdmin) {
-					if (req.user.isAdmin) {
-						// only admins can change any user isAdmin attribute
-						user.isAdmin = isAdmin
-					}
+				if (q3) {
+					user.pocosPosition.q3 = q3
 				}
-
-				if (password) {
-					user.password = userModel.cryptoPass(password)
+				if (q4) {
+					user.pocosPosition.q4 = q4
 				}
-
-				if (pocosPosition) {
-					const { q1, q2, q3, q4, radius } = pocosPosition
-
-					if (q1) {
-						user.pocosPosition.q1 = q1
-					}
-					if (q2) {
-						user.pocosPosition.q2 = q2
-					}
-					if (q3) {
-						user.pocosPosition.q3 = q3
-					}
-					if (q4) {
-						user.pocosPosition.q4 = q4
-					}
-					if (radius) {
-						user.pocosPosition.radius = radius
-					}
+				if (radius) {
+					user.pocosPosition.radius = radius
 				}
+			}
 
-				user.save(function (err, user) {
-					if (err) {
-						return res.status(500).json({
-							message: "Erro ao atualizar usuário.",
-							error: err,
-							success: false,
-						})
-					}
-					return res.status(201).json(user)
-				})
+			user.save(function (err, user) {
+				if (err) {
+					return res.status(500).json({
+						message: "Erro ao atualizar usuário.",
+						error: err,
+						success: false,
+					})
+				}
+				return res.status(201).json(user)
 			})
+		})
 	},
 
 	delete: (req, res, next) => {
@@ -204,7 +202,7 @@ const userController = {
 		return url + path
 	},
 
-	forgotPassword: async (req, res, next) => {
+	forgotPassword: (req, res, next) => {
 		const { email } = req.body
 
 		userModel.findOne({ email }, (err, user) => {
@@ -287,6 +285,71 @@ const userController = {
 					"Token inválido, tente solicitar uma nova verificação"
 				return res.status(500).json({ message, error: true })
 			}
+		})
+	},
+
+	register: async (req, res, next) => {
+		const { name, email, password } = req.body
+
+		await check("name")
+			.notEmpty()
+			.withMessage("Nome obrigatório")
+			.isString()
+			.withMessage("Nome inválido")
+			.isLength({ min: 4 })
+			.withMessage("Nome deve possuir pelo menos 4 caracteres")
+			.run(req)
+
+		await check("email")
+			.notEmpty()
+			.withMessage("E-mail obrigatório")
+			.isEmail()
+			.withMessage("E-mail inválido")
+			.custom((value, { req }) => {
+				return new Promise((resolve, reject) => {
+					userModel.findOne({ email }, function (err, user) {
+						if (err) {
+							reject(new Error("Server Error"))
+						}
+						if (Boolean(user)) {
+							reject(new Error("E-mail já esta sendo usado"))
+						}
+						resolve(true)
+					})
+				})
+			})
+			.run(req)
+
+		await check("password")
+			.notEmpty()
+			.withMessage("Senha obrigatório")
+			.isLength({ min: 6 })
+			.withMessage("Senha deve possuir pelo menos 6 caracteres")
+			.run(req)
+
+		const result = validationResult(req)
+		if (!result.isEmpty()) {
+			return res.status(422).json({ errors: result.array() })
+		}
+
+		const user = new userModel({
+			name: name,
+			email: email,
+			password: userModel.cryptoPass(password),
+		})
+
+		user.save((err, user) => {
+			if (err) {
+				return res.status(500).json({
+					message: "Erro ao cadastrar conta de usuário",
+					error: err,
+					success: false,
+				})
+			}
+			return res.status(201).json({
+				success: true,
+				message: "Usuário cadastrado com sucesso!",
+			})
 		})
 	},
 }

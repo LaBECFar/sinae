@@ -11,7 +11,7 @@
 					<b-form-input
 						id="name"
 						v-model="form.name"
-						type="name"
+						type="text"
 						required
 					/>
 				</b-form-group>
@@ -129,6 +129,8 @@ export default {
 				this.msg = "A senha deve ser a mesma nos dois campos"
 				return
 			}
+
+			this.loading = true
 
 			apiUsuario
 				.register(this.form)

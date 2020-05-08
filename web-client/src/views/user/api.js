@@ -134,9 +134,14 @@ export const apiUsuario = {
 					resolve(resp.data)
 				})
 				.catch((e) => {
-					let msg = "Não foi possível solicitar a redefinição de senha"
-					
-					if(e.response && e.response.data && e.response.data.message){
+					let msg =
+						"Não foi possível solicitar a redefinição de senha"
+
+					if (
+						e.response &&
+						e.response.data &&
+						e.response.data.message
+					) {
 						msg = e.response.data.message
 					}
 
@@ -160,11 +165,41 @@ export const apiUsuario = {
 				})
 				.catch((e) => {
 					let msg = "Erro ao alterar a senha"
-					
-					if(e.response && e.response.data && e.response.data.message){
+
+					if (
+						e.response &&
+						e.response.data &&
+						e.response.data.message
+					) {
 						msg = e.response.data.message
 					}
 
+					reject(new Error(msg))
+				})
+		})
+	},
+
+	register(user) {
+		if (!user) {
+			return Promise.reject(new Error("Dados não informados."))
+		}
+		return new Promise((resolve, reject) => {
+			config.api
+				.post(`/user/register`, user)
+				.then((resp) => {
+					resolve(resp.data)
+				})
+				.catch((e) => {
+					let msg =
+						"Erro ao cadastrar-se, verifique se os campos estão digitados corretamente"
+					if (
+						e.response &&
+						e.response.data &&
+						e.response.data.errors &&
+						e.response.data.errors.length > 0
+					) {
+						msg = e.response.data.errors[0].msg
+					}
 					reject(new Error(msg))
 				})
 		})

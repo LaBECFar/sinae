@@ -25,7 +25,6 @@
 					id="descricao"
 					v-model="form.descricao"
 					type="text"
-					required
 				/>
 			</b-form-group>
 			<b-row>

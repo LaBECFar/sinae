@@ -23,7 +23,6 @@
 					v-model="form.descricao"
 					type="text"
                     placeholder="Ex: Usado para saber se o parasita é macho ou fêmea"
-					required
 				/>
 			</b-form-group>
 			<b-row>

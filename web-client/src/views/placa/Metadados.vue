@@ -17,7 +17,8 @@
 			</div>
 
 			<div class="head-actions">
-				<b-button variant="light" v-on:click="btnImport">
+				<b-button class="btn-import" variant="info" v-on:click="btnImport">
+					<v-icon name="arrow-down-circle"></v-icon>
 					Importar
 				</b-button>
 				<b-button variant="primary" v-on:click="save">
@@ -149,11 +150,12 @@
 					</b-card-text>
 
 					<b-button
-						variant="primary"
+						variant="info"
 						@click="exportarMetadadosCsv()"
 						class="width-auto"
 						:disabled="!isSaved"
 					>
+						<v-icon name="download"></v-icon>
 						Exportar Metadados
 					</b-button>
 				</b-card>

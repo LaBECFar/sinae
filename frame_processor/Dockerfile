@@ -53,9 +53,14 @@ RUN ln -s \
 
 RUN pip install pymongo
 
+RUN pip install torch
+RUN pip install torchvision
+RUN pip install https://github.com/fastai/fastai1/archive/master.zip
+
 WORKDIR /
 
 COPY process.py process.py
+COPY trained_model2.pkl trained_model2.pkl
 
 # COPY start.sh start.sh
 # RUN chmod +x start.sh

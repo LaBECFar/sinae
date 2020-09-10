@@ -13,6 +13,7 @@ const frameRoutes = require("./routes/frameRoutes");
 const userRoutes = require("./routes/userRoutes");
 const tipoMetadadoRoutes = require("./routes/tipoMetadadoRoutes");
 const placaRoutes = require("./routes/placaRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
 
 app.use(bodyParser.json());
 app.use(
@@ -36,6 +37,7 @@ app.use("/frame", frameRoutes);
 app.use("/user", userRoutes);
 app.use("/tipo-metadado", tipoMetadadoRoutes);
 app.use("/placa", placaRoutes);
+app.use("/settings", settingsRoutes);
 app.use("/", index);
 
 module.exports = app;

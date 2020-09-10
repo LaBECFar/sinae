@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 import os
 from torchvision.utils import save_image
-from fastai.vision import load_learner, open_image
+from fastai.vision import *
 
 
 #funções necessárias para usar o modelo AI
@@ -46,7 +46,7 @@ def lovasz_hinge(logits, labels, per_image=False, ignore=None):
       per_image: compute the loss per image instead of per batch
       ignore: void class id
     """
-    print(logits.min(), logits.max(), logits.size())
+    # print(logits.min(), logits.max(), logits.size())
     logits=logits[:,1,:,:]
     labels = labels.squeeze(1)
     if per_image:
@@ -128,6 +128,11 @@ def dice_loss(logits, true, eps=1e-7):
     dice_loss = (2. * intersection / (cardinality + eps)).mean()
     return (1 - dice_loss)
 
+def learner_abspath(database):
+    #collection = db['configuration']
+    #model_location = collection.find( { 'name': 'cleaning_parasite_model_location' } )
+    modelpath = '/usr/uploads/model/trained_model2.pkl'
+    return modelpath
 
 # run 
 # sudo python process.py 1 40 5e11f5add6f73000247d162e 1 55 60 2 136 60 3 220 60 4 55 142 5 136 142 6 220 142 7 55 225 8 136 225 9 220 225 10 55 310 11 136 310 12 220 310 13 50 395 14 136 395 15 215 395
@@ -149,36 +154,12 @@ qtd_pocos = int(((len(sys.argv) - 4) / 3)+1)
 # conecta no banco de dados  (DENTRO DO DOCKER)
 client = MongoClient("mongodb://mongo:27017/")
 
-# LOCAL
-# client = MongoClient()
-
 db = client['sinae']
-
 collection = db['frames']
 
 # localiza todos os frames da analise x
 id_frame = {'analiseId': sys.argv[3],'quadrante':int(quadrante)}
-
 frames = collection.find(id_frame)
-
-# novos_valores = { '$set': { 'processado': True, 'pocos': pocos}}
-# collection.update_one(id_frame, novos_valores)
-
-
-# img_name = sys.argv[1]
-
-# path = img_name.split('/')
-
-# quadrante = path[-1].split('_')[0]
-
-# path = '/'.join(path[0:-1])
-
-# files = []
-# le todos os arquivos do diretorio
-# for rd, dd, fd in os.walk(path):
-    #for file in fd:
-     #   if quadrante in file:
-      #      files.append(os.path.join(rd, file))
 
 # armazena a posicao no primeiro frame de cada poco
 posicao_cada_poco = []
@@ -194,7 +175,8 @@ aux_nome_data = img_name.split('/')
 folder_name = '/'.join(aux_nome_data[:-1])+'/Q'+quadrante
 
 # carrega o modelo AI
-learn = load_learner("./", "trained_model2.pkl")
+learner_location = learner_abspath(db)
+learner = load_learner(os.path.dirname(learner_location), os.path.basename(learner_location))
 
 # cria a pasta para o quadrantecaso nao exista
 try:
@@ -301,22 +283,36 @@ for frame in frames:
         poco['url'] = nome_img_poco
         pocos += [poco]
         
-        # salva a imagem na pasta
+        # save well image (poço)
         cv2.imwrite(nome_img_poco,img_final)
 
-        
-        # passar poço pelo modelo de AI e gerar imagem
-        img_pred = open_image(nome_img_poco)
-        prediction = learn.predict(img_pred)
-        pred_float = prediction[1].float()
-        img_name = nome_img_poco.replace(".","_predicted.")
-        save_image(pred_float, img_name)
+        # predict parasite through AI and saves prediction as image
+        img_to_predict = open_image(nome_img_poco)
+        prediction = learner.predict(img_to_predict)
+        prediction_float = prediction[1].float()
+        mask_filepath = nome_img_poco.replace(".","_pred.")
+        save_image(prediction_float, mask_filepath)
+
+        # use predicted image as mask (to separate parasite)
+        mask = cv2.imread(mask_filepath, 0)
+        mask = cv2.resize(mask, (img_final.shape[0], img_final.shape[1]))
+
+        # apply mask
+        res = cv2.bitwise_and(img_final, mask)
+
+        # remove background color
+        res = cv2.cvtColor(res, cv2.COLOR_BGR2BGRA)
+        res_filepath = nome_img_poco.replace(".","_seg.")
+        res[:, :, 3] = mask
+
+        # saves resulting image
+        cv2.imwrite(res_filepath, res)
 
     # MONGO DB SALVA DADOS
     collection = db['frames']
     id_frame = {'_id': frame['_id']}
+
     # atualiza o frame dizendo que ele ja foi processado
     frame = collection.find_one(id_frame)
     novos_valores = { '$set': { 'processado': True, 'pocos': pocos}}
     collection.update_one(id_frame, novos_valores)
-    # print(frame)

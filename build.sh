@@ -10,7 +10,7 @@ cecho(){
     printf "${!1}${2} ${NC}\n"
 }
 
-# create tmp folder
+# create uploads folder
 echo "Checando pastas!"
 if [ ! -d "/usr/uploads" ] 
 then    
@@ -25,6 +25,14 @@ then
     sudo mkdir "/usr/uploads/tmp"
     sudo chmod 777 -R "/usr/uploads/tmp"
     echo "Directory /usr/uploads/tmp created."
+fi
+
+# create model folder
+if [ ! -d "/usr/uploads/model" ] 
+then
+    sudo mkdir "/usr/uploads/model"
+    sudo chmod 777 -R "/usr/uploads/model"
+    echo "Directory /usr/uploads/model created."
 fi
 
 # Build Web Client

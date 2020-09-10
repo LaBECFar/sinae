@@ -59,6 +59,12 @@
 						Meu Perfil
 					</router-link>
 				</li>
+				<li v-if="isAdmin">
+					<router-link :to="{ path: '/settings/' }">
+						<v-icon name="globe"></v-icon>
+						Configurações
+					</router-link>
+				</li>
 				<hr />
 				<li>
 					<a

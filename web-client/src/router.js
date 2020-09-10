@@ -50,6 +50,15 @@ const router = new Router({
 				},
 
 				{
+					path: 'settings',
+					name: 'settings',
+					component: () => import( /* webpackChunkName: "settings" */ './views/settings/Settings.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
 					path: 'experimento',
 					name: 'experimentoIndex',
 					component: () => import( /* webpackChunkName: "locationIndex" */ './views/experimento/Index.vue'),

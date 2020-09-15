@@ -128,12 +128,6 @@ def dice_loss(logits, true, eps=1e-7):
     dice_loss = (2. * intersection / (cardinality + eps)).mean()
     return (1 - dice_loss)
 
-def learner_abspath(database):
-    #collection = db['configuration']
-    #model_location = collection.find( { 'name': 'cleaning_parasite_model_location' } )
-    modelpath = '/usr/uploads/model/trained_model2.pkl'
-    return modelpath
-
 # run 
 # sudo python process.py 1 40 5e11f5add6f73000247d162e 1 55 60 2 136 60 3 220 60 4 55 142 5 136 142 6 220 142 7 55 225 8 136 225 9 220 225 10 55 310 11 136 310 12 220 310 13 50 395 14 136 395 15 215 395
 # docker build . -t frame_processor
@@ -175,7 +169,7 @@ aux_nome_data = img_name.split('/')
 folder_name = '/'.join(aux_nome_data[:-1])+'/Q'+quadrante
 
 # carrega o modelo AI
-learner_location = learner_abspath(db)
+learner_location = '/usr/uploads/model/modelo.pkl'
 learner = load_learner(os.path.dirname(learner_location), os.path.basename(learner_location))
 
 # cria a pasta para o quadrantecaso nao exista

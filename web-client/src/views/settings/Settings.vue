@@ -1,6 +1,9 @@
 <template>
 	<div>
-		<h2><v-icon style="width: 32px;" name="globe"></v-icon> Configurações</h2>
+		<h2>
+			<v-icon style="width: 32px;" name="globe"></v-icon>
+			Configurações
+		</h2>
 
 		<b-alert :show="msg.text" :v-show="msg.text" :variant="msg.type">
 			{{ msg.text }}
@@ -18,14 +21,39 @@
 
 			<b-form-group
 				label="Modelo AI para separar o parasita:"
-				label-for="cleaning_parasite_model_location"
+				label-for="upload"
 			>
-				<b-form-input
-					id="cleaning_parasite_model_location"
-					v-model="form.cleaning_parasite_model_location"
-					type="text"
-					required
-				/>
+				<div class="upload-actions">
+					<b-form-file
+						v-model="file"
+						:state="Boolean(file)"
+						placeholder="Escolha um arquivo ou arraste aqui..."
+						drop-placeholder="Arraste o arquivo aqui..."
+						accept=".pkl"
+					></b-form-file>
+					<b-button
+						type="button"
+						variant="info"
+						v-on:click="uploadModel"
+						v-if="file && uploadPercentage <= 0"
+					>
+						Enviar arquivo
+					</b-button>
+				</div>
+				<b-progress
+					:max="100"
+					height="2rem"
+					v-if="file && uploadPercentage > 0"
+				>
+					<b-progress-bar :value="uploadPercentage">
+						<strong v-if="uploadPercentage < 100">
+							{{ uploadPercentage }}%
+						</strong>
+						<strong v-if="uploadPercentage >= 100">
+							Upload Completo!
+						</strong>
+					</b-progress-bar>
+				</b-progress>
 			</b-form-group>
 
 			<hr />
@@ -40,7 +68,7 @@
 </template>
 
 <script>
-import { apiSettings } from "./api"
+import {apiSettings} from "./api"
 
 export default {
 	name: "settings",
@@ -48,13 +76,14 @@ export default {
 		return {
 			form: {
 				title: "",
-				cleaning_parasite_model_location: "",
 			},
 			msg: {
 				text: false,
 				type: "",
 			},
-			isAdmin: false,
+			file: null,
+			uploadPercentage: 0,
+			isAdmin: false
 		}
 	},
 
@@ -73,15 +102,89 @@ export default {
 					this.msg.type = "danger"
 				})
 		},
+
 		refresh() {
 			apiSettings.get().then((res) => {
 				this.form = res
 			})
 		},
+
+		uploadModel() {
+			let formData = new FormData()
+			formData.append("file", this.file)
+			//apiSettings.uploadModel(formData)
+
+			apiSettings
+				.getApi()
+				.post("/settings/upload-model-pkl", formData, {
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+					onUploadProgress: function(progressEvent) {
+						this.uploadPercentage = parseInt(
+							Math.round(
+								(progressEvent.loaded / progressEvent.total) *
+									100
+							)
+						)
+					}.bind(this),
+				})
+				.then(() => {
+					console.log("Enviado com sucesso!")
+				})
+				.catch(() => {
+					console.log("Arquivo deu erro ao enviar!")
+				})
+		},
 	},
+
 	created() {
 		this.isAdmin = localStorage.getItem("isAdmin")
 		this.refresh()
 	},
 }
 </script>
+
+<style>
+.upload-actions .custom-file .custom-file-label:after {
+	display: none !important;
+}
+.upload-actions {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.upload-actions button {
+	margin-right: 10px;
+}
+
+.upload-actions label {
+	cursor: pointer;
+}
+
+.upload-actions .btn-info {
+	height: 120px;
+	margin-left: 10px;
+	border-radius: 2px;
+	padding: 0 30px;
+	white-space: nowrap;
+}
+
+.upload-actions .custom-file-label {
+	height: 120px;
+	text-align: center;
+	border: 1px solid #ddd !important;
+	cursor: pointer;
+	outline: none;
+	box-shadow: none !important;
+	border-radius: 3px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.upload-actions .custom-file {
+	height: 120px;
+}
+</style>

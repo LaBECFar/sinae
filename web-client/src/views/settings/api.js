@@ -1,4 +1,4 @@
-import { config } from "../../config"
+import {config} from "../../config"
 
 export const apiSettings = {
 	update(settings) {
@@ -30,5 +30,9 @@ export const apiSettings = {
 					reject(e)
 				})
 		})
+	},
+
+	getApi() {
+		return config.api
 	},
 }

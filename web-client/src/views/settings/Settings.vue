@@ -45,7 +45,7 @@
 					height="2rem"
 					v-if="file && uploadPercentage > 0"
 				>
-					<b-progress-bar :value="uploadPercentage">
+					<b-progress-bar :value="uploadPercentage" variant="success">
 						<strong v-if="uploadPercentage < 100">
 							{{ uploadPercentage }}%
 						</strong>

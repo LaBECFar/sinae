@@ -17,11 +17,7 @@
 		</b-row>
 		<b-row>
 			<b-col>
-				<b-alert
-					:show="msg.text"
-					:v-show="msg.text"
-					:variant="msg.type"
-				>
+				<b-alert show v-show="msg.text" :variant="msg.type">
 					{{ msg.text }}
 				</b-alert>
 			</b-col>
@@ -44,11 +40,16 @@
 			</template>
 
 			<template v-slot:cell(actions)="row">
-				<b-button variant="success" size="sm" v-on:click="metadadosPlaca(row.item)" class="mr-2">
+				<b-button
+					variant="success"
+					size="sm"
+					v-on:click="metadadosPlaca(row.item)"
+					class="mr-2"
+				>
 					<v-icon name="tag"></v-icon>
 					Metadados
 				</b-button>
-				
+
 				<b-button
 					variant="primary"
 					size="sm"
@@ -89,13 +90,13 @@
 </template>
 
 <script>
-import { apiPlaca } from "./api";
-import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import {apiPlaca} from "./api"
+import Loading from "vue-loading-overlay"
+import "vue-loading-overlay/dist/vue-loading.css"
 
 export default {
 	name: "PlacaIndex",
-	components: { Loading },
+	components: {Loading},
 	data() {
 		return {
 			isBusy: true,
@@ -103,32 +104,32 @@ export default {
 			fields: [
 				{
 					key: "label",
-					label: "Label"
+					label: "Label",
 				},
 				{
 					key: "experimentoCodigo",
-					label: "Experimento"
+					label: "Experimento",
 				},
 				{
 					key: "actions",
 					label: "Ações",
-					class: "placaIndexActions"
-				}
+					class: "placaIndexActions",
+				},
 			],
 			items: [],
 			msg: {
 				text: false,
-				type: ""
-			}
-		};
+				type: "",
+			},
+		}
 	},
 	methods: {
-		metadadosPlaca(placa){
-			this.$router.push(`/placa/${placa._id}/metadados`);
+		metadadosPlaca(placa) {
+			this.$router.push(`/placa/${placa._id}/metadados`)
 		},
 
 		editarPlaca(placa) {
-			this.$router.push(`/placa/${placa._id}/editar`);
+			this.$router.push(`/placa/${placa._id}/editar`)
 		},
 
 		removerPlaca(placa) {
@@ -139,40 +140,40 @@ export default {
 					type: "warning",
 					showCancelButton: true,
 					confirmButtonText: "Sim, remover!",
-					cancelButtonText: "Cancelar"
+					cancelButtonText: "Cancelar",
 				})
-				.then(result => {
+				.then((result) => {
 					if (result.value) {
 						apiPlaca
 							.removerPlaca(placa._id)
 							.then(() => {
-								this.refresh();
+								this.refresh()
 							})
-							.catch(e => {
-								console.log(e);
-							});
+							.catch((e) => {
+								console.log(e)
+							})
 					}
-				});
+				})
 		},
 
 		refresh() {
-			this.isBusy = true;
-			this.isLoading = false;
+			this.isBusy = true
+			this.isLoading = false
 			apiPlaca
 				.listarPlacas()
-				.then(data => {
-					this.items = data;
-					this.isBusy = false;
+				.then((data) => {
+					this.items = data
+					this.isBusy = false
 				})
 				.catch(function() {
-					this.isBusy = false;
-				});
-		}
+					this.isBusy = false
+				})
+		},
 	},
 	created() {
-		this.refresh();
-	}
-};
+		this.refresh()
+	},
+}
 </script>
 
 <style>

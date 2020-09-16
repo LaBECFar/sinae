@@ -17,7 +17,7 @@
     </b-row>
     <b-row>
         <b-col>            
-            <b-alert :show="msg.text" :v-show="msg.text" :variant=msg.type>
+            <b-alert show v-show="msg.text" :variant="msg.type">
                 {{ msg.text }}
             </b-alert>
         </b-col>            

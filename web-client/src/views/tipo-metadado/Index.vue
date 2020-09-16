@@ -9,7 +9,11 @@
 				</h2>
 			</b-col>
 			<b-col class="text-right">
-				<b-button to="/tipo-metadado/novo" variant="success" class="mr-2">
+				<b-button
+					to="/tipo-metadado/novo"
+					variant="success"
+					class="mr-2"
+				>
 					<v-icon name="plus"></v-icon>
 					Novo
 				</b-button>
@@ -17,11 +21,7 @@
 		</b-row>
 		<b-row>
 			<b-col>
-				<b-alert
-					:show="msg.text"
-					:v-show="msg.text"
-					:variant="msg.type"
-				>
+				<b-alert show v-show="msg.text" :variant="msg.type">
 					{{ msg.text }}
 				</b-alert>
 			</b-col>
@@ -78,13 +78,13 @@
 </template>
 
 <script>
-import { apiTipoMetadado } from "./api";
-import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import {apiTipoMetadado} from "./api"
+import Loading from "vue-loading-overlay"
+import "vue-loading-overlay/dist/vue-loading.css"
 
 export default {
 	name: "TipoMetadadoIndex",
-	components: { Loading },
+	components: {Loading},
 	data() {
 		return {
 			isBusy: true,
@@ -92,28 +92,28 @@ export default {
 			fields: [
 				{
 					key: "nome",
-					label: "Nome"
+					label: "Nome",
 				},
 				{
 					key: "descricao",
-					label: "Descrição"
+					label: "Descrição",
 				},
 				{
 					key: "actions",
 					label: "Ações",
-					class: "tipoMetadadoIndexActions"
-				}
+					class: "tipoMetadadoIndexActions",
+				},
 			],
 			items: [],
 			msg: {
 				text: false,
-				type: ""
-			}
-		};
+				type: "",
+			},
+		}
 	},
 	methods: {
 		editarTipoMetadado(tipo) {
-			this.$router.push(`/tipo-metadado/${tipo._id}/editar`);
+			this.$router.push(`/tipo-metadado/${tipo._id}/editar`)
 		},
 
 		removerTipoMetadado(tipo) {
@@ -124,37 +124,37 @@ export default {
 					type: "warning",
 					showCancelButton: true,
 					confirmButtonText: "Sim, remover!",
-					cancelButtonText: "Cancelar"
+					cancelButtonText: "Cancelar",
 				})
-				.then(result => {
+				.then((result) => {
 					if (result.value) {
 						apiTipoMetadado
 							.removerTipoMetadado(tipo._id)
 							.then(() => {
-								this.refresh();
+								this.refresh()
 							})
 					}
-				});
+				})
 		},
 
 		refresh() {
-			this.isBusy = true;
-			this.isLoading = false;
+			this.isBusy = true
+			this.isLoading = false
 			apiTipoMetadado
 				.listarTiposMetadado()
-				.then(data => {
-					this.items = data;
-					this.isBusy = false;
+				.then((data) => {
+					this.items = data
+					this.isBusy = false
 				})
 				.catch(() => {
-					this.isBusy = false;
-				});
-		}
+					this.isBusy = false
+				})
+		},
 	},
 	created() {
-		this.refresh();
-	}
-};
+		this.refresh()
+	},
+}
 </script>
 
 <style>

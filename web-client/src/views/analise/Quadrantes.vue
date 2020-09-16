@@ -5,7 +5,7 @@
 			<b-button @click="back()" variant="secondary">Voltar</b-button>
 		</div>
 
-		<b-alert :show="msg.text" :v-show="msg.text" :variant="msg.type">
+		<b-alert show v-show="msg.text" :variant="msg.type">
 			{{ msg.text }}
 		</b-alert>
 

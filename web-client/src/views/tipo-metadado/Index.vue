@@ -149,7 +149,7 @@ export default {
 					this.items = data;
 					this.isBusy = false;
 				})
-				.catch(e => {
+				.catch(() => {
 					this.isBusy = false;
 				});
 		}

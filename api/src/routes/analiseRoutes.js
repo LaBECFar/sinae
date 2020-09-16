@@ -30,4 +30,7 @@ router.get('/:id/download-csv', analiseController.exportCsv);
 // processa os frames para extrair os poços do quadrante
 router.post('/:id/extract-pocos', auth, analiseController.extractPocos);
 
+// salva o vídeo no servidor
+router.post('/:id/upload-video', auth, analiseController.uploadVideo);
+
 module.exports = router;

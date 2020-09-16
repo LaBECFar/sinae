@@ -6,7 +6,8 @@ const fs = require("fs")
 const archiver = require('archiver')
 const path = require('path')
 const d = require("../util/dockerApi")
-const { Parser } = require('json2csv');
+const { Parser } = require('json2csv')
+const formidable = require("formidable")
 
 
 const analiseController = {
@@ -103,7 +104,7 @@ const analiseController = {
 
         const analise = new analiseModel({
             tempo: req.body.tempo,
-            fps: req.body.fps,
+            fps: req.body.fps || 1,
             experimentoCodigo: req.body.experimentoCodigo,
             placa: req.body.placa,
             dataColeta: dataColeta
@@ -486,6 +487,58 @@ const analiseController = {
                 return res.status(422).send(err.errors);
             });   
     
-    }
+    },
+
+    uploadVideo: (req, res, next) => {
+		var form = new formidable.IncomingForm()
+		form.keepExtensions = true
+        form.uploadDir = "/usr/uploads/tmp/"
+        
+        const analiseId = req.params.id
+
+        analiseModel.findById(analiseId)
+            .then(analise => {
+                form.parse(req, function (err, fields, files) {
+                    if (err) return res.status(422).send(err.errors)
+        
+                    if (!files.file) {
+                        let errorMsg = "Arquivo não transferido"
+                        return res
+                            .status(500)
+                            .json({error: true, message: errorMsg, success: false})
+                    }
+        
+                    saveFile(files.file, analise)
+                })
+            })
+
+
+		function saveFile(file, analise) {
+            let oldpath = file.path
+			let filename = 'video_'+analise._id + path.extname(oldpath)
+			let targetpath = '/usr/uploads/experimentos/'+analise.experimentoCodigo + '/' +analise.placa+ '/' + analise.tempo+'/';
+
+			if (!fs.existsSync(oldpath)) {
+				console.log("settingsController.js: Não existe o oldpath")
+			}
+
+			if (!fs.existsSync(targetpath)) {
+				fs.mkdirSync(targetpath, {recursive: true})
+			}
+
+			targetpath += "/" + filename
+
+			fs.rename(oldpath, targetpath, (err) => {
+				if (err) throw err
+				console.log("Vídeo atualizado: " + targetpath)
+				return res
+					.status(201)
+					.json({
+						message: "Vídeo enviado com sucesso!",
+						success: true,
+					})
+			})
+		}
+	}
 }    
 module.exports = analiseController

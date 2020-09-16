@@ -133,9 +133,6 @@ export default {
 							.then(() => {
 								this.refresh();
 							})
-							.catch(e => {
-								console.log(e);
-							});
 					}
 				});
 		},

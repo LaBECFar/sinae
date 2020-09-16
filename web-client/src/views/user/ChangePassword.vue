@@ -99,7 +99,6 @@ export default {
 
 			if (!this.form.token || !this.form.userid) {
 				this.msg = "URL inválida, tente solicitar um novo e-mail de recuperação"
-				console.log(this.form.token)
 				return
 			}
 

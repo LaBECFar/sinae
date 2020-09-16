@@ -24,8 +24,8 @@
 		<b-row>
 			<b-col>
 				<b-alert
-					:show="msg.text"
-					:v-show="msg.text"
+					show
+					v-show="msg.text"
 					:variant="msg.type"
 				>
 					{{ msg.text }}
@@ -140,7 +140,7 @@
 						</div>
 					</b-card-text>
 
-					<b-button @click="detalhesQuadrante()" variant="secondary">
+					<b-button @click="detalhesQuadrante()" variant="secondary" :disabled="analise.framesTotal < 1">
 						Extrair Poços
 					</b-button>
 				</b-card>

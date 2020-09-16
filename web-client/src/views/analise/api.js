@@ -75,6 +75,10 @@ export const apiAnalise = {
 		});
 	},
 
+	getApi() {
+		return config.api;
+	},
+
 	getFramesDownloadLink(analiseId) {
 		return `${config.URL_API}/analise/${analiseId}/download-frames`;
 	},

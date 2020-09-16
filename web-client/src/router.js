@@ -93,6 +93,15 @@ const router = new Router({
 				},
 
 				{
+					path: 'experimento/:experimentoCodigo/analises/novo',
+					name: 'analiseNovo',
+					component: () => import( /* webpackChunkName: "analiseNovo" */ './views/analise/Novo.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
+				{
 					path: 'placa',
 					name: 'placaIndex',
 					component: () => import( /* webpackChunkName: "placaIndex" */ './views/placa/Index.vue'),

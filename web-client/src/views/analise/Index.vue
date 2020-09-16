@@ -8,7 +8,12 @@
                 Analises do Experimento <strong>{{experimentoCodigo}}</strong>
             </h2>
         </b-col>
-
+        <b-col class="text-right">
+            <b-button :to="'/experimento/'+experimentoCodigo+'/analises/novo'" variant="success" class="mr-2">
+                <v-icon name="plus"></v-icon>
+                Novo
+            </b-button>    
+        </b-col>
     </b-row>
     <b-row>
         <b-col>            

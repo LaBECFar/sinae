@@ -33,4 +33,7 @@ router.post('/:id/extract-pocos', auth, analiseController.extractPocos);
 // salva o vídeo no servidor
 router.post('/:id/upload-video', auth, analiseController.uploadVideo);
 
+// extrair frames do vídeo
+router.post('/:id/extract-frames', auth, analiseController.extractFrames);
+
 module.exports = router;

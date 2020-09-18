@@ -8,6 +8,7 @@ const path = require('path')
 const d = require("../util/dockerApi")
 const { Parser } = require('json2csv')
 const formidable = require("formidable")
+const frameExtractor = require('ffmpeg-extract-frames')
 
 
 const analiseController = {
@@ -97,7 +98,7 @@ const analiseController = {
     },
     
     post: (req, res, next) => {
-        var dataColeta = req.body.dataColeta
+        let dataColeta = req.body.dataColeta
         if(dataColeta){
             dataColeta = moment(dataColeta, "YYYY-MM-DD").toDate()
         }
@@ -146,7 +147,7 @@ const analiseController = {
     },
     
     put: (req, res, next) => {
-        var id = req.params.id;
+        const id = req.params.id;
         const that = this
 
         analiseModel.findById(id)
@@ -328,7 +329,7 @@ const analiseController = {
     },
 
     extractPocos: (req, res, next) => {
-        let id = req.params.id;
+        const id = req.params.id;
         let quadrante = req.body.quadrante;
         let pocos = req.body.pocos;
         let raio = req.body.raio;
@@ -516,7 +517,7 @@ const analiseController = {
 		function saveFile(file, analise) {
             let oldpath = file.path
 			let filename = 'video_'+analise._id + path.extname(oldpath)
-			let targetpath = '/usr/uploads/experimentos/'+analise.experimentoCodigo + '/' +analise.placa+ '/' + analise.tempo+'/';
+			let targetpath = '/usr/uploads/experimentos/'+analise.experimentoCodigo + '/' +analise.placa+ '/' + analise.tempo;
 
 			if (!fs.existsSync(oldpath)) {
 				console.log("settingsController.js: Não existe o oldpath")
@@ -529,16 +530,109 @@ const analiseController = {
 			targetpath += "/" + filename
 
 			fs.rename(oldpath, targetpath, (err) => {
-				if (err) throw err
-				console.log("Vídeo atualizado: " + targetpath)
-				return res
-					.status(201)
-					.json({
-						message: "Vídeo enviado com sucesso!",
-						success: true,
-					})
+                if (err) throw err
+
+                analise.video = targetpath
+                
+                analise.save((err, analise) => {
+                    if (err) {
+                        return res.status(500).json({
+                            message: 'Erro ao salvar analise',
+                            error: err,
+                            success: false
+                        });
+                    }
+        
+                    return res
+                        .status(201)
+                        .json({
+                            message: "Vídeo enviado com sucesso!",
+                            success: true,
+                        })
+                })
 			})
 		}
-	}
+    },
+
+    extractFrames: async (req, res, next) => {
+        const analiseId = req.params.id
+        const quadrantes = req.body.quadrantes
+        const fps = req.body.fps || 1
+
+        const timeToMiliseconds = (time) => {
+            let value = time.split(':')
+            let minToMilis = parseInt(value[0]) * 60 * 1000 // minutes > seconds > miliseconds
+            let secToMilis =  parseInt(value[1]) * 1000 // seconds > miliseconds
+            return (minToMilis + secToMilis)
+        }
+
+        const calcOffsets = (init, end, count) => {
+            let offsets = []
+            for(let i = init; i <= end; i += count){
+                offsets.push(i)
+            }
+            return offsets
+        }
+
+
+        let analise = null
+        
+        try {
+            analise = await analiseModel.findById(analiseId)
+            analise.fps = fps
+        } catch(err) {
+            return res.status(422).send(err.errors)
+        }
+
+        if(!analise || !analise.video){
+            return res.status(404).json({
+                message: 'A análise informada não possui vídeo',
+                error: err,
+                success: false
+            });
+        }
+
+        const path = analise.video.substring(0, analise.video.lastIndexOf("/"))
+        const count = Math.floor(1000 / fps);
+        
+        Object.keys(quadrantes).forEach(async (q, qindex) => {
+            const quadrante = quadrantes[q]
+            const initTime = timeToMiliseconds(quadrante[0])
+            const endTime = timeToMiliseconds(quadrante[1])
+            const offsets = calcOffsets(initTime, endTime, count)
+
+            await frameExtractor({
+                input: analise.video,
+                output: path+'Q'+ (qindex++) +'_%i.png',
+                offsets: offsets
+            })
+            
+            //TODO save extracted frames into db
+
+            /*offsets.forEach(milisecond => {
+                const framepath = path + 'Q'+(qindex++)+'_'+milisecond+'.png'
+
+                const frame = new frameModel({
+                    tempoMilis: milisecond,
+                    url: framepath,
+                    analiseId: analiseId,
+                    quadrante: qindex
+                })
+                
+                frame.save((err, frame) => {
+                    if (err) {
+                        return res.status(500).json({  message: 'Erro ao criar frame', error: err, success: false });
+                    }
+                })
+            });*/
+        })
+
+        return res.status(201).json({
+            message: "Frames extraidos com sucesso!",
+            success: true,
+        })
+        
+
+    }
 }    
 module.exports = analiseController

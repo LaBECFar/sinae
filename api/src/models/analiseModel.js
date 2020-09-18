@@ -29,6 +29,10 @@ const analisesSchema = new Schema(
 		dataColeta: {
 			type: Date,
 			required: true
+		},
+
+		video: {
+			type: String
 		}
 	},
 	{

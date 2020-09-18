@@ -180,6 +180,16 @@ const router = new Router({
 						middleware: auth
 					}
 				},
+
+				{
+					path: 'analise/:id/extrair-video',
+					name: 'analiseExtrairVideo',
+					component: () => import( /* webpackChunkName: "analiseExtrairVideo" */ './views/analise/ExtrairVideo.vue'),
+					meta: {
+						middleware: auth
+					}
+				},
+
 				{
 					path: 'analise/:analiseCodigo/quadrante/:quadrante',
 					name: 'analiseDetalhesQuadrante',

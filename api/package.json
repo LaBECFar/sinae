@@ -19,6 +19,7 @@
     "env-cmd": "^9.0.3",
     "express": "^4.17.1",
     "express-validator": "^6.4.1",
+    "ffmpeg-extract-frames": "^2.0.2",
     "formidable": "^1.2.1",
     "get-docker-host": "^1.0.3",
     "jimp": "^0.9.3",

@@ -183,6 +183,10 @@ export default {
 					this.msg.text = "Análise cadastrada com sucesso"
 					this.msg.type = "success"
 					this.video.isUploading = false
+					
+					this.$router.push(
+						`/analise/${this.analiseId}/extrair-video/`
+					)
 				})
 				.catch(() => {
 					this.msg.text = "Erro ao enviar o vídeo!"

@@ -295,9 +295,9 @@ for frame in frames:
         res = cv2.bitwise_and(img_final, mask)
 
         # remove background color
-        res = cv2.cvtColor(res, cv2.COLOR_BGR2BGRA)
+        # res = cv2.cvtColor(res, cv2.COLOR_BGR2BGRA)
         res_filepath = nome_img_poco.replace(".","_seg.")
-        res[:, :, 3] = mask
+        # res[:, :, 3] = mask
 
         # saves resulting image
         cv2.imwrite(res_filepath, res)

@@ -218,7 +218,7 @@
 
 			<b-row>
 				<b-col>
-					<b-button type="submit" variant="primary">
+					<b-button type="submit" variant="primary" :disabled="isExtracting || !this.form.video">
 						Extrair frames
 					</b-button>
 				</b-col>
@@ -243,6 +243,8 @@ export default {
 				_id: "",
 				fps: "",
 			},
+
+			isExtracting: false,
 
 			quadrantes: {
 				q1: ["", ""],
@@ -279,7 +281,8 @@ export default {
 					quadrantes: this.quadrantes,
 				})
 				.then(() => {
-					this.msg.text = "Extração de frames inicializada com sucesso!"
+					this.isExtracting = true
+					this.msg.text = "Extração de frames inicializada, esse processo acontece de forma assíncrona"
 					this.msg.type = "success"
 				})
 				.catch((e) => {
@@ -294,7 +297,7 @@ export default {
 				this.form = ret
 
 				if (!this.form.video) {
-					this.msg.text = "Essa análise não possúi vídeo"
+					this.msg.text = "Essa análise não possúi vídeo ou os frames ja foram extraídos"
 					this.msg.type = "danger"
 				}
 
@@ -307,7 +310,7 @@ export default {
 				.fire({
 					title: "Configurações padrões",
 					text:
-						"Deseja salvar as configurações atuais como padrão para o seu usuário?",
+						"Deseja salvar as configurações atuais como padrão para o seu dispositivo?",
 					type: "info",
 					showCancelButton: true,
 					confirmButtonText: "Sim, salvar!",

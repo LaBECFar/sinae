@@ -43,7 +43,7 @@
 						id="dataColeta"
 						v-model="form.dataColeta"
 						placeholder="Selecione uma data"
-                        required
+						required
 					></b-form-datepicker>
 				</b-form-group>
 
@@ -75,9 +75,23 @@
 
 			<template v-slot:overlay>
 				<div class="uploading-box">
-					<b-spinner label="Spinning"></b-spinner>
-					<h3>Enviando vídeo...</h3>
+					<b-spinner
+						label="Spinning"
+						v-if="video.uploadPercentage < 100"
+					></b-spinner>
+
+					<h3 v-if="video.uploadPercentage < 100">
+						Enviando vídeo...
+					</h3>
+					<h3 v-if="video.uploadPercentage >= 100">
+						Vídeo enviado e analise cadastrada
+					</h3>
+					<p v-if="video.uploadPercentage >= 100">
+						Agora é necessário extrair os frames do vídeo
+					</p>
+
 					<br />
+
 					<b-progress :max="100" height="2rem">
 						<b-progress-bar
 							:value="video.uploadPercentage"
@@ -87,10 +101,20 @@
 								{{ video.uploadPercentage }}%
 							</strong>
 							<strong v-if="video.uploadPercentage >= 100">
-								Upload Completo!
+								Upload Completo
 							</strong>
 						</b-progress-bar>
 					</b-progress>
+
+					<b-button
+						class="btn-extract"
+						v-if="analiseId && video.uploadPercentage >= 100"
+						:to="'/analise/' + analiseId + '/extrair-video/'"
+						variant="primary"
+						size="lg"
+					>
+						Extrair Frames
+					</b-button>
 				</div>
 			</template>
 		</b-overlay>
@@ -117,8 +141,8 @@ export default {
 				isUploading: false,
 			},
 			msg: {
-				text: '',
-				type: '',
+				text: "",
+				type: "",
 			},
 		}
 	},
@@ -182,11 +206,7 @@ export default {
 				.then(() => {
 					this.msg.text = "Análise cadastrada com sucesso"
 					this.msg.type = "success"
-					this.video.isUploading = false
-					
-					this.$router.push(
-						`/analise/${this.analiseId}/extrair-video/`
-					)
+					//this.video.isUploading = false
 				})
 				.catch(() => {
 					this.msg.text = "Erro ao enviar o vídeo!"
@@ -207,6 +227,9 @@ export default {
 }
 .uploading-box {
 	text-align: center;
+}
+.btn-extract {
+	margin-top: 20px;
 }
 </style>
 

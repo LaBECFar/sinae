@@ -83,7 +83,26 @@
 		<br />
 
 		<b-row align-content="stretch">
-			<b-col>
+
+			<b-col md="3" v-if="analise.video && analise.framesTotal <= 0">
+				<b-card title="Extrair Frames do vídeo">
+					<b-card-text>
+						<div>
+							Você já pode extrair os frames do vídeos clicando no botão abaixo
+						</div>
+					</b-card-text>
+
+					<b-button
+						variant="primary"
+						@click="extractVideoFrames()"
+					>
+						Extrair Frames
+					</b-button>
+				</b-card>
+			</b-col>
+
+
+			<b-col md="3">
 				<b-card title="Quadrantes">
 					<b-card-text>
 						<div>
@@ -148,7 +167,7 @@
 
 			
 
-			<b-col>
+			<b-col md="3">
 				<b-card title="Exportação">
 					<b-card-text>
 						<b-alert
@@ -187,8 +206,6 @@
 				</b-card>
 			</b-col>
 
-			<b-col></b-col>
-			<b-col></b-col>
 		</b-row>
 	</div>
 </template>
@@ -259,9 +276,12 @@ export default {
 					this.isBusy = false;
 				})
 				.catch(() => {
-					//console.log(e)
 					this.isBusy = false;
 				});
+		},
+
+		extractVideoFrames() {
+			this.$router.push(`/analise/${this.analise._id}/extrair-video`);
 		},
 
 		exportCsv() {
@@ -337,6 +357,8 @@ export default {
 .link-download {
 	margin-left: 10px;
 }
+
+.card {min-height: 100%;}
 
 @keyframes yellowfade {
 	from {

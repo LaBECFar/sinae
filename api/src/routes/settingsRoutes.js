@@ -12,4 +12,7 @@ router.put("/", auth, settingsController.put)
 // upload model.pkl file 
 router.post("/upload-model-pkl", auth, settingsController.uploadModel)
 
+// upload cellprofiler config .cpproj file 
+router.post("/upload-cellprofiler-config", auth, settingsController.uploadCellprofilerConfig)
+
 module.exports = router

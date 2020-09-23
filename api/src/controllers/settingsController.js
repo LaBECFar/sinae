@@ -63,7 +63,7 @@ const settingsController = {
 		function saveModel(file) {
 			let filename = "modelo.pkl"
 			let oldpath = file.path
-			let targetpath = "/usr/uploads/model"
+			let targetpath = "/usr/uploads/settings"
 
 			if (!fs.existsSync(oldpath)) {
 				console.log("settingsController.js: Não existe o oldpath")
@@ -87,6 +87,55 @@ const settingsController = {
 			})
 		}
 	},
+
+	uploadCellprofilerConfig: (req, res, next) => {
+		var form = new formidable.IncomingForm()
+		form.keepExtensions = true
+		form.uploadDir = "/usr/uploads/tmp/"
+
+		form.parse(req, function (err, fields, files) {
+			if (err) return res.status(422).send(err.errors)
+
+			if (!files.file) {
+				return res
+					.status(500)
+					.json({
+						error: true, 
+						message: "Arquivo de configuração não transferido", 
+						success: false
+					})
+			}
+
+			saveFile(files.file)
+		})
+
+		function saveFile(file) {
+			let filename = "cellprofiler_config.cpproj"
+			let oldpath = file.path
+			let targetpath = "/usr/uploads/settings"
+
+			if (!fs.existsSync(oldpath)) {
+				console.log("settingsController.js: Não existe o oldpath")
+			}
+
+			if (!fs.existsSync(targetpath)) {
+				fs.mkdirSync(targetpath, {recursive: true})
+			}
+
+			targetpath += "/" + filename
+
+			fs.rename(oldpath, targetpath, (err) => {
+				if (err) throw err
+				console.log("Configuração do cellprofiler atualizada: " + targetpath)
+				return res
+					.status(201)
+					.json({
+						message: "Configuração do cellprofiler atualizada com sucesso!",
+						success: true,
+					})
+			})
+		}
+	}
 }
 
 module.exports = settingsController

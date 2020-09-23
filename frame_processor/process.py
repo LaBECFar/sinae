@@ -169,7 +169,7 @@ aux_nome_data = img_name.split('/')
 folder_name = '/'.join(aux_nome_data[:-1])+'/Q'+quadrante
 
 # carrega o modelo AI
-learner_location = '/usr/uploads/model/modelo.pkl'
+learner_location = '/usr/uploads/settings/modelo.pkl'
 learner = load_learner(os.path.dirname(learner_location), os.path.basename(learner_location))
 
 # cria a pasta para o quadrantecaso nao exista

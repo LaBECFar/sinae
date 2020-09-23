@@ -28,11 +28,11 @@ then
 fi
 
 # create model folder
-if [ ! -d "/usr/uploads/model" ] 
+if [ ! -d "/usr/uploads/settings" ] 
 then
-    sudo mkdir "/usr/uploads/model"
-    sudo chmod 777 -R "/usr/uploads/model"
-    echo "Directory /usr/uploads/model created."
+    sudo mkdir "/usr/uploads/settings"
+    sudo chmod 777 -R "/usr/uploads/settings"
+    echo "Directory /usr/uploads/settings created."
 fi
 
 # Build Web Client

@@ -25,17 +25,21 @@
 			>
 				<div class="upload-actions">
 					<b-form-file
-						v-model="file"
-						:state="Boolean(file)"
-						placeholder="Escolha um arquivo ou arraste aqui..."
+						v-model="trainedModel.file"
+						:state="Boolean(trainedModel.file)"
+						placeholder="Escolha um arquivo .pkl ou arraste aqui..."
 						drop-placeholder="Arraste o arquivo aqui..."
 						accept=".pkl"
+						v-if="trainedModel.uploadPercentage <= 0"
 					></b-form-file>
 					<b-button
 						type="button"
 						variant="info"
 						v-on:click="uploadModel"
-						v-if="file && uploadPercentage <= 0"
+						v-if="
+							trainedModel.file &&
+								trainedModel.uploadPercentage <= 0
+						"
 					>
 						Enviar arquivo
 					</b-button>
@@ -43,13 +47,69 @@
 				<b-progress
 					:max="100"
 					height="2rem"
-					v-if="file && uploadPercentage > 0"
+					v-if="
+						trainedModel.file && trainedModel.uploadPercentage > 0
+					"
 				>
-					<b-progress-bar :value="uploadPercentage" variant="success">
-						<strong v-if="uploadPercentage < 100">
-							{{ uploadPercentage }}%
+					<b-progress-bar
+						:value="trainedModel.uploadPercentage"
+						variant="success"
+					>
+						<strong v-if="trainedModel.uploadPercentage < 100">
+							{{ trainedModel.uploadPercentage }}%
 						</strong>
-						<strong v-if="uploadPercentage >= 100">
+						<strong v-if="trainedModel.uploadPercentage >= 100">
+							Upload Completo!
+						</strong>
+					</b-progress-bar>
+				</b-progress>
+			</b-form-group>
+
+			<b-form-group
+				label="Configurações do CellProfiler:"
+				label-for="upload"
+			>
+				<div class="upload-actions">
+					<b-form-file
+						v-model="cellprofilerConfig.file"
+						:state="Boolean(cellprofilerConfig.file)"
+						placeholder="Escolha um arquivo .cpproj ou arraste aqui..."
+						drop-placeholder="Arraste o arquivo aqui..."
+						accept=".cpproj"
+						v-if="cellprofilerConfig.uploadPercentage <= 0"
+					></b-form-file>
+					<b-button
+						type="button"
+						variant="info"
+						v-on:click="uploadCellprofilerConfig"
+						v-if="
+							cellprofilerConfig.file &&
+								cellprofilerConfig.uploadPercentage <= 0
+						"
+					>
+						Enviar arquivo
+					</b-button>
+				</div>
+				<b-progress
+					:max="100"
+					height="2rem"
+					v-if="
+						cellprofilerConfig.file &&
+							cellprofilerConfig.uploadPercentage > 0
+					"
+				>
+					<b-progress-bar
+						:value="cellprofilerConfig.uploadPercentage"
+						variant="success"
+					>
+						<strong
+							v-if="cellprofilerConfig.uploadPercentage < 100"
+						>
+							{{ cellprofilerConfig.uploadPercentage }}%
+						</strong>
+						<strong
+							v-if="cellprofilerConfig.uploadPercentage >= 100"
+						>
 							Upload Completo!
 						</strong>
 					</b-progress-bar>
@@ -77,12 +137,22 @@ export default {
 			form: {
 				title: "",
 			},
+
 			msg: {
 				text: false,
 				type: "",
 			},
-			file: null,
-			uploadPercentage: 0,
+
+			trainedModel: {
+				file: null,
+				uploadPercentage: 0,
+			},
+
+			cellprofilerConfig: {
+				file: null,
+				uploadPercentage: 0,
+			},
+
 			isAdmin: false,
 		}
 	},
@@ -110,30 +180,55 @@ export default {
 		},
 
 		uploadModel() {
+			const that = this
+
+			this.uploadFile(
+				this.trainedModel.file,
+				"/settings/upload-model-pkl",
+				function(progressEvent) {
+					that.trainedModel.uploadPercentage = parseInt(
+						Math.round(
+							(progressEvent.loaded / progressEvent.total) * 100
+						)
+					)
+				}
+			)
+		},
+
+		uploadCellprofilerConfig() {
+			const that = this
+
+			this.uploadFile(
+				this.cellprofilerConfig.file,
+				"/settings/upload-cellprofiler-config",
+				function(progressEvent) {
+					that.cellprofilerConfig.uploadPercentage = parseInt(
+						Math.round(
+							(progressEvent.loaded / progressEvent.total) * 100
+						)
+					)
+				}
+			)
+		},
+
+		uploadFile(file, route, onFileUploadProgress) {
 			let formData = new FormData()
-			formData.append("file", this.file)
-			//apiSettings.uploadModel(formData)
+			formData.append("file", file)
 
 			apiSettings
 				.getApi()
-				.post("/settings/upload-model-pkl", formData, {
+				.post(route, formData, {
 					headers: {
 						"Content-Type": "multipart/form-data",
 					},
 					onUploadProgress: function(progressEvent) {
-						this.uploadPercentage = parseInt(
-							Math.round(
-								(progressEvent.loaded / progressEvent.total) *
-									100
-							)
-						)
+						onFileUploadProgress(progressEvent)
 					}.bind(this),
 				})
-				.then(() => {
-					console.log("Enviado com sucesso!")
-				})
-				.catch(() => {
-					console.log("Arquivo deu erro ao enviar!")
+				.catch((err) => {
+					console.log(err)
+					this.msg.text = "Erro no upload"
+					this.msg.type = "danger"
 				})
 		},
 	},
@@ -152,7 +247,6 @@ export default {
 .upload-actions {
 	display: flex;
 	align-items: center;
-	margin-bottom: 10px;
 }
 
 .upload-actions button {

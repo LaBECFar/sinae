@@ -41,18 +41,20 @@
 						</b-col>
 					</b-row>
 
-					<br><br>
+					<br />
+					<br />
 
 					<b-form-group>
 						<b-row
 							align-v="center"
-							class="video-control"
+							class="btns"
 							v-if="$refs.videoPlayer"
 						>
 							<b-col md="auto">
-								<b-button>Copiar tempo atual</b-button>
-							</b-col>
-							<b-col md="auto">
+								<b-button @click="copyCurrentTime()">
+									Copiar tempo atual
+								</b-button>
+
 								<b-button variant="info" @click="saveConfig()">
 									Salvar configurações
 								</b-button>
@@ -67,7 +69,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q1start"
+									ref="q1start"
 									v-model="quadrantes.q1[0]"
 									type="text"
 									placeholder="Início"
@@ -82,7 +84,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q1end"
+									ref="q1end"
 									v-model="quadrantes.q1[1]"
 									type="text"
 									placeholder="Fim"
@@ -105,7 +107,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q2start"
+									ref="q2start"
 									v-model="quadrantes.q2[0]"
 									type="text"
 									placeholder="Início"
@@ -120,7 +122,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q2end"
+									ref="q2end"
 									v-model="quadrantes.q2[1]"
 									type="text"
 									placeholder="Fim"
@@ -143,7 +145,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q1start"
+									ref="q3start"
 									v-model="quadrantes.q3[0]"
 									type="text"
 									placeholder="Início"
@@ -158,7 +160,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q1end"
+									ref="q3end"
 									v-model="quadrantes.q3[1]"
 									type="text"
 									placeholder="Fim"
@@ -181,7 +183,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q4start"
+									ref="q4start"
 									v-model="quadrantes.q4[0]"
 									type="text"
 									placeholder="Início"
@@ -196,7 +198,7 @@
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="q4end"
+									ref="q4end"
 									v-model="quadrantes.q4[1]"
 									type="text"
 									placeholder="Fim"
@@ -285,19 +287,6 @@ export default {
 		}
 	},
 
-	mounted() {
-		console.log("$refs.videoPlayer in mounted", this.$refs.videoPlayer)
-	},
-
-	watch: {
-		"$refs.videoPlayer": {
-			immediate: true,
-			handler(value) {
-				console.log("$refs.videoPlayer watcher", value)
-			},
-		},
-	},
-
 	methods: {
 		quadranteState(q) {
 			return q[0] > q[1] ? false : null
@@ -382,6 +371,64 @@ export default {
 			const sec = Math.floor(seconds % 60)
 			return `${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`
 		},
+
+		copyToClipboard(text, infoText) {
+			let dummy = document.createElement("input")
+			document.body.appendChild(dummy)
+			dummy.value = text
+			dummy.select()
+			document.execCommand("copy")
+			document.body.removeChild(dummy)
+
+			this.$bvToast.toast(text, {
+				title: infoText,
+				variant: "info",
+				solid: true,
+				autoHideDelay: 3000,
+			})
+		},
+
+		copyCurrentTime() {
+			let currentTime = this.$refs.videoPlayer.currentTime
+			currentTime = this.secondsToTime(currentTime)
+
+			const nextEmptyQuadrant = this.getNextEmptyQuadrant()
+
+			if (nextEmptyQuadrant) {
+				const q = nextEmptyQuadrant.replace("start", "").replace("end", "")
+				const index = nextEmptyQuadrant.indexOf("start") > -1 ? 0 : 1
+
+				let newQuadrant = [...this.quadrantes[q]]
+				newQuadrant[index] = currentTime
+				this.quadrantes[q] = newQuadrant
+				
+				this.getQuadrantInput(nextEmptyQuadrant).focus()
+			} else {
+				this.copyToClipboard(
+					'Campos já estão preenchidos! O valor '+currentTime+' foi copiado para área de transferência.',
+					"Área de Transferência"
+				)
+			}
+		},
+
+		getNextEmptyQuadrant() {
+			for (let k in this.quadrantes) {
+				const quadrante = this.quadrantes[k]
+
+				if (!quadrante[0]) {
+					return k + "start"
+				}
+
+				if (!quadrante[1]) {
+					return k + "end"
+				}
+			}
+			return null
+		},
+
+		getQuadrantInput(ref) {
+			return this.$refs[ref]
+		},
 	},
 
 	created() {
@@ -390,3 +437,9 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.btns button + button {
+	margin-left: 10px;
+}
+</style>

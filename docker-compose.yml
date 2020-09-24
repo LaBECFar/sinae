@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  mongo:
+  mongo_sinae:
     image: mongo
     hostname: mongo
     container_name: mongo
@@ -16,7 +16,7 @@ services:
   rest-api-sinae:
     hostname: rest-api-sinae
     container_name: rest-api-sinae
-    depends_on: ["mongo"]
+    depends_on: ["mongo_sinae"]
     build: ./api
     command: npm run dev
     ports:

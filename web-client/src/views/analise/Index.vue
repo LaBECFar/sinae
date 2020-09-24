@@ -5,7 +5,7 @@
         <b-col>            
             <h2>
                 <v-icon style="width: 32px;" name="grid"></v-icon>
-                Analises do Experimento <strong>{{experimentoCodigo}}</strong>
+                Análises do Experimento <strong>{{experimentoCodigo}}</strong>
             </h2>
         </b-col>
         <b-col class="text-right">
@@ -61,7 +61,7 @@
         variant="secondary" 
         class="text-center" 
         :show=!items.length>
-        Ainda não existem experimentos cadastrados
+        Ainda não existem análises cadastradas
     </b-alert>
 
     <b-row>

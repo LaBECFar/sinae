@@ -121,5 +121,9 @@ export const apiAnalise = {
 					reject(new Error(`Erro ao atualizar o analise ${e}.`));
 				});
 		});
+	},
+
+	videoUrl(analiseId){
+		return `${config.URL_API}/analise/${analiseId}/video`;
 	}
 };

@@ -24,6 +24,9 @@ router.get('/:id/download-frames', analiseController.downloadFrames);
 // download de um arquivo .zip com todos os poços da analise
 router.get('/:id/download-pocos', analiseController.downloadPocos);
 
+// stream do vídeo da análise caso exista
+router.get('/:id/video', analiseController.videoStream);
+
 // download de um arquivo csv com as informações dos poços para serem usadas no cellprofiller
 router.get('/:id/download-csv', analiseController.exportCsv);
 

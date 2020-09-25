@@ -75,11 +75,10 @@
 									placeholder="Início"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q1)"
+									:state="inputFeedback(quadrantes.q1) == '' ? null : false"
 								/>
 								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
+									{{ inputFeedback(quadrantes.q1) }}
 								</b-form-invalid-feedback>
 							</b-col>
 							<b-col>
@@ -90,11 +89,10 @@
 									placeholder="Fim"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q1)"
+									:state="inputFeedback(quadrantes.q1) == '' ? null : false"
 								/>
 								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
+									{{ inputFeedback(quadrantes.q1) }}
 								</b-form-invalid-feedback>
 							</b-col>
 						</b-row>
@@ -113,11 +111,10 @@
 									placeholder="Início"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q2)"
+									:state="inputFeedback(quadrantes.q2) == '' ? null : false"
 								/>
 								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
+									{{ inputFeedback(quadrantes.q2) }}
 								</b-form-invalid-feedback>
 							</b-col>
 							<b-col>
@@ -128,11 +125,10 @@
 									placeholder="Fim"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q2)"
+									:state="inputFeedback(quadrantes.q2) == '' ? null : false"
 								/>
-								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
+								<b-form-invalid-feedback >
+									{{ inputFeedback(quadrantes.q2) }}
 								</b-form-invalid-feedback>
 							</b-col>
 						</b-row>
@@ -151,11 +147,10 @@
 									placeholder="Início"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q3)"
+									:state="inputFeedback(quadrantes.q3) == '' ? null : false"
 								/>
 								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
+									{{ inputFeedback(quadrantes.q3) }}
 								</b-form-invalid-feedback>
 							</b-col>
 							<b-col>
@@ -166,11 +161,10 @@
 									placeholder="Fim"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q3)"
+									:state="inputFeedback(quadrantes.q3) == '' ? null : false"
 								/>
 								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
+									{{ inputFeedback(quadrantes.q3) }}
 								</b-form-invalid-feedback>
 							</b-col>
 						</b-row>
@@ -189,11 +183,10 @@
 									placeholder="Início"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q4)"
+									:state="inputFeedback(quadrantes.q4) == '' ? null : false"
 								/>
 								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
+									{{ inputFeedback(quadrantes.q4) }}
 								</b-form-invalid-feedback>
 							</b-col>
 							<b-col>
@@ -204,12 +197,10 @@
 									placeholder="Fim"
 									v-mask="'##:##'"
 									required
-									:state="quadranteState(quadrantes.q4)"
+									:state="inputFeedback(quadrantes.q4) == '' ? null : false"
 								/>
-								<b-form-invalid-feedback>
-									O tempo inicial do quadrante não pode ser
-									maior que o final
-								</b-form-invalid-feedback>
+								<b-form-invalid-feedback v-text="inputFeedback(quadrantes.q4)"/>
+								
 							</b-col>
 						</b-row>
 					</b-form-group>
@@ -282,14 +273,31 @@ export default {
 
 			video: {
 				url: "",
-				player: null,
+				duration: 0,
 			},
 		}
 	},
 
 	methods: {
-		quadranteState(q) {
-			return q[0] > q[1] ? false : null
+
+		inputFeedback(quadrante) {
+			const init = quadrante[0]
+			const end = quadrante[1]
+
+			if(init > end) {
+				return 'O tempo inicial do quadrante não pode ser maior que o final'
+			}
+
+			if(this.$refs.videoPlayer && this.$refs.videoPlayer.duration) {
+				const videoDuration = this.$refs.videoPlayer.duration
+				const maxDuration = this.secondsToTime(Math.floor(videoDuration))
+
+				if(init > maxDuration || end > maxDuration){
+					return 'O tempo especificado não pode exceder a duração do vídeo'
+				}
+			}
+			
+			return ''
 		},
 
 		back() {
@@ -372,6 +380,13 @@ export default {
 			return `${min < 10 ? "0" + min : min}:${sec < 10 ? "0" + sec : sec}`
 		},
 
+		timeToSeconds(time) {
+			time = time.split(':')
+			const min = parseInt(time[0]) * 60
+			const sec = parseInt(time[1])
+			return min + sec
+		},
+
 		copyToClipboard(text, infoText) {
 			let dummy = document.createElement("input")
 			document.body.appendChild(dummy)
@@ -395,17 +410,21 @@ export default {
 			const nextEmptyQuadrant = this.getNextEmptyQuadrant()
 
 			if (nextEmptyQuadrant) {
-				const q = nextEmptyQuadrant.replace("start", "").replace("end", "")
+				const q = nextEmptyQuadrant
+					.replace("start", "")
+					.replace("end", "")
 				const index = nextEmptyQuadrant.indexOf("start") > -1 ? 0 : 1
 
 				let newQuadrant = [...this.quadrantes[q]]
 				newQuadrant[index] = currentTime
 				this.quadrantes[q] = newQuadrant
-				
+
 				this.getQuadrantInput(nextEmptyQuadrant).focus()
 			} else {
 				this.copyToClipboard(
-					'Campos já estão preenchidos! O valor '+currentTime+' foi copiado para área de transferência.',
+					"Campos já estão preenchidos! O valor " +
+						currentTime +
+						" foi copiado para área de transferência.",
 					"Área de Transferência"
 				)
 			}

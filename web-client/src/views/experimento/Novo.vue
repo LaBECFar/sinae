@@ -7,13 +7,15 @@
         </b-alert>
 
         <b-form @submit="onSubmit">
-            <b-form-group id="input-group-1" label="Código:" label-for="codigo">
-                <b-form-input id="codigo" v-model="form.codigo" type="text" required/>
-            </b-form-group>
-
             <b-form-group id="input-group-1" label="Label:" label-for="label">
                 <b-form-input id="label" v-model="form.label" type="text" required/>
             </b-form-group>
+
+            <b-form-group id="input-group-1" label="Código:" label-for="codigo">
+                <b-form-input id="codigo" v-model="form.codigo" placeholder="Código gerado automáticamente ao cadastrar experimento" type="text" disabled/>
+            </b-form-group>
+
+            
             <b-row>
                 <b-col>
                     <b-button type="submit" variant="primary">Salvar</b-button>
@@ -34,8 +36,8 @@ export default {
     data() {
         return {
             form: {
-                codigo: '',
-                label: ''
+                label: '',
+                codigo: ''
             },
             msg: {
                 text: false,
@@ -47,17 +49,19 @@ export default {
         onSubmit(evt) {
             evt.preventDefault()
             apiExperimento.novoExperimento(this.form)
-                .then(() => {
+                .then((experimento) => {
                     this.msg.text = "Experimento salvo"
                     this.msg.type = "success"
+
+                    if(experimento.codigo){
+                        this.form.codigo = experimento.codigo
+                    }
                 })
                 .catch((e) => {
                     this.msg.text = `Erro ao salvar o experimento ${e}`
                     this.msg.type = "danger"
                 })
         }
-    },
-    created() {
     }
 }
 </script>

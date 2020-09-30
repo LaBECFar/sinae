@@ -4,11 +4,16 @@
 			<b-col>
 				<h2>Extração de Frames da Análise</h2>
 			</b-col>
+			<b-col class="text-right">
+				<b-button @click="back()" variant="secondary">
+					Voltar
+				</b-button>
+			</b-col>
 		</b-row>
 
 		<b-alert show v-show="msg.text" :variant="msg.type">
 			{{ msg.text }}
-		</b-alert>
+		</b-alert><br>
 
 		<b-form @submit="onSubmit">
 			<b-row align-content="between">
@@ -225,19 +230,16 @@
 
 			<hr />
 
-			<b-row>
-				<b-col>
+			<b-row class="justify-content-md-center">
+				<b-col class="text-center" md="3">
 					<b-button
 						type="submit"
 						variant="primary"
-						:disabled="isExtracting || !this.form.video"
+						size="lg"
+						block 
+						:disabled="isExtracting || !this.form.video || getNextEmptyQuadrant() != null"
 					>
 						Extrair frames
-					</b-button>
-				</b-col>
-				<b-col class="text-right">
-					<b-button @click="back()" variant="secondary">
-						Voltar
 					</b-button>
 				</b-col>
 			</b-row>

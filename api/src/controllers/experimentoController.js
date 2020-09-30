@@ -3,7 +3,6 @@ const experimentoModel = require("../models/experimentoModel")
 const experimentoController = {
 
     list: (req, res, next) => {
-
         let user = req.user
         let filtros = {}
 
@@ -46,7 +45,6 @@ const experimentoController = {
     
     post: (req, res, next) => {
         const experimento = new experimentoModel({
-            codigo: req.body.codigo,
             label: req.body.label
         })
 
@@ -78,10 +76,8 @@ const experimentoController = {
                 }
 
                 experimento.label = req.body.label
-                experimento.codigo = req.body.codigo
 
                 experimento.save(function (err, experimento) {
-                    /* istanbul ignore next */ 
                     if (err) {
                         return res.status(500).json({
                             message: 'Erro ao atualizar experimento.',

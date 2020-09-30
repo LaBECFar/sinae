@@ -7,13 +7,14 @@
         </b-alert>
 
         <b-form @submit="onSubmit">
-            <b-form-group id="input-group-1" label="Código:" label-for="codigo">
-                <b-form-input id="codigo" v-model="form.codigo" type="text" required/>
-            </b-form-group>
-
             <b-form-group id="input-group-1" label="Label:" label-for="label">
                 <b-form-input id="label" v-model="form.label" type="text" required/>
             </b-form-group>
+
+            <b-form-group id="input-group-1" label="Código:" label-for="codigo">
+                <b-form-input id="codigo" placeholder="Código gerado automáticamente ao cadastrar experimento" v-model="form.codigo" type="text" disabled/>
+            </b-form-group>
+
             <b-row>
                 <b-col>
                     <b-button type="submit" variant="primary">Salvar</b-button>

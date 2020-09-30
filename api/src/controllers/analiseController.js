@@ -334,22 +334,28 @@ const analiseController = {
 				})
 				archive.pipe(output)
 
-				// adiciona os frames ao zip
-				for (let i = 0; i < frames.length; i++) {
-					let pocos = frames[i].pocos
-
-					for (let j = 0; j < pocos.length; j++) {
-						let poco = pocos[j]
-
-						if (fs.existsSync(poco.url)) {
-							let filename = poco.url.replace(
-								"/usr/uploads/experimentos",
-								""
-							)
-							archive.file(poco.url, {name: filename})
-						}
+				function appendPocoToArchive(filepath) {
+					if (fs.existsSync(filepath)) {
+						const filename = filepath.replace(
+							"/usr/uploads/experimentos",
+							""
+						)
+						archive.file(filepath, {name: filename})
 					}
 				}
+
+				// adiciona os frames ao zip
+				frames.forEach((frame) => {
+					frame.pocos.forEach((poco) => {
+						appendPocoToArchive(poco.url)
+						appendPocoToArchive(
+							poco.url.replace(/\.([^\.]*)$/, "_pred.$1")
+						)
+						appendPocoToArchive(
+							poco.url.replace(/\.([^\.]*)$/, "_seg.$1")
+						)
+					})
+				})
 
 				archive.finalize()
 				res.attachment(path_zip_file)
@@ -553,7 +559,14 @@ const analiseController = {
 		function saveFile(file, analise) {
 			let oldpath = file.path
 			let filename = "video_" + analise._id + path.extname(oldpath)
-			let targetpath = "/usr/uploads/experimentos/" + analise.experimentoCodigo + "/" + analise.placa + "/" + analise.tempo + '/'
+			let targetpath =
+				"/usr/uploads/experimentos/" +
+				analise.experimentoCodigo +
+				"/" +
+				analise.placa +
+				"/" +
+				analise.tempo +
+				"/"
 
 			if (!fs.existsSync(oldpath)) {
 				console.log("settingsController.js: Não existe o oldpath")
@@ -563,7 +576,7 @@ const analiseController = {
 				fs.mkdirSync(targetpath, {recursive: true})
 			}
 
-			targetpath +=  filename
+			targetpath += filename
 
 			fs.rename(oldpath, targetpath, (err) => {
 				if (err) throw err
@@ -607,16 +620,16 @@ const analiseController = {
 				offsets.push(i)
 			}
 			return offsets
-        }
-        
-        const removeFile = (filepath) => {
-            if (fs.existsSync(filepath)) {
-                rmdir(filepath, function (removedir_error) {
-                    if (removedir_error) console.log(removedir_error)
-                    else console.log("arquivo deletado:" + filepath)
-                })
-            }
-        }
+		}
+
+		const removeFile = (filepath) => {
+			if (fs.existsSync(filepath)) {
+				rmdir(filepath, function (removedir_error) {
+					if (removedir_error) console.log(removedir_error)
+					else console.log("arquivo deletado:" + filepath)
+				})
+			}
+		}
 
 		let analise = null
 
@@ -635,9 +648,10 @@ const analiseController = {
 			})
 		}
 
-        const videopath = analise.video
+		const videopath = analise.video
 		const count = 1 / fps
-		const path = analise.video.substring(0, analise.video.lastIndexOf("/")) + "/"
+		const path =
+			analise.video.substring(0, analise.video.lastIndexOf("/")) + "/"
 
 		Object.keys(quadrantes).forEach(async (q, qindex) => {
 			const quadrante = quadrantes[q]
@@ -656,21 +670,30 @@ const analiseController = {
 					.on("end", function () {
 						offsets.forEach((sec, oindex) => {
 							const miliseconds = sec * 1000
-							const generatedpath = path + "Q" + (qindex + 1) + "_" + sec + ".png"
-							const targetpath = path + "Q" + (qindex + 1) + "_" + miliseconds + ".png"
+							const generatedpath =
+								path + "Q" + (qindex + 1) + "_" + sec + ".png"
+							const targetpath =
+								path +
+								"Q" +
+								(qindex + 1) +
+								"_" +
+								miliseconds +
+								".png"
 
-							fs.rename(generatedpath, targetpath, function (rename_error) {
-								if (rename_error){
-                                    console.log("ERROR: " + rename_error)
-                                }
-                            })
-                            
-                            if (oindex == (offsets.length-1)) {
-                                removeFile(videopath)
+							fs.rename(generatedpath, targetpath, function (
+								rename_error
+							) {
+								if (rename_error) {
+									console.log("ERROR: " + rename_error)
+								}
+							})
 
-                                analise.video = ''
-                                analise.save()
-                            }
+							if (oindex == offsets.length - 1) {
+								removeFile(videopath)
+
+								analise.video = ""
+								analise.save()
+							}
 						})
 					})
 					.screenshots({
@@ -682,14 +705,15 @@ const analiseController = {
 			})
 
 			offsets.forEach((sec) => {
-                const miliseconds = sec * 1000
-                const targetpath = path + "Q" + (qindex + 1) + "_" + miliseconds + ".png"
+				const miliseconds = sec * 1000
+				const targetpath =
+					path + "Q" + (qindex + 1) + "_" + miliseconds + ".png"
 
 				const frame = new frameModel({
 					tempoMilis: miliseconds,
 					url: targetpath,
 					analiseId: analiseId,
-					quadrante: (qindex+1),
+					quadrante: qindex + 1,
 				})
 
 				frame.save((frame_error, frame) => {
@@ -697,7 +721,7 @@ const analiseController = {
 						console.log(frame_error)
 					}
 				})
-            })
+			})
 		})
 
 		return res.status(201).json({
@@ -707,12 +731,13 @@ const analiseController = {
 	},
 
 	videoStream: (req, res, next) => {
-		const analiseId = req.params.id;
-		
-		analiseModel.findById(analiseId)
-			.then(analise => {
+		const analiseId = req.params.id
+
+		analiseModel
+			.findById(analiseId)
+			.then((analise) => {
 				const path = analise.video
-				if(path){
+				if (path) {
 					const stat = fs.statSync(path)
 					const fileSize = stat.size
 					const range = req.headers.range
@@ -720,21 +745,23 @@ const analiseController = {
 					if (range) {
 						const parts = range.replace(/bytes=/, "").split("-")
 						const start = parseInt(parts[0], 10)
-						const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1
-						const chunksize = (end-start)+1
+						const end = parts[1]
+							? parseInt(parts[1], 10)
+							: fileSize - 1
+						const chunksize = end - start + 1
 						const file = fs.createReadStream(path, {start, end})
 						const head = {
-							'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-							'Accept-Ranges': 'bytes',
-							'Content-Length': chunksize,
-							'Content-Type': 'video/mp4',
+							"Content-Range": `bytes ${start}-${end}/${fileSize}`,
+							"Accept-Ranges": "bytes",
+							"Content-Length": chunksize,
+							"Content-Type": "video/mp4",
 						}
-						res.writeHead(206, head);
-						file.pipe(res);
+						res.writeHead(206, head)
+						file.pipe(res)
 					} else {
 						const head = {
-							'Content-Length': fileSize,
-							'Content-Type': 'video/mp4',
+							"Content-Length": fileSize,
+							"Content-Type": "video/mp4",
 						}
 						res.writeHead(200, head)
 						fs.createReadStream(path).pipe(res)
@@ -746,15 +773,14 @@ const analiseController = {
 						success: false,
 					})
 				}
-
-			}).catch(err => {
+			})
+			.catch((err) => {
 				res.status(422).json({
 					message: "Erro no streaming do vídeo",
 					error: err,
 					success: false,
 				})
-            });
-                                 
-    },
+			})
+	},
 }
 module.exports = analiseController

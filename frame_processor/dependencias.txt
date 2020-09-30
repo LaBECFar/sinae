@@ -10,6 +10,4 @@ para criar o docker container
 docker build . -t frame_processor
 
 para executar monte com o volume
-
-docker run -v /usr/uploads:/usr/uploads --network=api_express-mongo-network-sinae frame_processor
-
+docker run -v /usr/uploads:/usr/uploads --network=sinae_express-mongo-network-sinae frame_processor

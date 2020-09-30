@@ -45,6 +45,9 @@ cd ..
 cd api
 npm install
 
+cd ../frame_processor
+docker build . -t frame_processor
+
 cd .. 
 
 docker-compose build

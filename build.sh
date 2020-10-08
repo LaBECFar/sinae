@@ -48,6 +48,9 @@ npm install
 cd ../frame_processor
 docker build . -t frame_processor
 
+cd ../cellprofiler_processor
+docker build . -t cellprofiler_processor
+
 cd .. 
 
 docker-compose build

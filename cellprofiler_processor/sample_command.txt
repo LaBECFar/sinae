@@ -1,0 +1,1 @@
+docker run -v c:/uploads:/usr/uploads --network=sinae_express-mongo-network-sinae cellprofiler_processor cellprofiler -c -p "/usr/uploads/settings/projeto.cpproj" --file-list "/usr/uploads/settings/SCHISTO/filelist.csv" -o "/usr/uploads/settings/SCHISTO/"

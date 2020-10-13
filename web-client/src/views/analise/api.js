@@ -125,5 +125,21 @@ export const apiAnalise = {
 
 	videoUrl(analiseId){
 		return `${config.URL_API}/analise/${analiseId}/video`;
-	}
+	},
+
+	startMotilityProcessor(idAnalise) {
+		if (!idAnalise) {
+			return Promise.reject(new Error("Analise não informada."));
+		}
+		return new Promise((resolve, reject) => {
+			config.api
+				.post(`/analise/${idAnalise}/start-motility-processor`)
+				.then(resp => {
+					resolve(resp.data);
+				})
+				.catch(e => {
+					reject(new Error(`Erro ao iniciar processador de motilidade ${e}`));
+				});
+		});
+	},
 };

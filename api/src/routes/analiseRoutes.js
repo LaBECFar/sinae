@@ -3,40 +3,43 @@ const router = express.Router();
 const auth = require('./auth')
 const analiseController = require('../controllers/analiseController')
 
-// cadastro de analise - autenticação desnecessária para uso no app
+// analysis creation - authentication not necessary on app
 router.post('/', analiseController.post); 
 
-// listagem
+// lists
 router.get('/', auth, analiseController.list);
 
-// detalhes
+// datails
 router.get('/:id', auth, analiseController.get);
 
-// atualizar
+// update
 router.put('/:id', auth, analiseController.put);
 
-// remover
+// remove
 router.delete('/:id', auth, analiseController.delete);
 
-// download de um arquivo .zip com todos os frames da analise
+// download a zip with all video frames from a specific analysis
 router.get('/:id/download-frames', analiseController.downloadFrames);
 
-// download de um arquivo .zip com todos os poços da analise
+// download a zip with all wells from a specific analysis
 router.get('/:id/download-pocos', analiseController.downloadPocos);
 
-// stream do vídeo da análise caso exista
+// streams analysis video
 router.get('/:id/video', analiseController.videoStream);
 
-// download de um arquivo csv com as informações dos poços para serem usadas no cellprofiller
+// download to a csv file with wells information
 router.get('/:id/download-csv', analiseController.exportCsv);
 
-// processa os frames para extrair os poços do quadrante
+// process the video frames to extract the wells
 router.post('/:id/extract-pocos', auth, analiseController.extractPocos);
 
-// salva o vídeo no servidor
+// saves video on server
 router.post('/:id/upload-video', auth, analiseController.uploadVideo);
 
-// extrair frames do vídeo
+// extract video frames
 router.post('/:id/extract-frames', auth, analiseController.extractFrames);
+
+// starts the container cellprofiler_processor that processes well images to get the parasites motility
+router.post('/:id/start-motility-processor', auth, analiseController.startMotilityProcessor);
 
 module.exports = router;

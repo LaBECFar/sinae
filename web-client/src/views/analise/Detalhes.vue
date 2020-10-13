@@ -206,6 +206,46 @@
 				</b-card>
 			</b-col>
 
+
+			<b-col md="3">
+				<b-card title="Motilidade">
+					<b-card-text>
+						<b-alert
+							variant="warning"
+							:show="
+								analise.framesProcessados !=
+									analise.framesTotal ||
+									analise.framesTotal < 1
+							"
+						>
+							O botão para iniciar o processador de dados de motilidade 
+							só será habilitado após a extração de todos os poços
+						</b-alert>
+						<div
+							v-show="
+								analise.framesProcessados ==
+									analise.framesTotal &&
+									analise.framesTotal > 0
+							"
+						>
+							Você já pode iniciar o processador de motilidade clicando no
+							botão abaixo
+						</div>
+					</b-card-text>
+
+					<b-button
+						variant="primary"
+						@click="startMotilityProcessor()"
+						:disabled="
+							analise.framesProcessados != analise.framesTotal ||
+								analise.framesTotal < 1
+						"
+					>
+						Processar motilidade
+					</b-button>
+				</b-card>
+			</b-col>
+
 		</b-row>
 	</div>
 </template>
@@ -306,6 +346,19 @@ export default {
 					}
 
 					window.open(url, "_blank");
+				});
+		},
+
+		startMotilityProcessor() {
+			apiAnalise
+				.startMotilityProcessor(this.analiseCodigo)
+				.then(() => {
+					this.msg.text = 'Inciado processador de motilidade, isso pode demorar um tempo'
+					this.msg.type = 'info'
+				})
+				.catch(() => {
+					this.msg.text = 'Não foi posível iniciar o processador de motilidade'
+					this.msg.type = 'danger'
 				});
 		},
 

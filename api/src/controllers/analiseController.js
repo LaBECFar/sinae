@@ -5,11 +5,12 @@ const placaModel = require("../models/placaModel")
 const fs = require("fs")
 const archiver = require("archiver")
 const path = require("path")
-const d = require("../util/dockerApi")
 const {Parser} = require("json2csv")
 const formidable = require("formidable")
 const ffmpeg = require("fluent-ffmpeg")
 const rmdir = require("rimraf")
+const analiseHelper = require('../helpers/analiseHelper')
+const dockerHelper = require("../helpers/dockerHelper")
 
 const analiseController = {
 	list: (req, res, next) => {
@@ -386,34 +387,12 @@ const analiseController = {
 			startupParameters.push(poco.left.toString())
 		}
 
-		d.api().then((api) => {
-			api.createContainer({
-				Image: "frame_processor",
-				Cmd: startupParameters,
-				HostConfig: {
-					NetworkMode: "sinae_express-mongo-network-sinae",
-					AutoRemove: true,
-					Binds: [`/usr/uploads:/usr/uploads`],
-				},
-			})
-				.then(function (container) {
-					container.start().then((r) => {
-						console.log(r)
-						console.log(startupParameters.join(" "))
-						return res.status(201).json(r)
-					})
-				})
-				.catch(function (err) {
-					/* istanbul ignore next */
-					console.log(err)
-					return res.status(422).send(err)
-				})
-		})
+		dockerHelper.startImage("frame_processor", startupParameters)
 
 		return res.status(201).json("1")
 	},
 
-	exportCsv: (req, res, next) => {
+	exportCsv: async (req, res, next) => {
 		let search = {}
 		if (req.params.id) {
 			search.analiseId = req.params.id
@@ -421,6 +400,8 @@ const analiseController = {
 
 		// diretório onde os poços estão localizados na maquina do solicitante
 		let dir = req.params.dir || req.query.dir || req.body.dir
+
+		const analise = await analiseModel.findById(search.analiseId)
 
 		frameModel
 			.find(search, {
@@ -431,6 +412,7 @@ const analiseController = {
 			.then((frames) => {
 				// filtra os frames em quadrantes separados
 				let quadrantes = [[], [], [], []]
+
 				frames.forEach((frame) => {
 					quadrantes[frame.quadrante - 1].push(frame)
 				})
@@ -455,8 +437,24 @@ const analiseController = {
 							previousPoco = ""
 						}
 
-						frame.pocos.forEach((poco) => {
+						let next = null
+						let prev = null
+
+						if(index > 0){
+							prev = quadrante[index-1]
+						}
+
+						if(index < quadrante.length-1) {
+							next = quadrante[index+1]
+						}
+
+
+						frame.pocos.forEach((poco, pindex) => {
 							let link = poco.url
+
+							const prevLink = prev ? prev.pocos[pindex].url : ''
+							const nextLink = next ? next.pocos[pindex].url : ''
+							
 
 							if (dir) {
 								link = link.replace(
@@ -469,11 +467,16 @@ const analiseController = {
 
 							if (fs.existsSync(poco.url)) {
 								let item = {
-									file: link,
+									path: link,
 									miliseconds: frame.tempoMilis,
-									previousPoco: previousPoco,
-									firstPoco: isFirst,
-									lastPoco: isLast,
+									experiment: analise.experimentoCodigo,
+									analysis: search.analiseId,
+									well: poco.nome,
+									plate: analise.placa,
+									quadrant: frame.quadrante,
+									time: analise.tempo,
+									prev: prevLink,
+									next: nextLink,
 								}
 
 								data.push(item)
@@ -486,25 +489,54 @@ const analiseController = {
 				// value: nome do atributo do objeto e label: nome da coluna no arquivo csv
 				const fields = [
 					{
-						label: "File_name",
-						value: "file",
+						label: "Path",
+						value: "path",
 					},
 					{
-						label: "Number",
+						label: "Miliseconds",
 						value: "miliseconds",
 					},
+
 					{
-						label: "Previous_number",
-						value: "previousPoco",
+						label: "Experiment",
+						value: "experiment",
+					},
+
+
+					{
+						label: "Analysis",
+						value: "analysis",
+					},
+
+					{
+						label: "Time",
+						value: "time",
+					},
+
+					{
+						label: "Plate",
+						value: "plate",
+					},
+
+					{
+						label: "Quadrant",
+						value: "quadrant",
+					},
+
+					{
+						label: "Well",
+						value: "well",
+					},
+					
+					{
+						label: "Previous",
+						value: "prev",
 					},
 					{
-						label: "First",
-						value: "firstPoco",
+						label: "Next",
+						value: "next",
 					},
-					{
-						label: "Last",
-						value: "lastPoco",
-					},
+					
 				]
 
 				const json2csvParser = new Parser({
@@ -782,5 +814,27 @@ const analiseController = {
 				})
 			})
 	},
+
+
+
+	startMotilityProcessor: async (req, res, next) => {
+		const analiseId = req.params.id
+
+		await analiseHelper.generateFilelist(analiseId)
+		await analiseHelper.generatePrevNextList(analiseId)
+
+		const analise = await analiseModel.findById(analiseId)
+
+		const projectLocation = "/usr/uploads/settings/pipelines.cpproj"
+		const outputLocation = `/usr/uploads/experimentos/${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`
+		const filelistLocation = outputLocation + 'filelist.csv'
+
+		const executeComand = `cellprofiler -c -p "${projectLocation}" --file-list "${filelistLocation}" -o "${outputLocation}"`
+		const startupParameters = executeComand.split(' ')
+
+		dockerHelper.startImage("cellprofiler_processor", startupParameters)
+
+		return res.status(201).json("1")
+	}
 }
 module.exports = analiseController

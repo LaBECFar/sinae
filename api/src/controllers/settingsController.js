@@ -110,7 +110,7 @@ const settingsController = {
 		})
 
 		function saveFile(file) {
-			let filename = "cellprofiler_config.cpproj"
+			let filename = "pipelines.cpproj"
 			let oldpath = file.path
 			let targetpath = "/usr/uploads/settings"
 

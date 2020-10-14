@@ -46,9 +46,11 @@ const analiseController = {
 
 		analiseModel
 			.findById(id)
-			.then((analise) => {
+			.then(async (analise) => {
 				let obj = analise.toObject()
 				obj.idserver = analise._id
+
+				obj["isMotilityProcessorFinished"] = await analiseHelper.isMotilityProcessorFinished(analise)
 
 				aux_quadrante = 0
 				idPrimeiroFrame = []
@@ -91,8 +93,6 @@ const analiseController = {
 					.catch((err) => {
 						return res.status(422).send(err.errors)
 					})
-
-				// return res.status(201).json(obj);
 			})
 			.catch((err) => {
 				return res.status(422).send(err.errors)
@@ -813,18 +813,16 @@ const analiseController = {
 	},
 
 	startMotilityProcessor: async (req, res, next) => {
-		const analiseId = req.params.id
+		const analise = await analiseModel.findById(req.params.id)
 
-		await analiseHelper.generateFilelist(analiseId)
-		await analiseHelper.generatePrevNextList(analiseId)
-
-		const analise = await analiseModel.findById(analiseId)
+		await analiseHelper.generateFilelist(analise)
+		await analiseHelper.generatePrevNextList(analise)
 
 		const projectLocation = "/usr/uploads/settings/pipelines.cpproj"
 		const outputLocation = `/usr/uploads/experimentos/${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`
 		const filelistLocation = outputLocation + "filelist.csv"
 
-		const executeComand = `cellprofiler -c -p "${projectLocation}" --file-list "${filelistLocation}" -o "${outputLocation}"`
+		const executeComand = `cellprofiler -c -p ${projectLocation} --file-list ${filelistLocation} -o ${outputLocation}`
 		const startupParameters = executeComand.split(" ")
 
 		dockerHelper.startImage("cellprofiler_processor", startupParameters)

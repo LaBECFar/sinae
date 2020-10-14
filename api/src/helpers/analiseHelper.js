@@ -8,19 +8,16 @@ const csvHelper = require("./csvHelper")
 const placaHelper = require("./placaHelper")
 
 const analiseHelper = {
-	generateFilelist: async (analiseId) => {
-		const list = await analiseHelper.getPocosFilelist(analiseId)
-		const analise = await analiseModel.findById(analiseId)
+	generateFilelist: async (analise) => {
+		const list = (await analiseHelper.getPocosFilelist(analise._id)).slice(0,10)
 		const path = analiseHelper.getAnaliseLocation(analise)
 		const filelist = `${path}filelist.csv`
 		fs.writeFileSync(filelist, list.join("\n"))
 	},
 
-	generatePrevNextList: async (analiseId) => {
-		const analise = await analiseModel.findById(analiseId)
+	generatePrevNextList: async (analise) => {
 		const milisIncrement = Math.floor(1000 / analise.fps)
-
-		const previousList = await analiseHelper.getPocosFilelist(analiseId)
+		const previousList = (await analiseHelper.getPocosFilelist(analise._id)).slice(0,10)
 		let list = []
 
 		previousList.forEach((url, index) => {
@@ -113,8 +110,11 @@ const analiseHelper = {
 	isMotilityProcessorFinished: async (analise) => {
 		let exists = true
 
-		if(!analise.motilityResults){
+		if (!analise.motilityResults) {
 			const files = analiseHelper.getMotilityResultsFiles(analise)
+			if (files.length < 2) {
+				exists = false
+			}
 			files.forEach((filepath) => {
 				if (!fs.existsSync(filepath)) {
 					exists = false
@@ -158,8 +158,10 @@ const analiseHelper = {
 					}
 				})
 				.on("end", function () {
-					const fields = Object.keys(dataArray[0])
-					csvHelper.dataToCsv(file, dataArray, fields)
+					if(dataArray.length > 0){
+						const fields = Object.keys(dataArray[0])
+						csvHelper.dataToCsv(file, dataArray, fields)
+					}
 
 					count += 1
 					if (count >= files.length) {
@@ -177,8 +179,6 @@ const analiseHelper = {
 		nomePoco = `${letter}${number}`
 		return nomePoco
 	},
-
-
 }
 
 module.exports = analiseHelper

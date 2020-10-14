@@ -16,7 +16,6 @@ const dockerHelper = {
 			})
             .then(function (container) {
                 container.start().then((r) => {
-                    console.log(r)
                     console.log(startupParameters.join(" "))
                 })
             })

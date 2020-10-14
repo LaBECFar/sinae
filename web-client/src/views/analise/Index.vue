@@ -40,12 +40,10 @@
             Detalhes
         </b-button>
 
-<!--      
-        <b-button variant="primary" size="sm" @click="editarAnalise(row.item)" class="mr-2">
-            <v-icon name="edit-2"></v-icon>
-            Editar
+        <b-button variant="info" size="sm" @click="downloadMotilityResults(row.item)" class="mr-2">
+            <v-icon name="download"></v-icon>
         </b-button>
--->
+
         <b-button variant="danger" size="sm" @click="removerAnalise(row.item)" class="mr-2">
             <v-icon name="trash"></v-icon>
         </b-button>
@@ -116,6 +114,11 @@ export default {
         detalhesAnalise (analise) {
             this.$router.push(`/analise/${analise._id}`)
         },
+
+        downloadMotilityResults(analise) {
+			let url = apiAnalise.getMotilityResultsLink(analise._id)
+			window.open(url, "_blank")
+		},
 
         removerAnalise(analise) {
             this.$swal.fire({

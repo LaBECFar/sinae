@@ -32,6 +32,7 @@ const analiseController = {
 				experimentoCodigo: 1,
 				placa: 1,
 				dataColeta: 1,
+				motilityResults: 1
 			})
 			.then((analises) => {
 				return res.status(201).json(analises)

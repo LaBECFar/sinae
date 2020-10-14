@@ -23,11 +23,7 @@
 		</b-row>
 		<b-row>
 			<b-col>
-				<b-alert
-					show
-					v-show="msg.text"
-					:variant="msg.type"
-				>
+				<b-alert show v-show="msg.text" :variant="msg.type">
 					{{ msg.text }}
 				</b-alert>
 			</b-col>
@@ -57,7 +53,7 @@
 				<strong>Total de Frames:</strong>
 				<span>{{ analise.framesTotal }}</span>
 				<a
-					v-if="analise.framesTotal > 0"
+					v-show="analise.framesTotal > 0"
 					:href="framesDownloadLink"
 					class="link-download"
 				>
@@ -71,7 +67,7 @@
 				<strong>Frames já Processados:</strong>
 				<span>{{ analise.framesProcessados }}</span>
 				<a
-					v-if="analise.framesProcessados > 0"
+					v-show="analise.framesProcessados > 0"
 					:href="pocosDownloadLink"
 					class="link-download"
 				>
@@ -83,24 +79,20 @@
 		<br />
 
 		<b-row align-content="stretch">
-
-			<b-col md="3" v-if="analise.video && analise.framesTotal <= 0">
+			<b-col md="3" v-show="analise.video && analise.framesTotal <= 0">
 				<b-card title="Extrair Frames do vídeo">
 					<b-card-text>
 						<div>
-							Você já pode extrair os frames do vídeos clicando no botão abaixo
+							Você já pode extrair os frames do vídeos clicando no
+							botão abaixo
 						</div>
 					</b-card-text>
 
-					<b-button
-						variant="primary"
-						@click="extractVideoFrames()"
-					>
+					<b-button variant="primary" @click="extractVideoFrames()">
 						Extrair Frames
 					</b-button>
 				</b-card>
 			</b-col>
-
 
 			<b-col md="3">
 				<b-card title="Quadrantes">
@@ -112,7 +104,7 @@
 							<span
 								v-bind:class="{
 									'q-processados': true,
-									'yellow-fade': yellowFade[1]
+									'yellow-fade': yellowFade[1],
 								}"
 							>
 								{{ analise.frameQuadrante[1].processados }}
@@ -125,7 +117,7 @@
 							<span
 								v-bind:class="{
 									'q-processados': true,
-									'yellow-fade': yellowFade[2]
+									'yellow-fade': yellowFade[2],
 								}"
 							>
 								{{ analise.frameQuadrante[2].processados }}
@@ -138,7 +130,7 @@
 							<span
 								v-bind:class="{
 									'q-processados': true,
-									'yellow-fade': yellowFade[3]
+									'yellow-fade': yellowFade[3],
 								}"
 							>
 								{{ analise.frameQuadrante[3].processados }}
@@ -151,7 +143,7 @@
 							<span
 								v-bind:class="{
 									'q-processados': true,
-									'yellow-fade': yellowFade[4]
+									'yellow-fade': yellowFade[4],
 								}"
 							>
 								{{ analise.frameQuadrante[4].processados }}
@@ -159,20 +151,22 @@
 						</div>
 					</b-card-text>
 
-					<b-button @click="detalhesQuadrante()" variant="secondary" :disabled="analise.framesTotal < 1">
+					<b-button
+						@click="detalhesQuadrante()"
+						variant="secondary"
+						:disabled="analise.framesTotal < 1"
+					>
 						Extrair Poços
 					</b-button>
 				</b-card>
 			</b-col>
 
-			
-
 			<b-col md="3">
 				<b-card title="Exportação">
 					<b-card-text>
-						<b-alert
+						<b-alert show
 							variant="warning"
-							:show="
+							v-show="
 								analise.framesProcessados !=
 									analise.framesTotal ||
 									analise.framesTotal < 1
@@ -206,76 +200,88 @@
 				</b-card>
 			</b-col>
 
-
 			<b-col md="3">
 				<b-card title="Motilidade">
 					<b-card-text>
 						<b-alert
 							variant="warning"
-							:show="
+							show
+							v-show="
 								analise.framesProcessados !=
 									analise.framesTotal ||
 									analise.framesTotal < 1
 							"
 						>
-							O botão para iniciar o processador de dados de motilidade 
-							só será habilitado após a extração de todos os poços
+							O botão para iniciar o processador de dados de
+							motilidade só será habilitado após a extração de
+							todos os poços
 						</b-alert>
 						<div
 							v-show="
 								analise.framesProcessados ==
 									analise.framesTotal &&
-									analise.framesTotal > 0
+									analise.framesTotal > 0 &&
+									!analise.motilityResults &&
+									!analise.isMotilityProcessorFinished
 							"
 						>
-							Você já pode iniciar o processador de motilidade clicando no
-							botão abaixo
+							Você já pode iniciar o processador de motilidade
+							clicando no botão abaixo
+						</div>
+
+						<div v-show="analise.motilityResults || analise.isMotilityProcessorFinished">
+							Você pode baixar os resultados do processo de motilidade clicando no botão abaixo
 						</div>
 					</b-card-text>
 
 					<b-button
 						variant="primary"
 						@click="startMotilityProcessor()"
-						:disabled="
-							analise.framesProcessados != analise.framesTotal ||
-								analise.framesTotal < 1
-						"
+						v-show="!analise.motilityResults && !analise.isMotilityProcessorFinished"
+						:disabled="analise.framesProcessados != analise.framesTotal || analise.framesTotal < 1"
 					>
 						Processar motilidade
 					</b-button>
+
+					<b-button
+						variant="primary"
+						@click="downloadMotilityResults()"
+						v-show="analise.motilityResults || analise.isMotilityProcessorFinished"
+					>
+						Baixar resultados
+					</b-button>
 				</b-card>
 			</b-col>
-
 		</b-row>
 	</div>
 </template>
 
 <script>
-import { apiAnalise } from "./api";
-import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
+import {apiAnalise} from "./api"
+import Loading from "vue-loading-overlay"
+import "vue-loading-overlay/dist/vue-loading.css"
 
 export default {
 	name: "AnaliseDetalhes",
-	components: { Loading },
+	components: {Loading},
 	data() {
 		return {
 			isBusy: true,
 			isLoading: false,
 			analiseCodigo: "",
 			analise: {
-				frameQuadrante: [[], [], [], [], []]
+				frameQuadrante: [[], [], [], [], []],
 			},
 			msg: {
 				text: false,
-				type: ""
+				type: "",
 			},
 			framesDownloadLink: "",
 			pocosDownloadLink: "",
 			csvExportLink: "",
 			apiInterval: null,
-			yellowFade: [false, false, false, false, false]
-		};
+			yellowFade: [false, false, false, false, false],
+		}
 	},
 
 	watch: {
@@ -284,16 +290,16 @@ export default {
 				for (let i = 1; i < oldVal.length; i++) {
 					if (oldVal[i] && newVal[i]) {
 						if (oldVal[i].processados != newVal[i].processados) {
-							this.yellowFade[i] = false;
-							this.yellowFade[i] = true;
+							this.yellowFade[i] = false
+							this.yellowFade[i] = true
 							setTimeout(() => {
-								this.yellowFade[i] = false;
-							}, 1500);
+								this.yellowFade[i] = false
+							}, 1500)
 						}
 					}
 				}
 			}
-		}
+		},
 	},
 
 	methods: {
@@ -301,31 +307,31 @@ export default {
 			if (quadrante) {
 				this.$router.push(
 					`/analise/${this.analise._id}/quadrante/${quadrante}`
-				);
+				)
 			} else {
-				this.$router.push(`/analise/${this.analise._id}/quadrantes`);
+				this.$router.push(`/analise/${this.analise._id}/quadrantes`)
 			}
 		},
 		refresh() {
-			this.isBusy = true;
-			this.isLoading = false;
+			this.isBusy = true
+			this.isLoading = false
 			apiAnalise
 				.getAnalise(this.analiseCodigo)
-				.then(data => {
-					this.analise = data;
-					this.isBusy = false;
+				.then((data) => {
+					this.analise = data
+					this.isBusy = false
 				})
 				.catch(() => {
-					this.isBusy = false;
-				});
+					this.isBusy = false
+				})
 		},
 
 		extractVideoFrames() {
-			this.$router.push(`/analise/${this.analise._id}/extrair-video`);
+			this.$router.push(`/analise/${this.analise._id}/extrair-video`)
 		},
 
 		exportCsv() {
-			let inputvalue = "/usr/uploads/experimentos";
+			let inputvalue = "/usr/uploads/experimentos"
 
 			this.$swal
 				.fire({
@@ -336,74 +342,75 @@ export default {
 					inputValue: inputvalue,
 					showCancelButton: true,
 					confirmButtonText: "Baixar",
-					cancelButtonText: "Cancelar"
+					cancelButtonText: "Cancelar",
 				})
-				.then(result => {
-					let url = this.csvExportLink + "?dir=";
+				.then((result) => {
+					let url = this.csvExportLink + "?dir="
 
 					if (result.value) {
-						url += result.value;
+						url += result.value
 					}
 
-					window.open(url, "_blank");
-				});
+					window.open(url, "_blank")
+				})
 		},
 
 		startMotilityProcessor() {
 			apiAnalise
 				.startMotilityProcessor(this.analiseCodigo)
 				.then(() => {
-					this.msg.text = 'Inciado processador de motilidade, isso pode demorar um tempo'
-					this.msg.type = 'info'
+					this.msg.text =
+						"Inciado processador de motilidade, isso pode demorar um tempo"
+					this.msg.type = "info"
 				})
 				.catch(() => {
-					this.msg.text = 'Não foi posível iniciar o processador de motilidade'
-					this.msg.type = 'danger'
-				});
+					this.msg.text =
+						"Não foi posível iniciar o processador de motilidade"
+					this.msg.type = "danger"
+				})
 		},
 
-		checkPocosExtraidos() {
-			if (this.analise) {
-				if (
-					this.analise.framesTotal != this.analise.framesProcessados
-				) {
-					this.refresh();
-				} else {
-					clearInterval(this.apiInterval);
-				}
+		downloadMotilityResults() {
+			let url = apiAnalise.getMotilityResultsLink(this.analiseCodigo)
+			window.open(url, "_blank")
+		},
+
+		autoRefresh() {
+			//console.log("execute autorefresh")
+			if (this.analise) {	
+				this.refresh()
 			}
 		},
 
 		metadados() {
-			this.$router.push(`/analise/${this.analise._id}/metadados`);
-		}
+			this.$router.push(`/analise/${this.analise._id}/metadados`)
+		},
 	},
 
 	created() {
-		this.analiseCodigo = this.$route.params.analiseCodigo;
+		this.analiseCodigo = this.$route.params.analiseCodigo
 		this.framesDownloadLink = apiAnalise.getFramesDownloadLink(
 			this.analiseCodigo
-		);
+		)
 		this.pocosDownloadLink = apiAnalise.getPocosDownloadLink(
 			this.analiseCodigo
-		);
-		this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo);
+		)
+		this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo)
 
-		this.refresh();
-		//this.checkPocosExtraidos()
-	},
+		if(!this.apiInterval){
+			this.apiInterval = setInterval(this.autoRefresh, 5000)
+		}
 
-	mounted() {
-		this.apiInterval = setInterval(this.checkPocosExtraidos, 2000);
+		this.refresh()
 	},
 
 	beforeDestroy() {
 		if (this.apiInterval != null) {
-			clearInterval(this.apiInterval);
-			this.apiInterval = null;
+			clearInterval(this.apiInterval)
+			this.apiInterval = null
 		}
-	}
-};
+	},
+}
 </script>
 
 <style>
@@ -411,7 +418,9 @@ export default {
 	margin-left: 10px;
 }
 
-.card {min-height: 100%;}
+.card {
+	min-height: 100%;
+}
 
 @keyframes yellowfade {
 	from {

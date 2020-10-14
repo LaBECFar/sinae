@@ -167,7 +167,7 @@ const router = new Router({
 				{
 					path: 'analise/:analiseCodigo',
 					name: 'analiseDetalhes',
-					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/Detalhes.vue'),
+					component: () => import( /* webpackChunkName: "analiseDetail" */ './views/analise/Detalhes.vue'),
 					meta: {
 						middleware: auth
 					}
@@ -193,7 +193,7 @@ const router = new Router({
 				{
 					path: 'analise/:analiseCodigo/quadrante/:quadrante',
 					name: 'analiseDetalhesQuadrante',
-					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/DetalhesQuadrante.vue'),
+					component: () => import( /* webpackChunkName: "analiseQuadrants" */ './views/analise/DetalhesQuadrante.vue'),
 					meta: {
 						middleware: auth
 					}

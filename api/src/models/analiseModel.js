@@ -33,6 +33,10 @@ const analisesSchema = new Schema(
 
 		video: {
 			type: String
+		},
+
+		motilityResults: {
+			type: String
 		}
 	},
 	{
@@ -56,6 +60,6 @@ analisesSchema.methods.deleteFrames = function(removeFiles = true) {
 
 	// remove todos os frames dessa analise do banco de dados
 	frameModel.deleteMany({ analiseId: this._id });
-};
+}
 
 module.exports = mongoose.model("analise", analisesSchema);

@@ -30,6 +30,9 @@ router.get('/:id/video', analiseController.videoStream);
 // download to a csv file with wells information
 router.get('/:id/download-csv', analiseController.exportCsv);
 
+// download zip with results of motility processor files
+router.get('/:id/download-motility-results', analiseController.downloadMotilityResults);
+
 // process the video frames to extract the wells
 router.post('/:id/extract-pocos', auth, analiseController.extractPocos);
 

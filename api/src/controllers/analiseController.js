@@ -9,8 +9,9 @@ const {Parser} = require("json2csv")
 const formidable = require("formidable")
 const ffmpeg = require("fluent-ffmpeg")
 const rmdir = require("rimraf")
-const analiseHelper = require('../helpers/analiseHelper')
+const analiseHelper = require("../helpers/analiseHelper")
 const dockerHelper = require("../helpers/dockerHelper")
+const fileHelper = require("../helpers/fileHelper")
 
 const analiseController = {
 	list: (req, res, next) => {
@@ -440,21 +441,19 @@ const analiseController = {
 						let next = null
 						let prev = null
 
-						if(index > 0){
-							prev = quadrante[index-1]
+						if (index > 0) {
+							prev = quadrante[index - 1]
 						}
 
-						if(index < quadrante.length-1) {
-							next = quadrante[index+1]
+						if (index < quadrante.length - 1) {
+							next = quadrante[index + 1]
 						}
-
 
 						frame.pocos.forEach((poco, pindex) => {
 							let link = poco.url
 
-							const prevLink = prev ? prev.pocos[pindex].url : ''
-							const nextLink = next ? next.pocos[pindex].url : ''
-							
+							const prevLink = prev ? prev.pocos[pindex].url : ""
+							const nextLink = next ? next.pocos[pindex].url : ""
 
 							if (dir) {
 								link = link.replace(
@@ -502,7 +501,6 @@ const analiseController = {
 						value: "experiment",
 					},
 
-
 					{
 						label: "Analysis",
 						value: "analysis",
@@ -527,7 +525,7 @@ const analiseController = {
 						label: "Well",
 						value: "well",
 					},
-					
+
 					{
 						label: "Previous",
 						value: "prev",
@@ -536,7 +534,6 @@ const analiseController = {
 						label: "Next",
 						value: "next",
 					},
-					
 				]
 
 				const json2csvParser = new Parser({
@@ -815,8 +812,6 @@ const analiseController = {
 			})
 	},
 
-
-
 	startMotilityProcessor: async (req, res, next) => {
 		const analiseId = req.params.id
 
@@ -827,14 +822,36 @@ const analiseController = {
 
 		const projectLocation = "/usr/uploads/settings/pipelines.cpproj"
 		const outputLocation = `/usr/uploads/experimentos/${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`
-		const filelistLocation = outputLocation + 'filelist.csv'
+		const filelistLocation = outputLocation + "filelist.csv"
 
 		const executeComand = `cellprofiler -c -p "${projectLocation}" --file-list "${filelistLocation}" -o "${outputLocation}"`
-		const startupParameters = executeComand.split(' ')
+		const startupParameters = executeComand.split(" ")
 
 		dockerHelper.startImage("cellprofiler_processor", startupParameters)
 
 		return res.status(201).json("1")
-	}
+	},
+
+	downloadMotilityResults: async (req, res, next) => {
+		const analiseId = req.params.id
+		const analise = await analiseModel.findById(analiseId)
+
+		if (analise.motilityResults) {
+			// zip file was generated already
+			res.download(analise.motilityResults)
+		} else {
+			if (await analiseHelper.isMotilityProcessorFinished(analise)) {
+				await analiseHelper.mergeMetadataToResults(analise, (files) => {
+					const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
+					const zipLocation = analiseHelper.getAnaliseLocation(analise) + zipFile
+					let archive = fileHelper.zipArchives(files, zipLocation)
+					analise.motilityResults = zipLocation
+					analise.save()
+					res.attachment(zipLocation)
+					archive.pipe(res)
+				})
+			}
+		}
+	},
 }
 module.exports = analiseController

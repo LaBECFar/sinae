@@ -307,6 +307,6 @@ for frame in frames:
     id_frame = {'_id': frame['_id']}
 
     # atualiza o frame dizendo que ele ja foi processado
-    frame = collection.find_one(id_frame)
+    #frame = collection.find_one(id_frame)
     novos_valores = { '$set': { 'processado': True, 'pocos': pocos}}
     collection.update_one(id_frame, novos_valores)

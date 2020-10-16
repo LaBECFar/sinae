@@ -1,6 +1,5 @@
 const {Parser} = require("json2csv")
-const csv = require("csv-parser")
-const fs = require("fs")
+const fileHelper = require("./fileHelper")
 
 const csvHelper = {
 	dataToCsv: (file, data, fields) => {
@@ -14,9 +13,8 @@ const csvHelper = {
 		}
 
 		const json2csvParser = new Parser(parserOptions)
-
 		const result = json2csvParser.parse(data)
-		fs.writeFileSync(file, result)
+		fileHelper.saveFile(file, result)
 	},
 }
 

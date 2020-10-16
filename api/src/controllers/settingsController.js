@@ -2,6 +2,7 @@ const path = require("path")
 const fs = require("fs")
 const settingsPath = path.resolve(__dirname, "../../config/settings.json")
 const formidable = require("formidable")
+const fileHelper = require("../helpers/fileHelper")
 
 const settingsController = {
 	get: (req, res, next) => {
@@ -78,12 +79,10 @@ const settingsController = {
 			fs.rename(oldpath, targetpath, (err) => {
 				if (err) throw err
 				console.log("Modelo atualizado: " + targetpath)
-				return res
-					.status(201)
-					.json({
-						message: "Modelo atualizado com sucesso!",
-						success: true,
-					})
+				return res.status(201).json({
+					message: "Modelo atualizado com sucesso!",
+					success: true,
+				})
 			})
 		}
 	},
@@ -97,13 +96,11 @@ const settingsController = {
 			if (err) return res.status(422).send(err.errors)
 
 			if (!files.file) {
-				return res
-					.status(500)
-					.json({
-						error: true, 
-						message: "Arquivo de configuração não transferido", 
-						success: false
-					})
+				return res.status(500).json({
+					error: true,
+					message: "Arquivo de configuração não transferido",
+					success: false,
+				})
 			}
 
 			saveFile(files.file)
@@ -124,18 +121,14 @@ const settingsController = {
 
 			targetpath += "/" + filename
 
-			fs.rename(oldpath, targetpath, (err) => {
-				if (err) throw err
-				console.log("Configuração do cellprofiler atualizada: " + targetpath)
-				return res
-					.status(201)
-					.json({
-						message: "Configuração do cellprofiler atualizada com sucesso!",
-						success: true,
-					})
+			fileHelper.renameFile(oldpath, targetpath)
+
+			return res.status(201).json({
+				message: "Configuração do cellprofiler atualizada com sucesso!",
+				success: true,
 			})
 		}
-	}
+	},
 }
 
 module.exports = settingsController

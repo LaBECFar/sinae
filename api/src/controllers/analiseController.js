@@ -8,10 +8,10 @@ const path = require("path")
 const {Parser} = require("json2csv")
 const formidable = require("formidable")
 const ffmpeg = require("fluent-ffmpeg")
-const rmdir = require("rimraf")
 const analiseHelper = require("../helpers/analiseHelper")
 const dockerHelper = require("../helpers/dockerHelper")
 const fileHelper = require("../helpers/fileHelper")
+const timeHelper = require("../helpers/timeHelper")
 
 const analiseController = {
 	list: (req, res, next) => {
@@ -32,7 +32,7 @@ const analiseController = {
 				experimentoCodigo: 1,
 				placa: 1,
 				dataColeta: 1,
-				motilityResults: 1
+				motilityResults: 1,
 			})
 			.then((analises) => {
 				return res.status(201).json(analises)
@@ -51,7 +51,9 @@ const analiseController = {
 				let obj = analise.toObject()
 				obj.idserver = analise._id
 
-				obj["isMotilityProcessorFinished"] = await analiseHelper.isMotilityProcessorFinished(analise)
+				obj[
+					"isMotilityProcessorFinished"
+				] = await analiseHelper.isMotilityProcessorFinished(analise)
 
 				aux_quadrante = 0
 				idPrimeiroFrame = []
@@ -582,25 +584,15 @@ const analiseController = {
 						.json({error: true, message: errorMsg, success: false})
 				}
 
+				const filename = `video_${analise._id}${path.extname(oldpath)}`
 				saveFile(files.file, analise)
 			})
 		})
 
 		function saveFile(file, analise) {
 			let oldpath = file.path
-			let filename = "video_" + analise._id + path.extname(oldpath)
-			let targetpath =
-				"/usr/uploads/experimentos/" +
-				analise.experimentoCodigo +
-				"/" +
-				analise.placa +
-				"/" +
-				analise.tempo +
-				"/"
-
-			if (!fs.existsSync(oldpath)) {
-				console.log("settingsController.js: Não existe o oldpath")
-			}
+			let filename = `video_${analise._id}${path.extname(oldpath)}`
+			let targetpath = analiseHelper.getAnaliseLocation(analise)
 
 			if (!fs.existsSync(targetpath)) {
 				fs.mkdirSync(targetpath, {recursive: true})
@@ -608,25 +600,14 @@ const analiseController = {
 
 			targetpath += filename
 
-			fs.rename(oldpath, targetpath, (err) => {
-				if (err) throw err
+			fileHelper.renameFile(oldpath, targetpath)
 
-				analise.video = targetpath
+			analise.video = targetpath
+			analise.save()
 
-				analise.save((err, analise) => {
-					if (err) {
-						return res.status(500).json({
-							message: "Erro ao salvar analise",
-							error: err,
-							success: false,
-						})
-					}
-
-					return res.status(201).json({
-						message: "Vídeo enviado com sucesso!",
-						success: true,
-					})
-				})
+			return res.status(201).json({
+				message: "Vídeo enviado com sucesso!",
+				success: true,
 			})
 		}
 	},
@@ -635,32 +616,6 @@ const analiseController = {
 		const analiseId = req.params.id
 		const quadrantes = req.body.quadrantes
 		const fps = req.body.fps || 1
-
-		const timeToSeconds = (time) => {
-			let value = time.split(":")
-			let minToMilis = parseInt(value[0]) * 60 // minutes > seconds
-			let secToMilis = parseInt(value[1]) // seconds
-			return minToMilis + secToMilis
-		}
-
-		// init and end time needs to be in seconds
-		const calcOffsets = (init, end, count) => {
-			let offsets = []
-			for (let i = init; i <= end; i += count) {
-				offsets.push(i)
-			}
-			return offsets
-		}
-
-		const removeFile = (filepath) => {
-			if (fs.existsSync(filepath)) {
-				rmdir(filepath, function (removedir_error) {
-					if (removedir_error) console.log(removedir_error)
-					else console.log("arquivo deletado:" + filepath)
-				})
-			}
-		}
-
 		let analise = null
 
 		try {
@@ -685,9 +640,10 @@ const analiseController = {
 
 		Object.keys(quadrantes).forEach(async (q, qindex) => {
 			const quadrante = quadrantes[q]
-			const initTime = timeToSeconds(quadrante[0])
-			const endTime = timeToSeconds(quadrante[1])
-			const offsets = calcOffsets(initTime, endTime, count)
+			const initTime = timeHelper.timeToSeconds(quadrante[0])
+			const endTime = timeHelper.timeToSeconds(quadrante[1])
+			const offsets = timeHelper.offsets(initTime, endTime, count)
+			const quadranteNumber = qindex + 1
 
 			ffmpeg.ffprobe(videopath, function (err, metadata) {
 				const meta = metadata.streams[0]
@@ -699,51 +655,45 @@ const analiseController = {
 				ffmpeg(videopath)
 					.on("end", function () {
 						offsets.forEach((sec, oindex) => {
-							const miliseconds = sec * 1000
-							const generatedpath =
-								path + "Q" + (qindex + 1) + "_" + sec + ".png"
-							const targetpath =
-								path +
-								"Q" +
-								(qindex + 1) +
-								"_" +
-								miliseconds +
-								".png"
+							const miliseconds = Math.floor(sec * 1000)
+							const generatedpath = `${path}Q${quadranteNumber}_${sec}.png`
+							const targetpath = `${path}Q${quadranteNumber}_${miliseconds}.png`
 
-							fs.rename(generatedpath, targetpath, function (
-								rename_error
-							) {
-								if (rename_error) {
-									console.log("ERROR: " + rename_error)
+							fs.rename(
+								generatedpath,
+								targetpath,
+								(rename_error) => {
+									if (rename_error) {
+										console.log("ERROR: " + rename_error)
+									}
 								}
-							})
+							)
 
-							if (oindex == offsets.length - 1) {
-								removeFile(videopath)
-
-								analise.video = ""
-								analise.save()
-							}
+							/* removes vídeo after last extraction */
+							// if (oindex == offsets.length - 1) {
+							// 	removeFile(videopath)
+							// 	analise.video = ""
+							// 	analise.save()
+							// }
 						})
 					})
 					.screenshots({
 						timemarks: offsets,
-						filename: "Q" + (qindex + 1) + "_%s.png",
+						filename: `Q${quadranteNumber}_%s.png`,
 						folder: path,
 						size: width + "x" + height,
 					})
 			})
 
 			offsets.forEach((sec) => {
-				const miliseconds = sec * 1000
-				const targetpath =
-					path + "Q" + (qindex + 1) + "_" + miliseconds + ".png"
+				const miliseconds = Math.floor(sec * 1000)
+				const targetpath = `${path}Q${quadranteNumber}_${miliseconds}.png`
 
 				const frame = new frameModel({
-					tempoMilis: miliseconds,
+					tempoMilis: Math.floor(miliseconds),
 					url: targetpath,
 					analiseId: analiseId,
-					quadrante: qindex + 1,
+					quadrante: quadranteNumber,
 				})
 
 				frame.save((frame_error, frame) => {
@@ -815,19 +765,9 @@ const analiseController = {
 
 	startMotilityProcessor: async (req, res, next) => {
 		const analise = await analiseModel.findById(req.params.id)
-
-		await analiseHelper.generateFilelist(analise)
-		await analiseHelper.generatePrevNextList(analise)
-
-		const projectLocation = "/usr/uploads/settings/pipelines.cpproj"
-		const outputLocation = `/usr/uploads/experimentos/${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`
-		const filelistLocation = outputLocation + "filelist.csv"
-
-		const executeComand = `cellprofiler -c -p ${projectLocation} --file-list ${filelistLocation} -o ${outputLocation}`
-		const startupParameters = executeComand.split(" ")
-
-		dockerHelper.startImage("cellprofiler_processor", startupParameters)
-
+		await analiseHelper.generateFilelists(analise)
+		await analiseHelper.generatePrevnexts(analise)
+		analiseHelper.startMotilityProcessors(analise)
 		return res.status(201).json("1")
 	},
 
@@ -842,7 +782,8 @@ const analiseController = {
 			if (await analiseHelper.isMotilityProcessorFinished(analise)) {
 				await analiseHelper.mergeMetadataToResults(analise, (files) => {
 					const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
-					const zipLocation = analiseHelper.getAnaliseLocation(analise) + zipFile
+					const zipLocation =
+						analiseHelper.getAnaliseLocation(analise) + zipFile
 					let archive = fileHelper.zipArchives(files, zipLocation)
 					analise.motilityResults = zipLocation
 					analise.save()

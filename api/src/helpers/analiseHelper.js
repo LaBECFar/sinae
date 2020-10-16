@@ -1,100 +1,66 @@
-const analiseModel = require("../models/analiseModel")
-const frameModel = require("../models/frameModel")
 const fs = require("fs")
 const placaModel = require("../models/placaModel")
 const csv = require("csv-parser")
-const {Parser} = require("json2csv")
 const csvHelper = require("./csvHelper")
 const placaHelper = require("./placaHelper")
+const frameHelper = require("./frameHelper")
+const fileHelper = require("./fileHelper")
+const dockerHelper = require("./dockerHelper")
 
 const analiseHelper = {
-	generateFilelist: async (analise) => {
-		const list = (await analiseHelper.getPocosFilelist(analise._id)).slice(0,10)
-		const path = analiseHelper.getAnaliseLocation(analise)
-		const filelist = `${path}filelist.csv`
-		fs.writeFileSync(filelist, list.join("\n"))
+	generateFilelists: async (analise) => {
+		const analiseId = analise._id
+		const analisePath = analiseHelper.getAnaliseLocation(analise)
+		const frames = await frameHelper.getFrames({analiseId}, [
+			"pocos",
+			"tempoMilis",
+		])
+		const wells = frameHelper.getWells(frames)
+
+		wells.forEach((wellName) => {
+			const list = frameHelper.getWellFilelist(wellName, frames)
+			const file = `${analisePath}/cellprofiler/${wellName}/filelist.csv`
+			fileHelper.saveFile(file, list.join("\n"))
+		})
 	},
 
-	generatePrevNextList: async (analise) => {
+	generatePrevnexts: async (analise) => {
+		const analiseId = analise._id
+		const frames = await frameHelper.getFrames({analiseId}, [
+			"pocos",
+			"tempoMilis",
+		])
+		const wells = frameHelper.getWells(frames)
 		const milisIncrement = Math.floor(1000 / analise.fps)
-		const previousList = (await analiseHelper.getPocosFilelist(analise._id)).slice(0,10)
-		let list = []
 
-		previousList.forEach((url, index) => {
-			const milis = url.substring(
-				url.lastIndexOf("/") + 5,
-				url.lastIndexOf("_seg.")
-			)
-			const nextMilis = parseInt(milis) + milisIncrement
-
-			const nextUrl = url.replace(
-				"_" + milis + "_seg.",
-				"_" + nextMilis + "_seg."
-			)
-
-			list.push({
-				prev: url,
-				next: nextUrl,
+		wells.forEach((wellName) => {
+			const previousList = frameHelper.getWellFilelist(wellName, frames)
+			let list = []
+			previousList.forEach((prev) => {
+				const milis = prev.substring(
+					prev.lastIndexOf("/") + 5,
+					prev.lastIndexOf("_seg.")
+				)
+				const nextMilis = parseInt(milis) + milisIncrement
+				const next = prev.replace(
+					`_${milis}_seg.`,
+					`_${nextMilis}_seg.`
+				)
+				list.push({prev, next})
 			})
-		})
 
-		const json2csvParser = new Parser({
-			fields: [
+			const analisePath = analiseHelper.getAnaliseLocation(analise)
+			const file = `${analisePath}/cellprofiler/${wellName}/prevnext.csv`
+
+			csvHelper.dataToCsv(file, list, [
 				{label: "Previous", value: "prev"},
 				{label: "Next", value: "next"},
-			],
-			quote: "",
-			delimiter: ",",
-		})
-
-		const csv = json2csvParser.parse(list)
-
-		fs.writeFileSync(
-			analiseHelper.getAnaliseLocation(analise) + "prevnext.csv",
-			csv
-		)
-	},
-
-	getPrevNext: async () => {
-		const frames = await frameModel.find(
-			{analiseId},
-			["pocos", "tempoMilis"],
-			{sort: {tempoMilis: 1}}
-		)
-
-		const pocos = []
-
-		frames.forEach((frame, index) => {
-			const nextFrame = frames[index + 1]
-
-			frame.pocos.forEach((poco) => {
-				const nextPoco = nextFrame
-			})
+			])
 		})
 	},
 
 	getAnaliseLocation: (analise) => {
 		return `/usr/uploads/experimentos/${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`
-	},
-
-	getPocosFilelist: async (analiseId) => {
-		const frames = await frameModel.find(
-			{analiseId},
-			["pocos", "tempoMilis"],
-			{
-				sort: {tempoMilis: 1},
-			}
-		)
-
-		let list = []
-
-		frames.forEach((frame) => {
-			frame.pocos.map((poco) =>
-				list.push(`file://${poco.url.replace(".", "_seg.")}`)
-			)
-		})
-
-		return list.sort()
 	},
 
 	getMotilityResultsFiles: (analise) => {
@@ -158,7 +124,7 @@ const analiseHelper = {
 					}
 				})
 				.on("end", function () {
-					if(dataArray.length > 0){
+					if (dataArray.length > 0) {
 						const fields = Object.keys(dataArray[0])
 						csvHelper.dataToCsv(file, dataArray, fields)
 					}
@@ -178,6 +144,27 @@ const analiseHelper = {
 		let number = parseInt(nomePoco.slice(1))
 		nomePoco = `${letter}${number}`
 		return nomePoco
+	},
+
+	startMotilityProcessors: async (analise) => {
+		const frames = await frameHelper.getFrames({analiseId: analise._id}, [
+			"pocos",
+			"tempoMilis",
+		])
+		const wells = frameHelper.getWells(frames)
+		wells.forEach((wellName) => {
+			analiseHelper.startWellMotilityProcessor(wellName, analise)
+		})
+	},
+
+	startWellMotilityProcessor: (wellName, analise) => {
+		const projectLocation = "/usr/uploads/settings/pipelines.cpproj"
+		const analiseLocation = analiseHelper.getAnaliseLocation(analise)
+		const outputLocation = `${analiseLocation}cellprofiler/${wellName}/`
+		const filelistLocation = `${outputLocation}filelist.csv`
+		const executeComand = `cellprofiler -c -p ${projectLocation} --file-list ${filelistLocation} -o ${outputLocation}`
+		const startupParameters = executeComand.split(" ")
+		dockerHelper.startImage("cellprofiler_processor", startupParameters)
 	},
 }
 

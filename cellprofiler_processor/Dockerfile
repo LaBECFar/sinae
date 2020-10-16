@@ -1,4 +1,4 @@
-FROM cellprofiler/cellprofiler:latest
+FROM cellprofiler/cellprofiler:4.0.5
 
 RUN apt-get update -y; apt-get install -y unzip imagemagick
 

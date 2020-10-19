@@ -31,8 +31,7 @@ const analiseController = {
 				tempo: 1,
 				experimentoCodigo: 1,
 				placa: 1,
-				dataColeta: 1,
-				motilityResults: 1,
+				dataColeta: 1
 			})
 			.then((analises) => {
 				return res.status(201).json(analises)
@@ -775,22 +774,15 @@ const analiseController = {
 		const analiseId = req.params.id
 		const analise = await analiseModel.findById(analiseId)
 
-		if (analise.motilityResults) {
-			// zip file was generated already
-			res.download(analise.motilityResults)
-		} else {
-			if (await analiseHelper.isMotilityProcessorFinished(analise)) {
-				await analiseHelper.mergeMetadataToResults(analise, (files) => {
-					const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
-					const zipLocation =
-						analiseHelper.getAnaliseLocation(analise) + zipFile
-					let archive = fileHelper.zipArchives(files, zipLocation)
-					analise.motilityResults = zipLocation
-					analise.save()
-					res.attachment(zipLocation)
-					archive.pipe(res)
-				})
-			}
+		if (await analiseHelper.isMotilityProcessorFinished(analise)) {
+			await analiseHelper.mergeMotilityFiles(analise)
+			await analiseHelper.mergeMetadataToResults(analise, (files) => {
+				const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
+				const zipLocation = analiseHelper.getAnaliseLocation(analise) + zipFile
+				let archive = fileHelper.zipArchives(files, zipLocation)
+				res.attachment(zipLocation)
+				archive.pipe(res)
+			})
 		}
 	},
 }

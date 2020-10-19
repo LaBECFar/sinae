@@ -221,7 +221,6 @@
 								analise.framesProcessados ==
 									analise.framesTotal &&
 									analise.framesTotal > 0 &&
-									!analise.motilityResults &&
 									!analise.isMotilityProcessorFinished
 							"
 						>
@@ -229,7 +228,7 @@
 							clicando no botão abaixo
 						</div>
 
-						<div v-show="analise.motilityResults || analise.isMotilityProcessorFinished">
+						<div v-show="analise.isMotilityProcessorFinished">
 							Você pode baixar os resultados do processo de motilidade clicando no botão abaixo
 						</div>
 					</b-card-text>
@@ -237,7 +236,7 @@
 					<b-button
 						variant="primary"
 						@click="startMotilityProcessor()"
-						v-show="!analise.motilityResults && !analise.isMotilityProcessorFinished"
+						v-show="!analise.isMotilityProcessorFinished"
 						:disabled="analise.framesProcessados != analise.framesTotal || analise.framesTotal < 1"
 					>
 						Processar motilidade
@@ -246,7 +245,7 @@
 					<b-button
 						variant="primary"
 						@click="downloadMotilityResults()"
-						v-show="analise.motilityResults || analise.isMotilityProcessorFinished"
+						v-show="analise.isMotilityProcessorFinished"
 					>
 						Baixar resultados
 					</b-button>

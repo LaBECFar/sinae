@@ -6,6 +6,7 @@ const placaHelper = require("./placaHelper")
 const frameHelper = require("./frameHelper")
 const fileHelper = require("./fileHelper")
 const dockerHelper = require("./dockerHelper")
+const {default: PQueue} = require('p-queue')
 
 const analiseHelper = {
 	generateFilelists: async (analise) => {
@@ -65,22 +66,26 @@ const analiseHelper = {
 
 	getMotilityResultsFiles: (analise) => {
 		const path = analiseHelper.getAnaliseLocation(analise)
-		const pathContent = fs.readdirSync(path)
 		const prefix = "MyExpt_"
-		const files = pathContent
+		const pathContent = fs.readdirSync(path)
+		return pathContent
 			.filter((file) => file.indexOf(prefix) == 0)
 			.map((file) => `${path}${file}`)
-		return files
 	},
 
 	isMotilityProcessorFinished: async (analise) => {
 		let exists = true
 
-		if (!analise.motilityResults) {
+		if(analise.pocosProcessados.length < 60){
+			exists = false
+		} else {
+			const wells = await analiseHelper.getAnaliseWells(analise)
 			const files = analiseHelper.getMotilityResultsFiles(analise)
-			if (files.length < 2) {
+
+			if (files.length < wells.length * 2) {
 				exists = false
 			}
+
 			files.forEach((filepath) => {
 				if (!fs.existsSync(filepath)) {
 					exists = false
@@ -91,13 +96,45 @@ const analiseHelper = {
 		return exists
 	},
 
+	getAnaliseWells: async (analise) => {
+		const analiseId = analise._id
+		const frames = await frameHelper.getFrames({analiseId}, [
+			"pocos",
+			"tempoMilis",
+		])
+		return frameHelper.getWells(frames)
+	},
+
+	getMotilityFiles: (path) => {
+		const prefix = "MyExpt_"
+		const allFiles = fs.readdirSync(path)
+		return allFiles
+			.filter((file) => file.indexOf(prefix) == 0)
+			.map((file) => `${path}${file}`)
+	},
+
+	mergeMotilityFiles: async (analise) => {
+		const wells = await analiseHelper.getAnaliseWells(analise)
+		const path = analiseHelper.getAnaliseLocation(analise)
+		const files = []
+
+		wells.forEach((wellName) => {
+			const wellPath = `${path}/cellprofiler/${wellName}/`
+			const wellFiles = analiseHelper.getMotilityFiles(wellPath)
+			files.push(...wellFiles)
+		})
+
+		await csvHelper.mergeFiles(`${path}/MyExpt_Image.csv`, files.filter(f => f.indexOf('_Image') > 0))
+		await csvHelper.mergeFiles(`${path}/MyExpt_FilterObjects_Previous.csv`, files.filter(f => f.indexOf('_FilterObjects_Previous') > 0))
+	},
+
 	mergeMetadataToResults: async (analise, finishedCallback) => {
 		const placa = await placaModel.findOne({
 			label: analise.placa,
 			experimentoCodigo: analise.experimentoCodigo,
 		})
 		const metadados = placaHelper.getWellsMetadata(placa)
-		const files = analiseHelper.getMotilityResultsFiles(analise)
+		const files = await analiseHelper.getMotilityResultsFiles(analise)
 
 		let dataArray = []
 		let count = 0
@@ -147,24 +184,43 @@ const analiseHelper = {
 	},
 
 	startMotilityProcessors: async (analise) => {
-		const frames = await frameHelper.getFrames({analiseId: analise._id}, [
+		const maxSimultaneousContainers = 2
+		const analiseId = analise._id
+		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",
 			"tempoMilis",
 		])
 		const wells = frameHelper.getWells(frames)
+		const queue = new PQueue({concurrency: maxSimultaneousContainers})
+		queue.on('idle', () => {
+			console.log(`Motilidade processada na analise ${analiseId}`)
+		})
 		wells.forEach((wellName) => {
-			analiseHelper.startWellMotilityProcessor(wellName, analise)
+			queue.add(() => analiseHelper.startWellMotilityProcessor(wellName, analise))
 		})
 	},
 
-	startWellMotilityProcessor: (wellName, analise) => {
+	startWellMotilityProcessor: async (wellName, analise) => {
 		const projectLocation = "/usr/uploads/settings/pipelines.cpproj"
 		const analiseLocation = analiseHelper.getAnaliseLocation(analise)
 		const outputLocation = `${analiseLocation}cellprofiler/${wellName}/`
 		const filelistLocation = `${outputLocation}filelist.csv`
 		const executeComand = `cellprofiler -c -p ${projectLocation} --file-list ${filelistLocation} -o ${outputLocation}`
 		const startupParameters = executeComand.split(" ")
-		dockerHelper.startImage("cellprofiler_processor", startupParameters)
+
+		return new Promise((resolve) => {
+			//console.log(`${wellName}: starting motility process`)
+			dockerHelper
+				.runImage("cellprofiler_processor", startupParameters)
+				.then(() => {
+					if(analise.pocosProcessados) {
+						analise.pocosProcessados.push(wellName)
+						analise.save()
+					}
+					//console.log(`${wellName}: motility process has finished`)
+					resolve()
+				})
+		})
 	},
 }
 

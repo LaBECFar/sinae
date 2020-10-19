@@ -34,7 +34,9 @@ const analisesSchema = new Schema(
 
 		video: {
 			type: String,
-		}
+		},
+
+		pocosProcessados: [String],
 	},
 	{
 		timestamps: true,

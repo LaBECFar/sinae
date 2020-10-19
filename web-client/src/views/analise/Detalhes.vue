@@ -164,7 +164,8 @@
 			<b-col md="3">
 				<b-card title="Exportação">
 					<b-card-text>
-						<b-alert show
+						<b-alert
+							show
 							variant="warning"
 							v-show="
 								analise.framesProcessados !=
@@ -221,23 +222,40 @@
 								analise.framesProcessados ==
 									analise.framesTotal &&
 									analise.framesTotal > 0 &&
-									!analise.isMotilityProcessorFinished
+									!analise.isMotilityProcessorFinished &&
+									analise.pocosProcessados.length <= 0
 							"
 						>
 							Você já pode iniciar o processador de motilidade
 							clicando no botão abaixo
 						</div>
 
-						<div v-show="analise.isMotilityProcessorFinished">
-							Você pode baixar os resultados do processo de motilidade clicando no botão abaixo
+						<div
+							v-show="
+								analise.pocosProcessados.length > 0 &&
+									analise.pocosProcessados.length < 60
+							"
+						>
+							Processando poços...
+							<h2>
+								<span>
+									{{ analise.pocosProcessados.length }}
+								</span>
+								/60
+							</h2>
+						</div>
+
+						<div v-show="analise.pocosProcessados.length >= 60">
+							Você pode baixar os resultados do processo de
+							motilidade clicando no botão abaixo
 						</div>
 					</b-card-text>
 
 					<b-button
 						variant="primary"
 						@click="startMotilityProcessor()"
-						v-show="!analise.isMotilityProcessorFinished"
-						:disabled="analise.framesProcessados != analise.framesTotal || analise.framesTotal < 1"
+						v-show="analise.pocosProcessados.length < 60"
+						:disabled="analise.framesProcessados != analise.framesTotal ||analise.framesTotal < 1"
 					>
 						Processar motilidade
 					</b-button>
@@ -245,7 +263,7 @@
 					<b-button
 						variant="primary"
 						@click="downloadMotilityResults()"
-						v-show="analise.isMotilityProcessorFinished"
+						v-show="analise.pocosProcessados.length >= 60"
 					>
 						Baixar resultados
 					</b-button>
@@ -270,6 +288,7 @@ export default {
 			analiseCodigo: "",
 			analise: {
 				frameQuadrante: [[], [], [], [], []],
+				pocosProcessados: [],
 			},
 			msg: {
 				text: false,
@@ -376,7 +395,7 @@ export default {
 
 		autoRefresh() {
 			//console.log("execute autorefresh")
-			if (this.analise) {	
+			if (this.analise) {
 				this.refresh()
 			}
 		},
@@ -396,7 +415,7 @@ export default {
 		)
 		this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo)
 
-		if(!this.apiInterval){
+		if (!this.apiInterval) {
 			this.apiInterval = setInterval(this.autoRefresh, 5000)
 		}
 
@@ -447,6 +466,12 @@ export default {
 }
 .card-body .card-text {
 	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.card-body .card-text h2 {
+	font-weight: bold;
 }
 
 .card-body .btn {

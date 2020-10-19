@@ -1,6 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 const archiver = require("archiver")
+const rmdir = require("rimraf")
 
 const fileHelper = {
 	zipArchives: (files, zipLocation) => {
@@ -55,6 +56,14 @@ const fileHelper = {
 			fs.mkdirSync(dir, {recursive: true}) // create directory if it doesn't exists
 		}
 		fs.renameSync(oldname, newname); 
+	},
+
+	removeDir: (dir) => {
+		if (fs.existsSync(dir)) {
+			rmdir(dir, function (error) {
+				if (error) console.log(error)
+			})
+		}
 	}
 }
 

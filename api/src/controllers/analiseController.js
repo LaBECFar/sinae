@@ -50,9 +50,9 @@ const analiseController = {
 				let obj = analise.toObject()
 				obj.idserver = analise._id
 
-				obj[
-					"isMotilityProcessorFinished"
-				] = await analiseHelper.isMotilityProcessorFinished(analise)
+				// obj[
+				// 	"isMotilityProcessorFinished"
+				// ] = await analiseHelper.isMotilityProcessorFinished(analise)
 
 				aux_quadrante = 0
 				idPrimeiroFrame = []
@@ -774,8 +774,9 @@ const analiseController = {
 		const analiseId = req.params.id
 		const analise = await analiseModel.findById(analiseId)
 
-		if (await analiseHelper.isMotilityProcessorFinished(analise)) {
+		if (analise.pocosProcessados.length >= 60) {
 			await analiseHelper.mergeMotilityFiles(analise)
+
 			await analiseHelper.mergeMetadataToResults(analise, (files) => {
 				const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
 				const zipLocation = analiseHelper.getAnaliseLocation(analise) + zipFile

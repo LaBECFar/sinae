@@ -1,58 +1,67 @@
 const {Parser} = require("json2csv")
 const fileHelper = require("./fileHelper")
 const fs = require("fs")
-const csv = require("csv-parser")
-const {resolve} = require("path")
+const csv = require("fast-csv")
 
 const csvHelper = {
-	dataToCsv: (file, data, fields) => {
-		let parserOptions = {
-			quote: "",
-			delimiter: ",",
+	writeToPath: (path, data, overwrite = true) => {
+		if (overwrite && fs.existsSync(path)) {
+			fs.unlinkSync(path)
 		}
 
-		if (fields) {
-			parserOptions.fields = fields
-		}
-
-		const json2csvParser = new Parser(parserOptions)
-		const result = json2csvParser.parse(data)
-		fileHelper.saveFile(file, result)
+		return new Promise((resolve) => {
+			csv.writeToPath(path, data, {headers: true})
+				.on("error", (err) => console.error(err))
+				.on("finish", () => resolve())
+		})
 	},
 
-	readContent: async (file) => {
+	readContent: (file) => {
 		return new Promise((resolve) => {
-			let result = []
-			fs.createReadStream(file)
-				.pipe(csv())
+			const dataArray = []
+
+			csv.parseFile(file, {headers: true})
 				.on("data", function (data) {
-					result.push(data)
+					dataArray.push(data)
 				})
 				.on("end", function () {
-					resolve(result)
+					resolve(dataArray)
 				})
 		}).catch((e) => {
 			console.log(e)
 		})
 	},
 
-	readMultipleFiles: async (files) => {
-		let result = []
+	mergeFiles: async (files, outputFilePath) => {
+		if (fs.existsSync(outputFilePath)) {
+			fs.unlinkSync(outputFilePath)
+		}
 
-		const promises = files.map(async (url) => {
-			const content = await csvHelper.readContent(url)
-			result.push(content)
+		const promises = files.map((path) => {
+			return csvHelper.readContent(path)
 		})
 
-		await Promise.all(promises);
-		return result
-	},
+		const results = await Promise.all(promises)
 
-	mergeFiles: async (mergedFile, files) => {
-		const content = await csvHelper.readMultipleFiles(files)
-		//const fields = Object.keys(content[0])
-		console.log(content.length)
-		//csvHelper.dataToCsv(mergedFile, content, fields)
+		return new Promise((resolve) => {
+			const csvStream = csv.format({headers: true})
+			const writableStream = fs.createWriteStream(outputFilePath)
+
+			writableStream.on("finish", function () {
+				resolve()
+			})
+
+			csvStream.pipe(writableStream)
+
+			results.forEach((result) => {
+				result.forEach((data) => {
+					csvStream.write(data)
+				})
+			})
+			csvStream.end()
+		}).catch((e) => {
+			console.log(e)
+		})
 	},
 }
 

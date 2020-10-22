@@ -591,7 +591,7 @@ const analiseController = {
 		function saveFile(file, analise) {
 			let oldpath = file.path
 			let filename = `video_${analise._id}${path.extname(oldpath)}`
-			let targetpath = analiseHelper.getAnaliseLocation(analise)
+			let targetpath = analise.getLocation()
 
 			if (!fs.existsSync(targetpath)) {
 				fs.mkdirSync(targetpath, {recursive: true})
@@ -776,10 +776,10 @@ const analiseController = {
 
 		if (analise.pocosProcessados.length >= 60) {
 			await analiseHelper.mergeMotilityFiles(analise)
-
+			
 			await analiseHelper.mergeMetadataToResults(analise, (files) => {
 				const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
-				const zipLocation = analiseHelper.getAnaliseLocation(analise) + zipFile
+				const zipLocation = analise.getLocation() + zipFile
 				let archive = fileHelper.zipArchives(files, zipLocation)
 				res.attachment(zipLocation)
 				archive.pipe(res)

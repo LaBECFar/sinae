@@ -54,8 +54,8 @@ analisesSchema.methods = {
 		frameModel.deleteMany({analiseId: this._id})
 	},
 
-	getLocation: () => {
-		return `/usr/uploads/experimentos/${this.experimentoCodigo}/${this.placa}/${this.tempo}`
+	getLocation: function() {
+		return `/usr/uploads/experimentos/${this.experimentoCodigo}/${this.placa}/${this.tempo}/`
 	}
 }
 

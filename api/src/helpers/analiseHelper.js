@@ -122,14 +122,13 @@ const analiseHelper = {
 			files.filter((f) => f.indexOf("_Image") > 0),
 			`${path}MyExpt_Image.csv`
 		)
-			
+
 		await csvHelper.mergeFiles(
 			files.filter((f) => f.indexOf("_FilterObjects_Previous") > 0),
 			`${path}MyExpt_FilterObjects_Previous.csv`
 		)
 
 		console.log("motility files merged")
-
 	},
 
 	mergeMetadataToResults: async (analise, finishedCallback) => {
@@ -195,13 +194,15 @@ const analiseHelper = {
 		])
 		const wells = frameHelper.getWells(frames)
 		const queue = new PQueue({concurrency: maxSimultaneousContainers})
-		queue.on("idle", () => {
-			console.log(`Motilidade processada na analise ${analiseId}`)
-		})
+		// queue.on("idle", () => {
+		// 	console.log(`Motilidade processada na analise ${analiseId}`)
+		// })
 		wells.forEach((wellName) => {
-			queue.add(() =>
-				analiseHelper.startWellMotilityProcessor(wellName, analise)
-			)
+			if (!analise.pocosProcessados.includes(wellName)) {
+				queue.add(() =>
+					analiseHelper.startWellMotilityProcessor(wellName, analise)
+				)
+			}
 		})
 	},
 
@@ -214,7 +215,6 @@ const analiseHelper = {
 		const startupParameters = executeComand.split(" ")
 
 		return new Promise((resolve) => {
-			//console.log(`${wellName}: starting motility process`)
 			dockerHelper
 				.runImage("cellprofiler_processor", startupParameters)
 				.then(() => {
@@ -222,10 +222,16 @@ const analiseHelper = {
 						analise.pocosProcessados.push(wellName)
 						analise.save()
 					}
-					//console.log(`${wellName}: motility process has finished`)
 					resolve()
 				})
 		})
+	},
+
+	resetProcessedMotility: (analise) => {
+		analise.pocosProcessados = []
+		analise.save()
+		const pathToRemove = `${analise.getLocation()}cellprofiler/`
+		fileHelper.removeDir(pathToRemove)
 	},
 }
 

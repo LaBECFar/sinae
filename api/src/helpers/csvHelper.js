@@ -1,5 +1,3 @@
-const {Parser} = require("json2csv")
-const fileHelper = require("./fileHelper")
 const fs = require("fs")
 const csv = require("fast-csv")
 
@@ -20,13 +18,25 @@ const csvHelper = {
 		return new Promise((resolve) => {
 			const dataArray = []
 
-			csv.parseFile(file, {headers: true})
-				.on("data", function (data) {
-					dataArray.push(data)
-				})
-				.on("end", function () {
-					resolve(dataArray)
-				})
+			const newHeaders = []
+
+			csv.parseFile(file, {
+				headers: (headers) => {
+					if(newHeaders.length <= 0){
+						headers.forEach(column => {
+							if(!newHeaders.includes(column)){
+								newHeaders.push(column)
+							} else {
+								newHeaders.push(column+'_duplicate')
+							}
+						})
+					}
+					return newHeaders
+				}
+			})
+				.on("error", (err) => console.error(err))
+				.on("data", (data) => dataArray.push(data))
+				.on("end", () => resolve(dataArray))
 		}).catch((e) => {
 			console.log(e)
 		})
@@ -48,6 +58,7 @@ const csvHelper = {
 			const writableStream = fs.createWriteStream(outputFilePath)
 
 			writableStream.on("finish", function () {
+				console.log("finished writing file")
 				resolve()
 			})
 

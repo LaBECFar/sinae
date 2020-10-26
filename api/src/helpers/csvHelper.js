@@ -60,7 +60,7 @@ const csvHelper = {
 		return new Promise((resolve) => {
 			const csvStream = csv.format({headers: true})
 			const writableStream = fs.createWriteStream(outputFilePath)
-			writableStream.on("finish", () => writableStream.close())
+			writableStream.on("end", () => writableStream.close())
 			writableStream.on("close", () => resolve())
 
 			csvStream.pipe(writableStream)

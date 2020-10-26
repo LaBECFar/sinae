@@ -116,6 +116,18 @@
 				</b-progress>
 			</b-form-group>
 
+			<b-form-group
+				label="Número maximo de containers para processamento de motilidade de poços:"
+				label-for="maxMotilityContainers"
+			>
+				<b-form-input
+					id="maxMotilityContainers"
+					v-model="form.maxMotilityContainers"
+					type="number"
+					required
+				/>
+			</b-form-group>
+
 			<hr />
 
 			<b-row>
@@ -136,6 +148,7 @@ export default {
 		return {
 			form: {
 				title: "",
+				maxMotilityContainers: 0,
 			},
 
 			msg: {
@@ -176,6 +189,7 @@ export default {
 		refresh() {
 			apiSettings.get().then((res) => {
 				this.form = res
+				this.form.maxMotilityContainers = this.form.maxMotilityContainers || 2
 			})
 		},
 

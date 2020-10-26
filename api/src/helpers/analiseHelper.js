@@ -7,6 +7,7 @@ const fileHelper = require("./fileHelper")
 const dockerHelper = require("./dockerHelper")
 const csv = require("fast-csv")
 const {default: PQueue} = require("p-queue")
+const settings = require('../../config/settings.json');
 
 const analiseHelper = {
 	generateFilelists: async (analise) => {
@@ -183,7 +184,7 @@ const analiseHelper = {
 	},
 
 	startMotilityProcessors: async (analise) => {
-		const maxSimultaneousContainers = 2
+		const maxSimultaneousContainers = settings.maxMotilityContainers || 2
 		const analiseId = analise._id
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",

@@ -7,7 +7,7 @@ const fileHelper = require("./fileHelper")
 const dockerHelper = require("./dockerHelper")
 const csv = require("fast-csv")
 const {default: PQueue} = require("p-queue")
-const settings = require('../../config/settings.json');
+const settings = require("../../config/settings.json")
 
 const analiseHelper = {
 	generateFilelists: async (analise) => {
@@ -130,48 +130,46 @@ const analiseHelper = {
 		)
 	},
 
+	mergeMetadataToFile: (file, analise, metadados) => {
+		let dataArray = []
+
+		return new Promise((resolve) => {
+			csv.parseFile(file, {headers: true})
+				.on("error", (error) => console.error(error))
+				.on("data", (row) => {
+					const filename = row["FileName_Previous"]
+					const wellName = analiseHelper.getWellFromFilename(
+						filename
+					)
+					const wellMetadados = metadados[wellName]
+					row["Metadata_Well"] = wellName
+					row["Metadata_ExperimentCode"] =
+						analise.experimentoCodigo
+					row["Metadata_Plate"] = analise.placa
+					row["Metadata_Time"] = analise.tempo
+					if (wellMetadados) {
+						wellMetadados.forEach((metadado) => {
+							const column = "Metadata_" + metadado.nome
+							row[column] = metadado.valor
+						})
+					}
+					dataArray.push(row)
+				})
+				.on("end", () => csvHelper.writeToPath(file, dataArray).then((file) => resolve(file)))
+		})
+	},
+
 	mergeMetadataToResults: async (analise) => {
 		const placa = await placaModel.findOne({
 			label: analise.placa,
 			experimentoCodigo: analise.experimentoCodigo,
 		})
 		const metadados = placaHelper.getWellsMetadata(placa)
-		const files = await analiseHelper.getMotilityResultsFiles(analise)
-
-		let dataArray = []
-
-		const promises = files.map((file) => {
-			return new Promise((resolve) => {
-				fs.createReadStream(file)
-					.pipe(csv.parse({headers: true}))
-					.on("data", function (data) {
-						const filename = data["FileName_Previous"]
-						const wellName = analiseHelper.getWellFromFilename(
-							filename
-						)
-						const wellMetadados = metadados[wellName]
-						data["Metadata_Well"] = wellName
-						data["Metadata_ExperimentCode"] =
-							analise.experimentoCodigo
-						data["Metadata_Plate"] = analise.placa
-						data["Metadata_Time"] = analise.tempo
-						if (wellMetadados) {
-							wellMetadados.forEach((metadado) => {
-								const column = "Metadata_" + metadado.nome
-								data[column] = metadado.valor
-							})
-						}
-						dataArray.push(data)
-					})
-					.on("error", (err) => console.log(err))
-					.on("end", () => {
-						csvHelper.writeToPath(file, dataArray)
-							.then((file) => resolve(file))
-					})
-			})
-		})
-
-		return Promise.all(promises)
+		const files = analiseHelper.getMotilityResultsFiles(analise)
+		
+		for (const file of files) {
+			await analiseHelper.mergeMetadataToFile(file, analise, metadados)
+		}
 	},
 
 	getWellFromFilename: (filename) => {

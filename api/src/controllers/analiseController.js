@@ -775,16 +775,14 @@ const analiseController = {
 		const analise = await analiseModel.findById(analiseId)
 
 		if (analise.pocosProcessados.length >= 60) {
-			await analiseHelper.mergeMotilityFiles(analise)
-			
+			await analiseHelper.mergeMotilityFiles(analise)	
 			await analiseHelper.mergeMetadataToResults(analise)
-				.then(files => {
-					const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
-					const zipLocation = analise.getLocation() + zipFile
-					let archive = fileHelper.zipArchives(files, zipLocation)
-					res.attachment(zipLocation)
-					archive.pipe(res)
-				})
+			const files = analiseHelper.getMotilityResultsFiles(analise)
+			const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
+			const zipLocation = analise.getLocation() + zipFile
+			let archive = fileHelper.zipArchives(files, zipLocation)
+			res.attachment(zipLocation)
+			archive.pipe(res)
 		}
 	},
 }

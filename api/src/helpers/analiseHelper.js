@@ -127,11 +127,9 @@ const analiseHelper = {
 			files.filter((f) => f.indexOf("_FilterObjects_Previous") > 0),
 			`${path}MyExpt_FilterObjects_Previous.csv`
 		)
-
-		console.log("motility files merged")
 	},
 
-	mergeMetadataToResults: async (analise, finishedCallback) => {
+	mergeMetadataToResults: async (analise) => {
 		const placa = await placaModel.findOne({
 			label: analise.placa,
 			experimentoCodigo: analise.experimentoCodigo,
@@ -140,40 +138,39 @@ const analiseHelper = {
 		const files = await analiseHelper.getMotilityResultsFiles(analise)
 
 		let dataArray = []
-		let count = 0
 
-		files.forEach((file) => {
-			fs.createReadStream(file)
-				.pipe(csv.parse({headers: true}))
-				.on("data", function (data) {
-					const filename = data["FileName_Previous"]
-					const wellName = analiseHelper.getWellFromFilename(filename)
-					const wellMetadados = metadados[wellName]
-
-					data["Metadata_Well"] = wellName
-					data["Metadata_ExperimentCode"] = analise.experimentoCodigo
-					data["Metadata_Plate"] = analise.placa
-					data["Metadata_Time"] = analise.tempo
-
-					if (wellMetadados) {
-						wellMetadados.forEach((metadado) => {
-							const column = "Metadata_" + metadado.nome
-							data[column] = metadado.valor
-						})
+		const promises = files.map((file) => {
+			return new Promise((resolve) => {
+				fs.createReadStream(file)
+					.pipe(csv.parse({headers: true}))
+					.on("data", function (data) {
+						const filename = data["FileName_Previous"]
+						const wellName = analiseHelper.getWellFromFilename(
+							filename
+						)
+						const wellMetadados = metadados[wellName]
+						data["Metadata_Well"] = wellName
+						data["Metadata_ExperimentCode"] =
+							analise.experimentoCodigo
+						data["Metadata_Plate"] = analise.placa
+						data["Metadata_Time"] = analise.tempo
+						if (wellMetadados) {
+							wellMetadados.forEach((metadado) => {
+								const column = "Metadata_" + metadado.nome
+								data[column] = metadado.valor
+							})
+						}
 						dataArray.push(data)
-					}
-				})
-				.on("end", function () {
-					if (dataArray.length > 0) {
+					})
+					.on("error", (err) => console.log(err))
+					.on("end", () => {
 						csvHelper.writeToPath(file, dataArray)
-					}
-
-					count += 1
-					if (count >= files.length) {
-						finishedCallback(files)
-					}
-				})
+							.then((file) => resolve(file))
+					})
+			})
 		})
+
+		return Promise.all(promises)
 	},
 
 	getWellFromFilename: (filename) => {
@@ -194,9 +191,6 @@ const analiseHelper = {
 		])
 		const wells = frameHelper.getWells(frames)
 		const queue = new PQueue({concurrency: maxSimultaneousContainers})
-		// queue.on("idle", () => {
-		// 	console.log(`Motilidade processada na analise ${analiseId}`)
-		// })
 		wells.forEach((wellName) => {
 			if (!analise.pocosProcessados.includes(wellName)) {
 				queue.add(() =>

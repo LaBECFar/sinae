@@ -8,9 +8,13 @@ const csvHelper = {
 		}
 
 		return new Promise((resolve) => {
-			csv.writeToPath(path, data, {headers: true})
+			const stream = csv
+				.writeToPath(path, data, {headers: true})
 				.on("error", (err) => console.error(err))
-				.on("finish", () => resolve())
+				.on("finish", () => {
+					stream.close()
+					resolve(path)
+				})
 		})
 	},
 
@@ -22,17 +26,17 @@ const csvHelper = {
 
 			csv.parseFile(file, {
 				headers: (headers) => {
-					if(newHeaders.length <= 0){
-						headers.forEach(column => {
-							if(!newHeaders.includes(column)){
+					if (newHeaders.length <= 0) {
+						headers.forEach((column) => {
+							if (!newHeaders.includes(column)) {
 								newHeaders.push(column)
 							} else {
-								newHeaders.push(column+'_duplicate')
+								newHeaders.push(column + "_duplicate")
 							}
 						})
 					}
 					return newHeaders
-				}
+				},
 			})
 				.on("error", (err) => console.error(err))
 				.on("data", (data) => dataArray.push(data))
@@ -56,11 +60,8 @@ const csvHelper = {
 		return new Promise((resolve) => {
 			const csvStream = csv.format({headers: true})
 			const writableStream = fs.createWriteStream(outputFilePath)
-
-			writableStream.on("finish", function () {
-				console.log("finished writing file")
-				resolve()
-			})
+			writableStream.on("finish", () => writableStream.close())
+			writableStream.on("close", () => resolve())
 
 			csvStream.pipe(writableStream)
 

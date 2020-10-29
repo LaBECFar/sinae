@@ -43,12 +43,12 @@ const dockerHelper = {
 		})
 	},
 
-	isAnyContainerActive: (imageName) => {
+	isAnyContainerActive: (imageName, commandSearch) => {
 		return new Promise((resolve) => {
 			d.api().then((docker) => {
 				docker.listContainers(function (err, containers) {
 					containers.forEach(function (containerInfo) {
-						if (containerInfo.Image == imageName) {
+						if (containerInfo.Image == imageName && containerInfo.Command.indexOf(commandSearch) > -1) {
 							resolve(true)
 						}
 					})

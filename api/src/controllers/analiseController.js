@@ -50,12 +50,8 @@ const analiseController = {
 			.then(async (analise) => {
 				let obj = analise.toObject()
 				obj.idserver = analise._id
-
-				// obj[
-				// 	"isMotilityProcessorFinished"
-				// ] = await analiseHelper.isMotilityProcessorFinished(analise)
-
-				obj.isProcessingMotility = await dockerHelper.isAnyContainerActive('cellprofiler_processor')
+				
+				obj.isProcessingMotility = await dockerHelper.isAnyContainerActive('cellprofiler_processor', `${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`)
 				
 				aux_quadrante = 0
 				idPrimeiroFrame = []

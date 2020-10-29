@@ -352,9 +352,7 @@ export default {
 					this.analise = data
 					this.isBusy = false
 
-					if(this.analise.isProcessingMotility) {
-						this.processingMotility = true
-					}
+					this.processingMotility = this.analise.isProcessingMotility || false
 				})
 				.catch(() => {
 					this.isBusy = false

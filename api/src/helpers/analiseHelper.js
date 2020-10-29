@@ -182,13 +182,14 @@ const analiseHelper = {
 	},
 
 	startMotilityProcessors: async (analise) => {
-		const maxSimultaneousContainers = settings.maxMotilityContainers || 2
+		const maxSimultaneousContainers = parseInt(settings.maxMotilityContainers) || 2
 		const analiseId = analise._id
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",
 			"tempoMilis",
 		])
-		const wells = frameHelper.getWells(frames)
+		const wells = frameHelper.getWells(frames)		
+		
 		const queue = new PQueue({concurrency: maxSimultaneousContainers})
 		wells.forEach((wellName) => {
 			if (!analise.pocosProcessados.includes(wellName)) {

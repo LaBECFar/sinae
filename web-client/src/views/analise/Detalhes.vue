@@ -222,7 +222,7 @@
 								analise.framesProcessados ==
 									analise.framesTotal &&
 									analise.framesTotal > 0 &&
-									!analise.isMotilityProcessorFinished &&
+									!processingMotility &&
 									analise.pocosProcessados.length <= 0
 							"
 						>
@@ -231,17 +231,15 @@
 						</div>
 
 						<div
-							v-show="
-								analise.pocosProcessados.length > 0 &&
-									analise.pocosProcessados.length < 60
+							v-show="processingMotility || 
+								(analise.pocosProcessados.length > 0 && analise.pocosProcessados.length < 60)
 							"
 						>
 							Processando poços...
 							<h2>
 								<span>
 									{{ analise.pocosProcessados.length }}
-								</span>
-								/60
+								</span> / 60
 							</h2>
 						</div>
 

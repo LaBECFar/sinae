@@ -40,7 +40,7 @@
             Detalhes
         </b-button>
 
-        <b-button variant="info" size="sm" @click="downloadMotilityResults(row.item)" class="mr-2">
+        <b-button variant="info" size="sm" @click="downloadMotilityResults(row.item)" class="mr-2" v-show="row.item.pocosProcessados.length >= 60">
             <v-icon name="download"></v-icon>
         </b-button>
 

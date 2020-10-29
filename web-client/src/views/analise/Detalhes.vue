@@ -351,7 +351,6 @@ export default {
 				.then((data) => {
 					this.analise = data
 					this.isBusy = false
-
 					this.processingMotility = this.analise.isProcessingMotility || false
 				})
 				.catch(() => {

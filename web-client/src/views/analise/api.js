@@ -146,4 +146,20 @@ export const apiAnalise = {
 				});
 		});
 	},
+
+	resetMotility(idAnalise) {
+		if (!idAnalise) {
+			return Promise.reject(new Error("Analise não informada."));
+		}
+		return new Promise((resolve, reject) => {
+			config.api
+				.post(`/analise/${idAnalise}/reset-motility`)
+				.then(resp => {
+					resolve(resp.data);
+				})
+				.catch(e => {
+					reject(new Error(`Erro ao iniciar processador de motilidade ${e}`));
+				});
+		});
+	}
 };

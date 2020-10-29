@@ -31,7 +31,7 @@ const analiseController = {
 				tempo: 1,
 				experimentoCodigo: 1,
 				placa: 1,
-				dataColeta: 1
+				dataColeta: 1,
 			})
 			.then((analises) => {
 				return res.status(201).json(analises)
@@ -54,6 +54,8 @@ const analiseController = {
 				// 	"isMotilityProcessorFinished"
 				// ] = await analiseHelper.isMotilityProcessorFinished(analise)
 
+				obj.isProcessingMotility = await dockerHelper.isAnyContainerActive('cellprofiler_processor')
+				
 				aux_quadrante = 0
 				idPrimeiroFrame = []
 
@@ -583,7 +585,6 @@ const analiseController = {
 						.json({error: true, message: errorMsg, success: false})
 				}
 
-				const filename = `video_${analise._id}${path.extname(oldpath)}`
 				saveFile(files.file, analise)
 			})
 		})
@@ -775,7 +776,7 @@ const analiseController = {
 		const analise = await analiseModel.findById(analiseId)
 
 		if (analise.pocosProcessados.length >= 60) {
-			await analiseHelper.mergeMotilityFiles(analise)	
+			await analiseHelper.mergeMotilityFiles(analise)
 			await analiseHelper.mergeMetadataToResults(analise)
 			const files = analiseHelper.getMotilityResultsFiles(analise)
 			const zipFile = `${analise.experimentoCodigo}_${analise.placa}_${analise.tempo}_motility_results.zip`
@@ -784,6 +785,16 @@ const analiseController = {
 			res.attachment(zipLocation)
 			archive.pipe(res)
 		}
+	},
+
+	resetMotility: async (req, res, next) => {
+		const analiseId = req.params.id
+		const analise = await analiseModel.findById(analiseId)
+		analiseHelper.resetProcessedMotility(analise)
+		return res.status(201).json({
+			message: "Motilidade da analise resetada",
+			success: true,
+		})
 	},
 }
 module.exports = analiseController

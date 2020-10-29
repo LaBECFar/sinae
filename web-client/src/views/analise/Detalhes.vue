@@ -255,18 +255,29 @@
 						variant="primary"
 						@click="startMotilityProcessor()"
 						v-show="analise.pocosProcessados.length < 60"
-						:disabled="analise.framesProcessados != analise.framesTotal ||analise.framesTotal < 1"
+						:disabled="
+							analise.framesProcessados != analise.framesTotal ||
+								analise.framesTotal < 1 || processingMotility
+						"
 					>
 						Processar motilidade
 					</b-button>
 
-					<b-button
-						variant="primary"
-						@click="downloadMotilityResults()"
+					<div
+						class="flex"
 						v-show="analise.pocosProcessados.length >= 60"
 					>
-						Baixar resultados
-					</b-button>
+						<b-button
+							variant="primary"
+							@click="downloadMotilityResults()"
+						>
+							Baixar resultados
+						</b-button>
+
+						<b-button variant="light" @click="resetMotility()">
+							<b-icon-arrow-counterclockwise></b-icon-arrow-counterclockwise>
+						</b-button>
+					</div>
 				</b-card>
 			</b-col>
 		</b-row>
@@ -277,10 +288,11 @@
 import {apiAnalise} from "./api"
 import Loading from "vue-loading-overlay"
 import "vue-loading-overlay/dist/vue-loading.css"
+import {BIconArrowCounterclockwise} from "bootstrap-vue"
 
 export default {
 	name: "AnaliseDetalhes",
-	components: {Loading},
+	components: {Loading, BIconArrowCounterclockwise},
 	data() {
 		return {
 			isBusy: true,
@@ -299,6 +311,7 @@ export default {
 			csvExportLink: "",
 			apiInterval: null,
 			yellowFade: [false, false, false, false, false],
+			processingMotility: false
 		}
 	},
 
@@ -338,6 +351,10 @@ export default {
 				.then((data) => {
 					this.analise = data
 					this.isBusy = false
+
+					if(this.analise.isProcessingMotility) {
+						this.processingMotility = true
+					}
 				})
 				.catch(() => {
 					this.isBusy = false
@@ -380,11 +397,13 @@ export default {
 					this.msg.text =
 						"Inciado processador de motilidade, isso pode demorar um tempo"
 					this.msg.type = "info"
+					this.processingMotility = true
 				})
 				.catch(() => {
 					this.msg.text =
 						"Não foi posível iniciar o processador de motilidade"
 					this.msg.type = "danger"
+					this.processingMotility = false
 				})
 		},
 
@@ -394,7 +413,6 @@ export default {
 		},
 
 		autoRefresh() {
-			//console.log("execute autorefresh")
 			if (this.analise) {
 				this.refresh()
 			}
@@ -402,6 +420,35 @@ export default {
 
 		metadados() {
 			this.$router.push(`/analise/${this.analise._id}/metadados`)
+		},
+
+		resetMotility() {
+			this.$swal
+				.fire({
+					title: "Resetar motilidade",
+					text: "Tem certeza que deseja resetar a motilidade dos poços? Sera necessário reprocessar após o reset.",
+					type: "warning",
+					showCancelButton: true,
+					confirmButtonText: "Sim, resetar!",
+					cancelButtonText: "Cancelar",
+					focusCancel: true
+				})
+				.then((result) => {
+					if (result.value) {
+						apiAnalise
+							.resetMotility(this.analiseCodigo)
+							.then(() => {
+								this.msg.text = "Motilidade resetada"
+								this.msg.type = "info"
+								this.refresh()
+							})
+							.catch(() => {
+								this.msg.text =
+									"Não foi posível resetar a motilidade da analise"
+								this.msg.type = "danger"
+							})
+					}
+				})
 		},
 	},
 
@@ -438,6 +485,13 @@ export default {
 
 .card {
 	min-height: 100%;
+}
+
+.flex {
+	display: flex;
+}
+.flex .btn-primary {
+	flex: 1;
 }
 
 @keyframes yellowfade {

@@ -45,4 +45,6 @@ router.post('/:id/extract-frames', auth, analiseController.extractFrames);
 // starts the container cellprofiler_processor that processes well images to get the parasites motility
 router.post('/:id/start-motility-processor', auth, analiseController.startMotilityProcessor);
 
+router.post('/:id/reset-motility', auth, analiseController.resetMotility);
+
 module.exports = router;

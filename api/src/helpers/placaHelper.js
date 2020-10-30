@@ -2,14 +2,14 @@ const placaHelper = {
     getWellsMetadata: (placa) => {
         let metadados = []
 		placa.pocos.forEach(poco => {
-			metadados[poco.nome] = []
-
+			let pocoMetadados = []
 			poco.metadados.forEach(metadado => {
-				metadados[poco.nome].push({
+				pocoMetadados.push({
 					nome: metadado.nome, 
 					valor: metadado.valor
 				})
 			})
+			metadados[poco.nome] = pocoMetadados
         })
         
         return metadados

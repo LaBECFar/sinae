@@ -130,32 +130,53 @@ const analiseHelper = {
 		)
 	},
 
-	mergeMetadataToFile: (file, analise, metadados) => {
-		let dataArray = []
+	getMetadataNames: (metadados) => {
+		let headers = []
+		for (m in metadados) {
+			metadados[m].forEach((metadado) => {
+				headers.push(metadado.nome)
+			})
+		}
+		return [...new Set(headers)]
+	},
 
+	mergeMetadataToFile: (file, analise, metadados) => {
 		return new Promise((resolve) => {
+			let dataArray = []
+			let metadataHeaders = analiseHelper.getMetadataNames(metadados)
+
 			csv.parseFile(file, {headers: true})
 				.on("error", (error) => console.error(error))
 				.on("data", (row) => {
 					const filename = row["FileName_Previous"]
-					const wellName = analiseHelper.getWellFromFilename(
-						filename
-					)
-					const wellMetadados = metadados[wellName]
+					const wellName = analiseHelper.getWellFromFilename(filename)
+
 					row["Metadata_Well"] = wellName
-					row["Metadata_ExperimentCode"] =
-						analise.experimentoCodigo
+					row["Metadata_ExperimentCode"] = analise.experimentoCodigo
 					row["Metadata_Plate"] = analise.placa
 					row["Metadata_Time"] = analise.tempo
+
+					// add headers to all rows even if empty to be sure the columns will be in the csv
+					metadataHeaders.forEach((name) => {
+						row[`Metadata_${name}`] = ""
+					})
+
+					// then (re)add existing values
+					const wellMetadados = metadados[wellName]
 					if (wellMetadados) {
 						wellMetadados.forEach((metadado) => {
-							const column = "Metadata_" + metadado.nome
-							row[column] = metadado.valor
+							row["Metadata_" + metadado.nome] = metadado.valor
 						})
 					}
+
+					// updated row
 					dataArray.push(row)
 				})
-				.on("end", () => csvHelper.writeToPath(file, dataArray).then((file) => resolve(file)))
+				.on("end", () =>
+					csvHelper
+						.writeToPath(file, dataArray)
+						.then((file) => resolve(file))
+				)
 		})
 	},
 
@@ -164,9 +185,15 @@ const analiseHelper = {
 			label: analise.placa,
 			experimentoCodigo: analise.experimentoCodigo,
 		})
-		const metadados = placaHelper.getWellsMetadata(placa)
+
+		let metadados = []
+
+		if(placa){
+			metadados = placaHelper.getWellsMetadata(placa)
+		}
+
 		const files = analiseHelper.getMotilityResultsFiles(analise)
-		
+
 		for (const file of files) {
 			await analiseHelper.mergeMetadataToFile(file, analise, metadados)
 		}
@@ -182,14 +209,15 @@ const analiseHelper = {
 	},
 
 	startMotilityProcessors: async (analise) => {
-		const maxSimultaneousContainers = parseInt(settings.maxMotilityContainers) || 2
+		const maxSimultaneousContainers =
+			parseInt(settings.maxMotilityContainers) || 2
 		const analiseId = analise._id
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",
 			"tempoMilis",
 		])
-		const wells = frameHelper.getWells(frames)		
-		
+		const wells = frameHelper.getWells(frames)
+
 		const queue = new PQueue({concurrency: maxSimultaneousContainers})
 		wells.forEach((wellName) => {
 			if (!analise.pocosProcessados.includes(wellName)) {

@@ -8,6 +8,7 @@ const dockerHelper = require("./dockerHelper")
 const csv = require("fast-csv")
 const {default: PQueue} = require("p-queue")
 const settings = require("../../config/settings.json")
+const experimentoModel = require("../models/experimentoModel")
 
 const analiseHelper = {
 	generateFilelists: async (analise) => {
@@ -181,9 +182,12 @@ const analiseHelper = {
 	},
 
 	mergeMetadataToResults: async (analise) => {
+		const experimento = await experimentoModel.findOne({codigo: analise.experimentoCodigo})
+		
 		const placa = await placaModel.findOne({
 			label: analise.placa,
 			experimentoCodigo: analise.experimentoCodigo,
+			createdBy: experimento.createdBy
 		})
 
 		let metadados = []

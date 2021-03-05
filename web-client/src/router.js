@@ -34,7 +34,7 @@ const router = new Router({
 
 		{
 			path: '/',
-			name: 'dashboard',
+			//name: 'dashboard',
 			component: Dashboard,
 			meta: {
 				middleware: auth

@@ -214,7 +214,7 @@ const analiseHelper = {
 	},
 
 	startMotilityProcessors: async (analiseId) => {
-		const analise = await analiseModel.findById(req.params.id)
+		const analise = await analiseModel.findById(analiseId)
 		const maxSimultaneousContainers = parseInt(settings.maxMotilityContainers) || 2
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",

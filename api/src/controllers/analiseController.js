@@ -765,7 +765,7 @@ const analiseController = {
 		if(analise) {
 			await analiseHelper.generateFilelists(analise._id)
 			await analiseHelper.generatePrevnexts(analise._id)
-			analiseHelper.startMotilityProcessors(analise)
+			analiseHelper.startMotilityProcessors(analise._id)
 			return res.status(201).json("1")
 		}
 		return res.status(404).json("0")

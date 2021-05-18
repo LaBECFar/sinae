@@ -762,10 +762,13 @@ const analiseController = {
 
 	startMotilityProcessor: async (req, res, next) => {
 		const analise = await analiseModel.findById(req.params.id)
-		await analiseHelper.generateFilelists(analise)
-		await analiseHelper.generatePrevnexts(analise)
-		analiseHelper.startMotilityProcessors(analise)
-		return res.status(201).json("1")
+		if(analise) {
+			await analiseHelper.generateFilelists(analise._id)
+			await analiseHelper.generatePrevnexts(analise._id)
+			analiseHelper.startMotilityProcessors(analise)
+			return res.status(201).json("1")
+		}
+		return res.status(404).json("0")
 	},
 
 	downloadMotilityResults: async (req, res, next) => {

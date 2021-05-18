@@ -1,4 +1,5 @@
 const fs = require("fs")
+const analiseModel = require("../models/analiseModel")
 const placaModel = require("../models/placaModel")
 const csvHelper = require("./csvHelper")
 const placaHelper = require("./placaHelper")
@@ -11,8 +12,8 @@ const settings = require("../../config/settings.json")
 const experimentoModel = require("../models/experimentoModel")
 
 const analiseHelper = {
-	generateFilelists: async (analise) => {
-		const analiseId = analise._id
+	generateFilelists: async (analiseId) => {
+		const analise = await analiseModel.findById(analiseId)
 		const analisePath = analise.getLocation()
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",
@@ -27,8 +28,8 @@ const analiseHelper = {
 		})
 	},
 
-	generatePrevnexts: async (analise) => {
-		const analiseId = analise._id
+	generatePrevnexts: async (analiseId) => {
+		const analise = await analiseModel.findById(analiseId)
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",
 			"tempoMilis",
@@ -213,8 +214,7 @@ const analiseHelper = {
 	},
 
 	startMotilityProcessors: async (analise) => {
-		const maxSimultaneousContainers =
-			parseInt(settings.maxMotilityContainers) || 2
+		const maxSimultaneousContainers = parseInt(settings.maxMotilityContainers) || 2
 		const analiseId = analise._id
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",
@@ -226,13 +226,14 @@ const analiseHelper = {
 		wells.forEach((wellName) => {
 			if (!analise.pocosProcessados.includes(wellName)) {
 				queue.add(() =>
-					analiseHelper.startWellMotilityProcessor(wellName, analise)
+					analiseHelper.startWellMotilityProcessor(wellName, analiseId)
 				)
 			}
 		})
 	},
 
-	startWellMotilityProcessor: async (wellName, analise) => {
+	startWellMotilityProcessor: async (wellName, analiseId) => {
+		const analise = await analiseModel.findById(analiseId)
 		const projectLocation = "/usr/uploads/settings/pipelines.cpproj"
 		const analiseLocation = analise.getLocation()
 		const outputLocation = `${analiseLocation}cellprofiler/${wellName}/`
@@ -243,10 +244,11 @@ const analiseHelper = {
 		return await new Promise((resolve) => {
 			dockerHelper
 				.runImage("cellprofiler_processor", startupParameters)
-				.then(() => {
-					if (analise.pocosProcessados) {
-						analise.pocosProcessados.push(wellName)
-						analise.save()
+				.then(async () => {
+					const updatedAnalise = await analiseModel.findById(analiseId)
+					if (updatedAnalise.pocosProcessados) {
+						updatedAnalise.pocosProcessados.push(wellName)
+						updatedAnalise.save()
 					}
 					resolve()
 				})

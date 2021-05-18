@@ -240,7 +240,6 @@ const analiseHelper = {
 		const filelistLocation = `${outputLocation}filelist.csv`
 		const executeComand = `cellprofiler -c -p ${projectLocation} --file-list ${filelistLocation} -o ${outputLocation}`
 		const startupParameters = executeComand.split(" ")
-		console.log("Executing command:" + executeComand)
 		
 		return await new Promise((resolve) => {
 			dockerHelper
@@ -253,7 +252,6 @@ const analiseHelper = {
 						}
 					})
 					resolve()
-					console.log(`Cellprofiler Well: ${wellName} (OK)`)
 				})
 		})
 	},

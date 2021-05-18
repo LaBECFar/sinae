@@ -246,7 +246,7 @@ const analiseHelper = {
 				.then(() => {
 					if (analise.pocosProcessados) {
 						analise.pocosProcessados.push(wellName)
-						analise.save()
+						await analise.save()
 					}
 					resolve()
 				})

@@ -213,9 +213,9 @@ const analiseHelper = {
 		return nomePoco
 	},
 
-	startMotilityProcessors: async (analise) => {
+	startMotilityProcessors: async (analiseId) => {
+		const analise = await analiseModel.findById(req.params.id)
 		const maxSimultaneousContainers = parseInt(settings.maxMotilityContainers) || 2
-		const analiseId = analise._id
 		const frames = await frameHelper.getFrames({analiseId}, [
 			"pocos",
 			"tempoMilis",
@@ -240,17 +240,20 @@ const analiseHelper = {
 		const filelistLocation = `${outputLocation}filelist.csv`
 		const executeComand = `cellprofiler -c -p ${projectLocation} --file-list ${filelistLocation} -o ${outputLocation}`
 		const startupParameters = executeComand.split(" ")
-
+		console.log("Executing command:" + executeComand)
+		
 		return await new Promise((resolve) => {
 			dockerHelper
 				.runImage("cellprofiler_processor", startupParameters)
-				.then(async () => {
-					const updatedAnalise = await analiseModel.findById(analiseId)
-					if (updatedAnalise.pocosProcessados) {
-						updatedAnalise.pocosProcessados.push(wellName)
-						updatedAnalise.save()
-					}
+				.then(() => {
+					analiseModel.findById(analiseId, function (err, updatedAnalise){
+						if (updatedAnalise.pocosProcessados) {
+							updatedAnalise.pocosProcessados.push(wellName)
+							updatedAnalise.save()
+						}
+					})
 					resolve()
+					console.log(`Cellprofiler Well: ${wellName} (OK)`)
 				})
 		})
 	},

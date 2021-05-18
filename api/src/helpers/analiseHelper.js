@@ -240,7 +240,7 @@ const analiseHelper = {
 		const executeComand = `cellprofiler -c -p ${projectLocation} --file-list ${filelistLocation} -o ${outputLocation}`
 		const startupParameters = executeComand.split(" ")
 
-		return new Promise(await (resolve) => {
+		return await new Promise((resolve) => {
 			dockerHelper
 				.runImage("cellprofiler_processor", startupParameters)
 				.then(() => {

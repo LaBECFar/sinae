@@ -20,8 +20,8 @@ fi
 
 rm "web-client/.env"
 touch "web-client/.env"
-echo VUE_APP_MY_URL_API = \'http://$apiurl:3000\' >> web-app/.env
-echo VUE_APP_MY_URL_APP = \'http://$weburl:8080\' >> web-app/.env
+echo VUE_APP_MY_URL_API = \'http://$apiurl:3000\' >> web-client/.env
+echo VUE_APP_MY_URL_APP = \'http://$weburl:8080\' >> web-client/.env
 
 echo "Installing web client"
 cd web-client

@@ -66,6 +66,7 @@
 					</router-link>
 				</li>
 				<hr />
+				<li><img src="../../assets/labecfar.png" width="100%" style="margin-bottom:10px;"/></li>
 				<li>
 					<a
 						target="_blank"

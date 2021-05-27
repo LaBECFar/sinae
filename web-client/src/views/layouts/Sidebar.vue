@@ -5,7 +5,7 @@
 				<li>
 					<router-link to="/">
 						<v-icon name="home"></v-icon>
-						Home
+						Painel
 					</router-link>
 				</li>
 				<li>
@@ -66,11 +66,11 @@
 					</router-link>
 				</li>
 				<hr />
-				<li><img src="../../assets/labecfar.png" width="100%" style="margin-bottom:10px;"/></li>
+				
 				<li>
 					<a
 						target="_blank"
-						href="https://github.com/anselmobattisti/sinae"
+						href="https://github.com/LaBECFar/sinae"
 					>
 						<v-icon name="github"></v-icon>
 						Github
@@ -89,16 +89,15 @@ export default {
 			isAdmin: localStorage.getItem("isAdmin"),
 			userId: localStorage.getItem("userid")
 		};
-	},
-	methods: {
-		created() {
-			//this.isAdmin =  || false
-		}
 	}
 };
 </script>
 
 <style scoped>
+.creditos {
+	display: flex;
+	justify-content: space-between;
+}
 .main-sidebar {
 	background-color: #f5f5f5;
 	min-height: 100vh;

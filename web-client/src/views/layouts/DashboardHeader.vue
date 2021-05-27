@@ -1,7 +1,7 @@
 <template>
     <header id="header" style="min-height:75px">
         <div class="float-left logo-container">
-            <em>SINAE</em>
+            <em>SchistoSPro</em>
         </div>
         <b-button style="margin-right:15px; margin-top:5px" class="float-right" @click="logout()" variant="light">
             <v-icon style="font-weight: bolder" name="x"></v-icon>

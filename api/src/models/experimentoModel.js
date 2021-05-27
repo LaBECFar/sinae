@@ -3,6 +3,7 @@ const analiseModel = require("./analiseModel")
 const analiseSchema = analiseModel.schema
 var Schema = mongoose.Schema
 const shortid = require("shortid")
+const fileHelper = require("../helpers/fileHelper")
 
 const experimentosSchema = new Schema(
 	{
@@ -31,8 +32,6 @@ const experimentosSchema = new Schema(
 
 experimentosSchema.methods.deleteAnalises = function () {
 	const dir = `/usr/uploads/experimentos/${this.codigo}`
-	const fs = require("fs")
-	const rimraf = require("rimraf")
 
 	analiseModel
 		.find({experimentoCodigo: this.codigo})
@@ -43,11 +42,7 @@ experimentosSchema.methods.deleteAnalises = function () {
 			})
 
 			// remove o diretório completo de arquivos do experimento
-			if (fs.existsSync(dir)) {
-				rimraf(dir, function (error) {
-					if (error) console.log(error)
-				})
-			}
+			fileHelper.removeDir(dir)
 
 			// remove todas as analises desse experimento do banco de dados
 			analiseModel.deleteMany({experimentoCodigo: this.codigo})
@@ -61,11 +56,7 @@ experimentosSchema.methods.deleteAnalises = function () {
 let experimentoModel = mongoose.model("experimento", experimentosSchema)
 
 // Dropping an Index in MongoDB (unique name)
-experimentoModel.collection.dropIndexes(['analises.metadados.metadado.nome','analises.metadados.nome','analises.pocosMetadados.metadados.metadado.nome'], function(err){
-	if(!err){
-		console.log("experimento index analises.metadados.metadado.nome removido.")
-	}
-})
+experimentoModel.collection.dropIndexes(['analises.metadados.metadado.nome','analises.metadados.nome','analises.pocosMetadados.metadados.metadado.nome'])
 
 
 module.exports = experimentoModel

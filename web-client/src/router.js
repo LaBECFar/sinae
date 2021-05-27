@@ -34,10 +34,10 @@ const router = new Router({
 
 		{
 			path: '/',
-			//name: 'dashboard',
 			component: Dashboard,
 			meta: {
-				middleware: auth
+				middleware: auth,
+				title: 'Home'
 			},
 			children: [
 				{
@@ -45,7 +45,8 @@ const router = new Router({
 					name: 'home',
 					component: () => import( /* webpackChunkName: "locationIndex" */ './views/Home.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Home'
 					}
 				},
 
@@ -54,7 +55,8 @@ const router = new Router({
 					name: 'settings',
 					component: () => import( /* webpackChunkName: "settings" */ './views/settings/Settings.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Configurações'
 					}
 				},
 
@@ -63,7 +65,8 @@ const router = new Router({
 					name: 'experimentoIndex',
 					component: () => import( /* webpackChunkName: "locationIndex" */ './views/experimento/Index.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Experimentos'
 					}
 				},
 
@@ -72,7 +75,8 @@ const router = new Router({
 					name: 'locationNovo',
 					component: () => import( /* webpackChunkName: "locationNew" */ './views/experimento/Novo.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Novo Experimento'
 					}
 				},
 				{
@@ -80,7 +84,8 @@ const router = new Router({
 					name: 'experimentoEditar',
 					component: () => import( /* webpackChunkName: "locationEdit" */ './views/experimento/Editar.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Editar Experimento'
 					}
 				},
 				{
@@ -88,7 +93,8 @@ const router = new Router({
 					name: 'analiseIndex',
 					component: () => import( /* webpackChunkName: "analiseIndex" */ './views/analise/Index.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Análises'
 					}
 				},
 
@@ -97,7 +103,8 @@ const router = new Router({
 					name: 'analiseNovo',
 					component: () => import( /* webpackChunkName: "analiseNovo" */ './views/analise/Novo.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Nova Análise'
 					}
 				},
 
@@ -106,7 +113,8 @@ const router = new Router({
 					name: 'placaIndex',
 					component: () => import( /* webpackChunkName: "placaIndex" */ './views/placa/Index.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Placas'
 					}
 				},
 
@@ -115,7 +123,8 @@ const router = new Router({
 					name: 'placaNovo',
 					component: () => import( /* webpackChunkName: "placaNovo" */ './views/placa/Novo.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Nova Placa'
 					}
 				},
 
@@ -124,7 +133,8 @@ const router = new Router({
 					name: 'placaEditar',
 					component: () => import( /* webpackChunkName: "placaEditar" */ './views/placa/Editar.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Editar Placa'
 					}
 				},
 
@@ -133,7 +143,8 @@ const router = new Router({
 					name: 'placaMetadados',
 					component: () => import( /* webpackChunkName: "placaMetadados" */ './views/placa/Metadados.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Métadados'
 					}
 				},
 
@@ -142,7 +153,8 @@ const router = new Router({
 					name: 'tipoMetadadoIndex',
 					component: () => import( /* webpackChunkName: "tipoMetadadoIndex" */ './views/tipo-metadado/Index.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Tipo de metadado'
 					}
 				},
 
@@ -151,7 +163,8 @@ const router = new Router({
 					name: 'tipoMetadadoNovo',
 					component: () => import( /* webpackChunkName: "tipoMetadadoNovo" */ './views/tipo-metadado/Novo.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Novo tipo de metadado'
 					}
 				},
 
@@ -160,7 +173,8 @@ const router = new Router({
 					name: 'tipoMetadadoEditar',
 					component: () => import( /* webpackChunkName: "tipoMetadadoEditar" */ './views/tipo-metadado/Editar.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Editar tipo de metadado'
 					}
 				},
 
@@ -169,7 +183,8 @@ const router = new Router({
 					name: 'analiseDetalhes',
 					component: () => import( /* webpackChunkName: "analiseDetail" */ './views/analise/Detalhes.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Detalhes da Análise'
 					}
 				},
 				{
@@ -177,7 +192,8 @@ const router = new Router({
 					name: 'analiseEditar',
 					component: () => import( /* webpackChunkName: "locationEdit" */ './views/analise/Editar.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Editar Análise'
 					}
 				},
 
@@ -186,7 +202,8 @@ const router = new Router({
 					name: 'analiseExtrairVideo',
 					component: () => import( /* webpackChunkName: "analiseExtrairVideo" */ './views/analise/ExtrairVideo.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Extrair vídeo'
 					}
 				},
 
@@ -195,7 +212,8 @@ const router = new Router({
 					name: 'analiseDetalhesQuadrante',
 					component: () => import( /* webpackChunkName: "analiseQuadrants" */ './views/analise/DetalhesQuadrante.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Quadrante'
 					}
 				},
 				{
@@ -203,7 +221,8 @@ const router = new Router({
 					name: 'analiseQuadrantes',
 					component: () => import( /* webpackChunkName: "analiseQuadrantes" */ './views/analise/Quadrantes.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Quadrantes'
 					}
 				},
 				{
@@ -211,7 +230,8 @@ const router = new Router({
 					name: 'userIndex',
 					component: () => import( /* webpackChunkName: "userNew" */ './views/user/Index.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Usuários'
 					}
 				},
 				{
@@ -219,7 +239,8 @@ const router = new Router({
 					name: 'userNovo',
 					component: () => import( /* webpackChunkName: "userNew" */ './views/user/Novo.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Novo úsuario'
 					}
 				},
 				{
@@ -227,7 +248,8 @@ const router = new Router({
 					name: 'userEditar',
 					component: () => import( /* webpackChunkName: "userNew" */ './views/user/Editar.vue'),
 					meta: {
-						middleware: auth
+						middleware: auth,
+						title: 'Editar úsuario'
 					}
 				},
 			]
@@ -279,6 +301,12 @@ router.beforeEach((to, from, next) => {
 	}
 
 	return next();
+});
+
+router.afterEach((to) => {
+    Vue.nextTick(() => {
+        document.title = `${to.meta.title} - ${process.env.VUE_APP_TITLE || 'Schistosome Smart Profiler'}`;
+    });
 });
 
 

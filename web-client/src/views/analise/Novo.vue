@@ -48,6 +48,7 @@
 				</b-form-group>
 
 				<b-form-group label="Vídeo" label-for="upload">
+					<p class="form-label-description">O tamanho do vídeo esta limitado a 5GB de dados</p>
 					<div class="upload-actions">
 						<b-form-file
 							v-model="video.file"
@@ -274,5 +275,11 @@ export default {
 
 .upload-actions .custom-file {
 	height: 120px;
+}
+
+.form-label-description {
+	font-size:80%;
+	line-height:1;
+	color:#777;
 }
 </style>

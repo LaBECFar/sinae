@@ -7,7 +7,7 @@
 		</b-alert>
 
 		<b-form @submit="onSubmit">
-			<b-form-group label="Label:" label-for="label">
+			<b-form-group label="Placa:" label-for="label">
 				<b-form-input
 					id="label"
 					v-model="form.label"

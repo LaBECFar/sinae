@@ -104,7 +104,7 @@ export default {
 			fields: [
 				{
 					key: "label",
-					label: "Label",
+					label: "Placa",
 				},
 				{
 					key: "experimentoCodigo",

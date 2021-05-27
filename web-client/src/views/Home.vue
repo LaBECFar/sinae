@@ -6,22 +6,33 @@
         </h1>
 
         <div class="ctas">
-            <a class="card cta" href="/experimentos">
+            <a class="card cta" href="/#/experimento">
                 <v-icon style="width: 32px;" name="layers"></v-icon>
                 <h2>Experimentos</h2>
             </a>
 
-            <a class="card cta" href="/tipo-metadado">
+            <a class="card cta" href="/#/tipo-metadado">
                 <v-icon style="width: 32px;" name="tag"></v-icon>
                 <h2>Métadados</h2>
             </a>
 
-            <a class="card cta" href="/user">
+            <a class="card cta" href="/#/placa">
+                <v-icon style="width: 32px;" name="grid"></v-icon>
+                <h2>Placas</h2>
+            </a>
+
+            <a v-if="isAdmin" class="card cta" href="/#/user">
                 <v-icon style="width: 32px;" name="users"></v-icon>
                 <h2>Usuários</h2>
             </a>
 
-            <a class="card cta" href="/experimentos">
+            
+            <router-link class="card cta" :to="{ path: '/user/' + userId + '/Editar' }">
+                <v-icon style="width: 32px;" name="users"></v-icon>
+                <h2>Meu Perfil</h2>
+            </router-link>
+
+            <a v-if="isAdmin" class="card cta" href="/#/settings">
                 <v-icon style="width: 32px;" name="globe"></v-icon>
                 <h2>Configurações</h2>
             </a>
@@ -42,7 +53,13 @@
 
 <script>
 export default {
-    name: "home"
+    name: "home",
+    data() {
+		return {
+			isAdmin: localStorage.getItem("isAdmin"),
+			userId: localStorage.getItem("userid")
+		};
+	}
 };
 </script>
 
@@ -50,11 +67,11 @@ export default {
 .ctas {
     display: flex; 
     flex-wrap: wrap;
-    margin:20px 0 -1%;
+    margin:20px -1% 0;
 }
 .cta {
     padding: 20px;
-    margin: 0 1% 10px;
+    margin: 0 1% 20px;
     text-align:center;
     display: block; 
     width: 23%;
@@ -70,16 +87,24 @@ export default {
     font-weight: normal;
 }
 .realizacao {
-    margin-top: 50px;
-    text-align: center;
+    margin-top: 10px;
+    bottom: 20px;
+    margin-bottom:20px;
+    
 }
 .creditos { 
     display: flex;
-    justify-content: center;
+    
 }
 .creditos img {
-    margin-right: 50px;
+       margin-right: 20px;
     display: inline-block;
+    object-fit: contain;
+    width: 300px;
+    height: 200px;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 2px;
 } 
-.realizacao h4 {margin-bottom: 40px; font-size: 20px;}
+.realizacao h4 {margin-bottom: 10px; font-size: 20px;}
 </style>

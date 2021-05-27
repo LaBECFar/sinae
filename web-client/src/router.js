@@ -11,25 +11,29 @@ const router = new Router({
 		{
 			path: '/login',
 			name: 'login',
-			component: () => import( /* webpackChunkName: "locationNew" */ './views/user/Login.vue')
+			component: () => import( /* webpackChunkName: "locationNew" */ './views/user/Login.vue'),
+			meta: { title: "Login" }
 		},
 
 		{
 			path: '/forgot-password',
 			name: 'forgotPassword',
-			component: () => import( /* webpackChunkName: "forgotPassword" */ './views/user/ForgotPassword.vue')
+			component: () => import( /* webpackChunkName: "forgotPassword" */ './views/user/ForgotPassword.vue'),
+			meta: { title: "Recuperar senha" }
 		},
 
 		{
 			path: '/change-password/:userid/:token',
 			name: 'changePassword',
-			component: () => import( /* webpackChunkName: "changePassword" */ './views/user/ChangePassword.vue')
+			component: () => import( /* webpackChunkName: "changePassword" */ './views/user/ChangePassword.vue'),
+			meta: { title: "Mudar senha" }
 		},
 
 		{
 			path: '/register',
 			name: 'register',
-			component: () => import( /* webpackChunkName: "register" */ './views/user/Register.vue')
+			component: () => import( /* webpackChunkName: "register" */ './views/user/Register.vue'),
+			meta: { title: "Registrar" }
 		},
 
 		{

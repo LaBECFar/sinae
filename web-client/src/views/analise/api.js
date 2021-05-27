@@ -131,6 +131,19 @@ export const apiAnalise = {
 		return `${config.URL_API}/analise/${analiseId}/video`;
 	},
 
+	checkConfigFilesExist() {
+		return new Promise((resolve, reject) => {
+			config.api
+				.get("/settings/check-config-files")
+				.then(resp => {
+					resolve(resp.data);
+				})
+				.catch(e => {
+					reject(e);
+				});
+		});
+	},
+
 	startMotilityProcessor(idAnalise) {
 		if (!idAnalise) {
 			return Promise.reject(new Error("Analise não informada."));

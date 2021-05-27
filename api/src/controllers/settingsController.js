@@ -129,6 +129,36 @@ const settingsController = {
 			})
 		}
 	},
+
+
+	checkConfigFilesExist: (req, res, next) => {
+		const pathToCpproj = "/usr/uploads/settings/pipelines.cpproj"
+		const pathToPkl = "/usr/uploads/settings/modelo.pkl"
+		
+		const defaultMsg = "Arquivos de configuração encontrados"
+		const notFoundMsg = "Arquivos de configuração não encontrados, faça o upload em configurações"
+
+		let result = {
+			success: true,
+			msg: defaultMsg,
+			inexistent: []
+		}
+
+		if(!fs.existsSync(pathToCpproj)) {
+			result.inexistent.push('Configurações do Cellprofiler')
+		}
+		
+		if(!fs.existsSync(pathToPkl)) {
+			result.inexistent.push('Modelo AI de identificação do parasita')
+		}
+
+		if (result.inexistent.length > 0) {
+			result.success = false
+			result.msg = notFoundMsg	
+		}
+
+		return res.status(201).json(result)
+	}
 }
 
 module.exports = settingsController

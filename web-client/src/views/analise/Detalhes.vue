@@ -309,7 +309,8 @@ export default {
 			csvExportLink: "",
 			apiInterval: null,
 			yellowFade: [false, false, false, false, false],
-			processingMotility: false
+			processingMotility: false,
+			loadingComponent: true
 		}
 	},
 
@@ -417,6 +418,14 @@ export default {
 			this.$router.push(`/analise/${this.analise._id}/metadados`)
 		},
 
+		checkConfigFiles: async function() {
+			const result = await apiAnalise.checkConfigFilesExist()
+			if(result.inexistent && result.inexistent.length > 0) {
+				this.msg.type = "danger"
+				this.msg.text = `Arquivo: "${result.inexistent[0]}" não encontrado, faça o upload em Configurações`;
+			}
+		},
+
 		resetMotility() {
 			this.$swal
 				.fire({
@@ -448,20 +457,24 @@ export default {
 	},
 
 	created() {
-		this.analiseCodigo = this.$route.params.analiseCodigo
-		this.framesDownloadLink = apiAnalise.getFramesDownloadLink(
-			this.analiseCodigo
-		)
-		this.pocosDownloadLink = apiAnalise.getPocosDownloadLink(
-			this.analiseCodigo
-		)
-		this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo)
+		if(this.loadingComponent){
+			this.loadingComponent = false
+			this.analiseCodigo = this.$route.params.analiseCodigo
+			this.framesDownloadLink = apiAnalise.getFramesDownloadLink(
+				this.analiseCodigo
+			)
+			this.pocosDownloadLink = apiAnalise.getPocosDownloadLink(
+				this.analiseCodigo
+			)
+			this.csvExportLink = apiAnalise.getCsvExportLink(this.analiseCodigo)
 
-		if (!this.apiInterval) {
-			this.apiInterval = setInterval(this.autoRefresh, 5000)
+			if (!this.apiInterval) {
+				this.apiInterval = setInterval(this.autoRefresh, 5000)
+			}
+
+			this.refresh()
+			this.checkConfigFiles()
 		}
-
-		this.refresh()
 	},
 
 	beforeDestroy() {

@@ -15,4 +15,7 @@ router.post("/upload-model-pkl", auth, settingsController.uploadModel)
 // upload cellprofiler config .cpproj file 
 router.post("/upload-cellprofiler-config", auth, settingsController.uploadCellprofilerConfig)
 
+// check if the needed config files exist
+router.get("/check-config-files", auth, settingsController.checkConfigFilesExist)
+
 module.exports = router

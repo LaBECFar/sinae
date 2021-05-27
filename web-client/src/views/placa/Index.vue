@@ -149,8 +149,8 @@ export default {
 							.then(() => {
 								this.refresh()
 							})
-							.catch((e) => {
-								console.log(e)
+							.catch(() => {
+								//console.log(e)
 							})
 					}
 				})

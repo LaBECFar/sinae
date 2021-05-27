@@ -566,6 +566,7 @@ const analiseController = {
 
 	uploadVideo: (req, res, next) => {
 		var form = new formidable.IncomingForm()
+		form.maxFileSize = 5 * 1024 * 1024 * 1024 // 5GB upload limit
 		form.keepExtensions = true
 		form.uploadDir = "/usr/uploads/tmp/"
 

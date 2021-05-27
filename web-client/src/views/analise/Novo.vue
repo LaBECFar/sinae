@@ -131,7 +131,7 @@ export default {
 			form: {
 				tempo: "",
 				placa: "",
-				dataColeta: "",
+				dataColeta: new Date().toISOString().slice(0, 10),
 				experimentoCodigo: "",
 			},
 			analiseId: "",

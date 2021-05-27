@@ -18,7 +18,7 @@
             
             <b-row>
                 <b-col>
-                    <b-button type="submit" variant="primary">Salvar</b-button>
+                    <b-button type="submit" variant="primary" :disabled="form.codigo != ''">Salvar</b-button>
                 </b-col>
                 <b-col class="text-right">
                     <b-button to="/experimento" variant="secondary">Voltar</b-button>        

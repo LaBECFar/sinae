@@ -6,7 +6,7 @@ const experimentoController = {
         let user = req.user
         let filtros = {}
 
-        if(user){
+        if(user && !user.isAdmin){
             filtros.createdBy = req.user.userid
         }
 

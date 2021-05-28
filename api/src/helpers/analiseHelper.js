@@ -262,6 +262,7 @@ const analiseHelper = {
 		const pathToRemove = `${analise.getLocation()}cellprofiler/`
 		fileHelper.removeDir(pathToRemove)
 	},
+	
 }
 
 module.exports = analiseHelper

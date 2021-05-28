@@ -55,12 +55,14 @@ framesSchema.methods.removerArquivos = function() {
 	// remover imagens de poços
 	if (this.pocos && this.pocos.length > 0) {
 		this.pocos.forEach(poco => {
-			fs.unlinkSync(poco.url);
+			if(fs.existsSync(poco.url)){
+				fs.unlinkSync(poco.url);
+			}
 		});
 	}
 
 	// remover imagem do frame
-	if (this.url) {
+	if (fs.existsSync(this.url)) {
 		fs.unlinkSync(this.url);
 	}
 };

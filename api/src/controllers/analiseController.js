@@ -1,17 +1,18 @@
-const analiseModel = require("../models/analiseModel")
-const moment = require("moment")
-const frameModel = require("../models/frameModel")
-const placaModel = require("../models/placaModel")
-const fs = require("fs")
-const archiver = require("archiver")
-const path = require("path")
-const {Parser} = require("json2csv")
-const formidable = require("formidable")
-const ffmpeg = require("fluent-ffmpeg")
-const analiseHelper = require("../helpers/analiseHelper")
-const dockerHelper = require("../helpers/dockerHelper")
-const fileHelper = require("../helpers/fileHelper")
-const timeHelper = require("../helpers/timeHelper")
+const analiseModel = require('../models/analiseModel')
+const moment = require('moment')
+const frameModel = require('../models/frameModel')
+const placaModel = require('../models/placaModel')
+const fs = require('fs')
+const archiver = require('archiver')
+const path = require('path')
+const { Parser } = require('json2csv')
+const formidable = require('formidable')
+const ffmpeg = require('fluent-ffmpeg')
+const analiseHelper = require('../helpers/analiseHelper')
+const dockerHelper = require('../helpers/dockerHelper')
+const fileHelper = require('../helpers/fileHelper')
+const timeHelper = require('../helpers/timeHelper')
+const frameHelper = require('../helpers/frameHelper')
 
 const analiseController = {
 	list: (req, res, next) => {
@@ -32,7 +33,7 @@ const analiseController = {
 				experimentoCodigo: 1,
 				placa: 1,
 				dataColeta: 1,
-				pocosProcessados: 1
+				pocosProcessados: 1,
 			})
 			.then((analises) => {
 				return res.status(201).json(analises)
@@ -50,20 +51,20 @@ const analiseController = {
 			.then(async (analise) => {
 				let obj = analise.toObject()
 				obj.idserver = analise._id
-				
+
 				obj.isProcessingMotility = await dockerHelper.isAnyContainerActive('cellprofiler_processor', `${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`)
-				
+
 				aux_quadrante = 0
 				idPrimeiroFrame = []
 
 				frameQuadrante = []
-				frameQuadrante[1] = {qtd: 0, processados: 0, quadrante: 1}
-				frameQuadrante[2] = {qtd: 0, processados: 0, quadrante: 2}
-				frameQuadrante[3] = {qtd: 0, processados: 0, quadrante: 3}
-				frameQuadrante[4] = {qtd: 0, processados: 0, quadrante: 4}
+				frameQuadrante[1] = { qtd: 0, processados: 0, quadrante: 1 }
+				frameQuadrante[2] = { qtd: 0, processados: 0, quadrante: 2 }
+				frameQuadrante[3] = { qtd: 0, processados: 0, quadrante: 3 }
+				frameQuadrante[4] = { qtd: 0, processados: 0, quadrante: 4 }
 
 				frameModel
-					.find({analiseId: obj._id})
+					.find({ analiseId: obj._id })
 					.then((frames) => {
 						let processados = 0
 						let total = 0
@@ -84,10 +85,10 @@ const analiseController = {
 							}
 						})
 
-						obj["framesTotal"] = total
-						obj["framesProcessados"] = processados
-						obj["idPrimeiroFrame"] = idPrimeiroFrame
-						obj["frameQuadrante"] = frameQuadrante
+						obj['framesTotal'] = total
+						obj['framesProcessados'] = processados
+						obj['idPrimeiroFrame'] = idPrimeiroFrame
+						obj['frameQuadrante'] = frameQuadrante
 
 						return res.status(201).json(obj)
 					})
@@ -103,7 +104,7 @@ const analiseController = {
 	post: (req, res, next) => {
 		let dataColeta = req.body.dataColeta
 		if (dataColeta) {
-			dataColeta = moment(dataColeta, "YYYY-MM-DD").toDate()
+			dataColeta = moment(dataColeta, 'YYYY-MM-DD').toDate()
 		}
 
 		const analise = new analiseModel({
@@ -129,21 +130,19 @@ const analiseController = {
 
 					placa.save((err, placa) => {
 						if (err) {
-							console.log(
-								"Erro ao criar placa automaticamente. " + err
-							)
+							console.log('Erro ao criar placa automaticamente. ' + err)
 						}
 					})
 				}
 			})
 			.catch((err) => {
-				console.log("Erro ao criar placa automaticamente. ")
+				console.log('Erro ao criar placa automaticamente. ')
 			})
 
 		analise.save((err, analise) => {
 			if (err) {
 				return res.status(500).json({
-					message: "Erro ao criar analise",
+					message: 'Erro ao criar analise',
 					error: err,
 					success: false,
 				})
@@ -162,7 +161,7 @@ const analiseController = {
 
 		analiseModel
 			.findById(id)
-			.populate("analises")
+			.populate('analises')
 			.exec()
 			.then((analise) => {
 				if (!analise) {
@@ -177,19 +176,15 @@ const analiseController = {
 				var dataColeta = req.body.dataColeta
 
 				if (dataColeta) {
-					dataColeta = moment(dataColeta, "DD/MM/YYYY").toDate()
+					dataColeta = moment(dataColeta, 'DD/MM/YYYY').toDate()
 				}
 
-				if (typeof req.body.tempo !== "undefined")
-					analise.tempo = req.body.tempo
-				if (typeof req.body.fps !== "undefined")
-					analise.fps = req.body.fps
-				if (typeof req.body.dataColeta !== "undefined")
-					analise.dataColeta = dataColeta
-				if (typeof req.body.experimentoCodigo !== "undefined")
-					analise.experimentoCodigo = req.body.experimentoCodigo
+				if (typeof req.body.tempo !== 'undefined') analise.tempo = req.body.tempo
+				if (typeof req.body.fps !== 'undefined') analise.fps = req.body.fps
+				if (typeof req.body.dataColeta !== 'undefined') analise.dataColeta = dataColeta
+				if (typeof req.body.experimentoCodigo !== 'undefined') analise.experimentoCodigo = req.body.experimentoCodigo
 
-				if (typeof req.body.placa !== "undefined") {
+				if (typeof req.body.placa !== 'undefined') {
 					analise.placa = req.body.placa
 					placaModel
 						.find({
@@ -199,31 +194,27 @@ const analiseController = {
 						.then((placas) => {
 							if (placas.length <= 0) {
 								const placa = new placaModel({
-									experimentoCodigo:
-										analise.experimentoCodigo,
+									experimentoCodigo: analise.experimentoCodigo,
 									label: analise.placa,
 									pocos: [],
 								})
 
 								placa.save((err, placa) => {
 									if (err) {
-										console.log(
-											"Erro ao criar placa automaticamente. " +
-												err
-										)
+										console.log('Erro ao criar placa automaticamente. ' + err)
 									}
 								})
 							}
 						})
 						.catch((err) => {
-							console.log("Erro ao criar placa automaticamente. ")
+							console.log('Erro ao criar placa automaticamente. ')
 						})
 				}
 
 				analise.save(function (err, analise) {
 					if (err) {
 						return res.status(500).json({
-							message: "Erro ao atualizar analise.",
+							message: 'Erro ao atualizar analise.',
 							error: err,
 							success: false,
 						})
@@ -236,10 +227,10 @@ const analiseController = {
 	delete: (req, res, next) => {
 		let id = req.params.id
 
-		analiseModel.findOneAndDelete({_id: id}, function (err, analise) {
+		analiseModel.findOneAndDelete({ _id: id }, function (err, analise) {
 			if (err) {
 				return res.status(500).json({
-					message: "Erro ao deletar analise.",
+					message: 'Erro ao deletar analise.',
 					error: err,
 					success: false,
 				})
@@ -263,23 +254,20 @@ const analiseController = {
 				url: 1,
 			})
 			.then((frames) => {
-				let path_zip_folder = "/usr/uploads/tmp/"
-				let path_zip_file = path.join(
-					path_zip_folder,
-					`/${search.analiseId}.zip`
-				)
+				let path_zip_folder = '/usr/uploads/tmp/'
+				let path_zip_file = path.join(path_zip_folder, `/${search.analiseId}.zip`)
 
 				if (fs.existsSync(path_zip_file)) {
 					fs.unlinkSync(path_zip_file)
 				}
 				var output = fs.createWriteStream(path_zip_file)
 
-				var archive = archiver("zip", {
+				var archive = archiver('zip', {
 					gzip: true,
-					zlib: {level: 9}, // compression level.
+					zlib: { level: 9 }, // compression level.
 				})
-				archive.on("error", (err) => {
-					console.log("Erro ao criar zip")
+				archive.on('error', (err) => {
+					console.log('Erro ao criar zip')
 					throw err
 				})
 				archive.pipe(output)
@@ -288,11 +276,8 @@ const analiseController = {
 				for (let i = 0; i < frames.length; i++) {
 					let frame = frames[i]
 					if (fs.existsSync(frame.url)) {
-						let filename = frame.url.replace(
-							"/usr/uploads/experimentos",
-							""
-						)
-						archive.file(frame.url, {name: filename})
+						let filename = frame.url.replace('/usr/uploads/experimentos', '')
+						archive.file(frame.url, { name: filename })
 					}
 				}
 
@@ -316,34 +301,28 @@ const analiseController = {
 				pocos: 1,
 			})
 			.then((frames) => {
-				let path_zip_folder = "/usr/uploads/tmp/"
-				let path_zip_file = path.join(
-					path_zip_folder,
-					`/${search.analiseId}_pocos.zip`
-				)
+				let path_zip_folder = '/usr/uploads/tmp/'
+				let path_zip_file = path.join(path_zip_folder, `/${search.analiseId}_pocos.zip`)
 
 				if (fs.existsSync(path_zip_file)) {
 					fs.unlinkSync(path_zip_file)
 				}
 				var output = fs.createWriteStream(path_zip_file)
 
-				var archive = archiver("zip", {
+				var archive = archiver('zip', {
 					gzip: true,
-					zlib: {level: 9}, // compression level.
+					zlib: { level: 9 }, // compression level.
 				})
-				archive.on("error", (err) => {
-					console.log("Erro ao criar zip")
+				archive.on('error', (err) => {
+					console.log('Erro ao criar zip')
 					throw err
 				})
 				archive.pipe(output)
 
 				function appendPocoToArchive(filepath) {
 					if (fs.existsSync(filepath)) {
-						const filename = filepath.replace(
-							"/usr/uploads/experimentos",
-							""
-						)
-						archive.file(filepath, {name: filename})
+						const filename = filepath.replace('/usr/uploads/experimentos', '')
+						archive.file(filepath, { name: filename })
 					}
 				}
 
@@ -351,12 +330,8 @@ const analiseController = {
 				frames.forEach((frame) => {
 					frame.pocos.forEach((poco) => {
 						appendPocoToArchive(poco.url)
-						appendPocoToArchive(
-							poco.url.replace(/\.([^\.]*)$/, "_pred.$1")
-						)
-						appendPocoToArchive(
-							poco.url.replace(/\.([^\.]*)$/, "_seg.$1")
-						)
+						appendPocoToArchive(poco.url.replace(/\.([^\.]*)$/, '_pred.$1'))
+						appendPocoToArchive(poco.url.replace(/\.([^\.]*)$/, '_seg.$1'))
 					})
 				})
 
@@ -376,8 +351,8 @@ const analiseController = {
 		let raio = req.body.raio
 
 		startupParameters = []
-		startupParameters.push("python")
-		startupParameters.push("process.py")
+		startupParameters.push('python')
+		startupParameters.push('process.py')
 		startupParameters.push(quadrante)
 		startupParameters.push(raio.toString())
 		startupParameters.push(id)
@@ -389,9 +364,9 @@ const analiseController = {
 			startupParameters.push(poco.left.toString())
 		}
 
-		dockerHelper.startImage("frame_processor", startupParameters)
+		dockerHelper.startImage('frame_processor', startupParameters)
 
-		return res.status(201).json("1")
+		return res.status(201).json('1')
 	},
 
 	exportCsv: async (req, res, next) => {
@@ -436,7 +411,7 @@ const analiseController = {
 
 						// o primeiro frames (poços) não deve possuir um Previous_number
 						if (isFirst) {
-							previousPoco = ""
+							previousPoco = ''
 						}
 
 						let next = null
@@ -453,16 +428,13 @@ const analiseController = {
 						frame.pocos.forEach((poco, pindex) => {
 							let link = poco.url
 
-							const prevLink = prev ? prev.pocos[pindex].url : ""
-							const nextLink = next ? next.pocos[pindex].url : ""
+							const prevLink = prev ? prev.pocos[pindex].url : ''
+							const nextLink = next ? next.pocos[pindex].url : ''
 
 							if (dir) {
-								link = link.replace(
-									"/usr/uploads/experimentos",
-									dir
-								)
+								link = link.replace('/usr/uploads/experimentos', dir)
 							} else {
-								link = link.split("\\").pop().split("/").pop() // remove path, restando apenas o nome do arquivo
+								link = link.split('\\').pop().split('/').pop() // remove path, restando apenas o nome do arquivo
 							}
 
 							if (fs.existsSync(poco.url)) {
@@ -489,70 +461,65 @@ const analiseController = {
 				// value: nome do atributo do objeto e label: nome da coluna no arquivo csv
 				const fields = [
 					{
-						label: "Path",
-						value: "path",
+						label: 'Path',
+						value: 'path',
 					},
 					{
-						label: "Miliseconds",
-						value: "miliseconds",
-					},
-
-					{
-						label: "Experiment",
-						value: "experiment",
+						label: 'Miliseconds',
+						value: 'miliseconds',
 					},
 
 					{
-						label: "Analysis",
-						value: "analysis",
+						label: 'Experiment',
+						value: 'experiment',
 					},
 
 					{
-						label: "Time",
-						value: "time",
+						label: 'Analysis',
+						value: 'analysis',
 					},
 
 					{
-						label: "Plate",
-						value: "plate",
+						label: 'Time',
+						value: 'time',
 					},
 
 					{
-						label: "Quadrant",
-						value: "quadrant",
+						label: 'Plate',
+						value: 'plate',
 					},
 
 					{
-						label: "Well",
-						value: "well",
+						label: 'Quadrant',
+						value: 'quadrant',
 					},
 
 					{
-						label: "Previous",
-						value: "prev",
+						label: 'Well',
+						value: 'well',
+					},
+
+					{
+						label: 'Previous',
+						value: 'prev',
 					},
 					{
-						label: "Next",
-						value: "next",
+						label: 'Next',
+						value: 'next',
 					},
 				]
 
 				const json2csvParser = new Parser({
 					fields,
-					quote: "",
-					delimiter: ",",
+					quote: '',
+					delimiter: ',',
 				})
 				const csv = json2csvParser.parse(data)
 
 				analiseModel
 					.findById(search.analiseId)
 					.then((analise) => {
-						res.attachment(
-							analise.experimentoCodigo +
-								"_" +
-								analise.tempo +
-								".csv"
-						)
+						res.attachment(analise.experimentoCodigo + '_' + analise.tempo + '.csv')
 						return res.status(200).send(csv)
 					})
 					.catch((err) => {
@@ -568,7 +535,7 @@ const analiseController = {
 		var form = new formidable.IncomingForm()
 		form.maxFileSize = 5 * 1024 * 1024 * 1024 // 5GB upload limit
 		form.keepExtensions = true
-		form.uploadDir = "/usr/uploads/tmp/"
+		form.uploadDir = '/usr/uploads/tmp/'
 
 		const analiseId = req.params.id
 
@@ -577,10 +544,8 @@ const analiseController = {
 				if (err) return res.status(422).send(err.errors)
 
 				if (!files.file) {
-					let errorMsg = "Arquivo não transferido"
-					return res
-						.status(500)
-						.json({error: true, message: errorMsg, success: false})
+					let errorMsg = 'Arquivo não transferido'
+					return res.status(500).json({ error: true, message: errorMsg, success: false })
 				}
 
 				saveFile(files.file, analise)
@@ -593,7 +558,7 @@ const analiseController = {
 			let targetpath = analise.getLocation()
 
 			if (!fs.existsSync(targetpath)) {
-				fs.mkdirSync(targetpath, {recursive: true})
+				fs.mkdirSync(targetpath, { recursive: true })
 			}
 
 			targetpath += filename
@@ -604,7 +569,7 @@ const analiseController = {
 			analise.save()
 
 			return res.status(201).json({
-				message: "Vídeo enviado com sucesso!",
+				message: 'Vídeo enviado com sucesso!',
 				success: true,
 			})
 		}
@@ -625,7 +590,7 @@ const analiseController = {
 
 		if (!analise || !analise.video) {
 			return res.status(404).json({
-				message: "A análise informada não possui vídeo",
+				message: 'A análise informada não possui vídeo',
 				error: err,
 				success: false,
 			})
@@ -633,8 +598,7 @@ const analiseController = {
 
 		const videopath = analise.video
 		const count = 1 / fps
-		const path =
-			analise.video.substring(0, analise.video.lastIndexOf("/")) + "/"
+		const path = analise.video.substring(0, analise.video.lastIndexOf('/')) + '/'
 
 		Object.keys(quadrantes).forEach(async (q, qindex) => {
 			const quadrante = quadrantes[q]
@@ -645,27 +609,29 @@ const analiseController = {
 
 			ffmpeg.ffprobe(videopath, function (err, metadata) {
 				const meta = metadata.streams[0]
-				let ratio = meta.display_aspect_ratio.split(":")
-				ratio = ratio[0] / ratio[1]
+
+				let ratio = meta.display_aspect_ratio.split(':').map((num) => parseInt(num))
+				if (ratio[0] <= ratio[1]) {
+					ratio = ratio[0] / ratio[1]
+				} else {
+					ratio = ratio[1] / ratio[0]
+				}
+
 				const width = Math.round(meta.height * ratio)
 				const height = meta.height
 
 				ffmpeg(videopath)
-					.on("end", function () {
+					.on('end', function () {
 						offsets.forEach((sec, oindex) => {
 							const miliseconds = Math.floor(sec * 1000)
 							const generatedpath = `${path}Q${quadranteNumber}_${sec}.png`
 							const targetpath = `${path}Q${quadranteNumber}_${miliseconds}.png`
 
-							fs.rename(
-								generatedpath,
-								targetpath,
-								(rename_error) => {
-									if (rename_error) {
-										console.log("ERROR: " + rename_error)
-									}
+							fs.rename(generatedpath, targetpath, (rename_error) => {
+								if (rename_error) {
+									console.log('ERROR: ' + rename_error)
 								}
-							)
+							})
 
 							/* removes vídeo after last extraction */
 							// if (oindex == offsets.length - 1) {
@@ -679,7 +645,7 @@ const analiseController = {
 						timemarks: offsets,
 						filename: `Q${quadranteNumber}_%s.png`,
 						folder: path,
-						size: width + "x" + height,
+						size: width + 'x' + height,
 					})
 			})
 
@@ -703,7 +669,7 @@ const analiseController = {
 		})
 
 		return res.status(201).json({
-			message: "Extração de frames inicializada",
+			message: 'Extração de frames inicializada',
 			success: true,
 		})
 	},
@@ -721,32 +687,30 @@ const analiseController = {
 					const range = req.headers.range
 
 					if (range) {
-						const parts = range.replace(/bytes=/, "").split("-")
+						const parts = range.replace(/bytes=/, '').split('-')
 						const start = parseInt(parts[0], 10)
-						const end = parts[1]
-							? parseInt(parts[1], 10)
-							: fileSize - 1
+						const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1
 						const chunksize = end - start + 1
-						const file = fs.createReadStream(path, {start, end})
+						const file = fs.createReadStream(path, { start, end })
 						const head = {
-							"Content-Range": `bytes ${start}-${end}/${fileSize}`,
-							"Accept-Ranges": "bytes",
-							"Content-Length": chunksize,
-							"Content-Type": "video/mp4",
+							'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+							'Accept-Ranges': 'bytes',
+							'Content-Length': chunksize,
+							'Content-Type': 'video/mp4',
 						}
 						res.writeHead(206, head)
 						file.pipe(res)
 					} else {
 						const head = {
-							"Content-Length": fileSize,
-							"Content-Type": "video/mp4",
+							'Content-Length': fileSize,
+							'Content-Type': 'video/mp4',
 						}
 						res.writeHead(200, head)
 						fs.createReadStream(path).pipe(res)
 					}
 				} else {
 					return res.status(404).json({
-						message: "A análise informada não possui vídeo",
+						message: 'A análise informada não possui vídeo',
 						error: err,
 						success: false,
 					})
@@ -754,7 +718,7 @@ const analiseController = {
 			})
 			.catch((err) => {
 				res.status(422).json({
-					message: "Erro no streaming do vídeo",
+					message: 'Erro no streaming do vídeo',
 					error: err,
 					success: false,
 				})
@@ -763,13 +727,13 @@ const analiseController = {
 
 	startMotilityProcessor: async (req, res, next) => {
 		const analise = await analiseModel.findById(req.params.id)
-		if(analise) {
+		if (analise) {
 			await analiseHelper.generateFilelists(analise._id)
 			await analiseHelper.generatePrevnexts(analise._id)
 			analiseHelper.startMotilityProcessors(analise._id)
-			return res.status(201).json("1")
+			return res.status(201).json('1')
 		}
-		return res.status(404).json("0")
+		return res.status(404).json('0')
 	},
 
 	downloadMotilityResults: async (req, res, next) => {
@@ -793,7 +757,7 @@ const analiseController = {
 		const analise = await analiseModel.findById(analiseId)
 		analiseHelper.resetProcessedMotility(analise)
 		return res.status(201).json({
-			message: "Motilidade da analise resetada",
+			message: 'Motilidade da analise resetada',
 			success: true,
 		})
 	},

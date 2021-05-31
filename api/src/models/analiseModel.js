@@ -13,8 +13,13 @@ const analisesSchema = new Schema(
 
 		fps: {
 			type: Number,
+			default: 1
+		},
+		
+		interval: {
+			type: Number,
 			required: true,
-			default: 1,
+			default: 1000,
 		},
 
 		tempo: {

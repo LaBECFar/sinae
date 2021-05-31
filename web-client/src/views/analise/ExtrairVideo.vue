@@ -210,16 +210,16 @@
 						</b-row>
 					</b-form-group>
 
-					<b-form-group id="fps">
+					<b-form-group id="interval">
 						<b-row align-v="center">
 							<b-col md="auto">
-								<strong>FPS</strong>
+								<strong>Intervalo em Milisegundos</strong>
 							</b-col>
 							<b-col>
 								<b-form-input
-									id="fps"
-									v-model="form.fps"
-									type="text"
+									id="interval"
+									v-model="form.interval"
+									type="number"
 									required
 								/>
 							</b-col>
@@ -256,7 +256,7 @@ export default {
 		return {
 			form: {
 				_id: "",
-				fps: "",
+				interval: 1000,
 			},
 
 			isExtracting: false,
@@ -314,7 +314,7 @@ export default {
 			apiAnalise
 				.extractFrames({
 					_id: this.form._id,
-					fps: this.form.fps,
+					interval: this.form.interval,
 					quadrantes: this.quadrantes,
 				})
 				.then(() => {
@@ -358,7 +358,7 @@ export default {
 				.then((result) => {
 					if (result.value) {
 						let config = {
-							fps: this.form.fps,
+							interval: this.form.interval,
 							quadrantes: this.quadrantes,
 						}
 						config = JSON.stringify(config)
@@ -371,7 +371,7 @@ export default {
 			let config = localStorage.getItem("extraction-config")
 			if (config) {
 				config = JSON.parse(config)
-				this.form.fps = config.fps
+				this.form.interval = config.interval || 1000
 				this.quadrantes = config.quadrantes
 			}
 		},

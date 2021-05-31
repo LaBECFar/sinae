@@ -5,6 +5,10 @@ const timeHelper = {
 		let secToMilis = parseInt(value[1]) // seconds
 		return minToMilis + secToMilis
     },
+
+    timeToMiliseconds(time) {
+        return this.timeToSeconds(time) * 1000
+    },
     
     offsets: (init, end, count) => {
         let offsets = []

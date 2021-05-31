@@ -35,7 +35,7 @@ const analiseHelper = {
 			"tempoMilis",
 		])
 		const wells = frameHelper.getWells(frames)
-		const milisIncrement = Math.floor(1000 / analise.fps)
+		const milisIncrement = analise.interval
 
 		await wells.forEach(async (wellName) => {
 			const previousList = frameHelper.getWellFilelist(wellName, frames)

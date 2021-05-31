@@ -28,7 +28,7 @@ const analiseController = {
 
 		analiseModel
 			.find(search, {
-				fps: 1,
+				interval: 1,
 				tempo: 1,
 				experimentoCodigo: 1,
 				placa: 1,
@@ -109,10 +109,10 @@ const analiseController = {
 
 		const analise = new analiseModel({
 			tempo: req.body.tempo,
-			fps: req.body.fps || 1,
+			interval: req.body.interval || 1000,
 			experimentoCodigo: req.body.experimentoCodigo,
 			placa: req.body.placa,
-			dataColeta: dataColeta,
+			dataColeta: dataColeta
 		})
 
 		placaModel
@@ -180,7 +180,7 @@ const analiseController = {
 				}
 
 				if (typeof req.body.tempo !== 'undefined') analise.tempo = req.body.tempo
-				if (typeof req.body.fps !== 'undefined') analise.fps = req.body.fps
+				if (typeof req.body.interval !== 'undefined') analise.interval = req.body.interval
 				if (typeof req.body.dataColeta !== 'undefined') analise.dataColeta = dataColeta
 				if (typeof req.body.experimentoCodigo !== 'undefined') analise.experimentoCodigo = req.body.experimentoCodigo
 
@@ -578,12 +578,12 @@ const analiseController = {
 	extractFrames: async (req, res, next) => {
 		const analiseId = req.params.id
 		const quadrantes = req.body.quadrantes
-		const fps = req.body.fps || 1
+		const interval = req.body.interval || 1000
 		let analise = null
 
 		try {
 			analise = await analiseModel.findById(analiseId)
-			analise.fps = fps
+			analise.interval = interval
 		} catch (err) {
 			return res.status(422).send(err.errors)
 		}
@@ -597,14 +597,13 @@ const analiseController = {
 		}
 
 		const videopath = analise.video
-		const count = 1 / fps
 		const path = analise.video.substring(0, analise.video.lastIndexOf('/')) + '/'
 
 		Object.keys(quadrantes).forEach(async (q, qindex) => {
 			const quadrante = quadrantes[q]
 			const initTime = timeHelper.timeToSeconds(quadrante[0])
 			const endTime = timeHelper.timeToSeconds(quadrante[1])
-			const offsets = timeHelper.offsets(initTime, endTime, count)
+			const offsets = timeHelper.offsets(initTime, endTime, (interval / 1000))
 			const quadranteNumber = qindex + 1
 
 			ffmpeg.ffprobe(videopath, function (err, metadata) {
@@ -632,13 +631,6 @@ const analiseController = {
 									console.log('ERROR: ' + rename_error)
 								}
 							})
-
-							/* removes vídeo after last extraction */
-							// if (oindex == offsets.length - 1) {
-							// 	removeFile(videopath)
-							// 	analise.video = ""
-							// 	analise.save()
-							// }
 						})
 					})
 					.screenshots({
@@ -654,7 +646,7 @@ const analiseController = {
 				const targetpath = `${path}Q${quadranteNumber}_${miliseconds}.png`
 
 				const frame = new frameModel({
-					tempoMilis: Math.floor(miliseconds),
+					tempoMilis: miliseconds,
 					url: targetpath,
 					analiseId: analiseId,
 					quadrante: quadranteNumber,

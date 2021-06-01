@@ -48,6 +48,12 @@
 				<span>{{ analise.placa }}</span>
 			</b-col>
 		</b-row>
+		<b-row v-if="analise.interval">
+			<b-col>
+				<strong>Intervalo: </strong>
+				<span>{{ analise.interval }} ms</span>
+			</b-col>
+		</b-row>
 		<b-row>
 			<b-col>
 				<strong>Total de Frames:</strong>

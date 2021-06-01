@@ -1,4 +1,5 @@
 const experimentoModel = require("../models/experimentoModel")
+const ObjectId = require('mongodb').ObjectID;
 
 const experimentoController = {
 
@@ -11,12 +12,11 @@ const experimentoController = {
         }
 
         experimentoModel.find(filtros) 
-            .then(experimentos => {
-                return res.status(201).json(experimentos);
+            .populate('creator', 'name email isAdmin')
+            .exec(function (err, results) {
+                if(err) { console.log(err)}
+                return res.status(201).json(results);
             })
-            .catch(err => {
-                return res.status(422).send(err.errors);
-            });        
     },
     
     get: (req, res, next) => {
@@ -50,6 +50,7 @@ const experimentoController = {
 
         if(req.user){
             experimento.createdBy = req.user.userid
+            experimento.creator = new ObjectId(experimento.createdBy)
         }
         
         experimento.save((err, experimento) => {

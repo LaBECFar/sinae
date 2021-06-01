@@ -1,5 +1,6 @@
 var mongoose = require("mongoose")
 const analiseModel = require("./analiseModel")
+const userModel = require("./userModel")
 const analiseSchema = analiseModel.schema
 var Schema = mongoose.Schema
 const shortid = require("shortid")
@@ -24,6 +25,11 @@ const experimentosSchema = new Schema(
 		createdBy: {
 			type: String,
 		},
+
+		creator: { 
+			type: Schema.Types.ObjectId, 
+			ref: 'user' 
+		}
 	},
 	{
 		timestamps: true,
@@ -50,6 +56,10 @@ experimentosSchema.methods.deleteAnalises = function () {
 		.catch((err) => {
 			console.log(err.errors)
 		})
+}
+
+experimentosSchema.methods.getCreator = async function() {
+	return await userModel.findById(this.createdBy)
 }
 
 

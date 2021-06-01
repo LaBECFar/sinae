@@ -1,9 +1,12 @@
 const userModel = require("../models/userModel")
+const ObjectId = require('mongodb').ObjectID;
+const experimentoModel = require("../models/experimentoModel")
 
 const enviromentPreparations = {
     check()  {
         this.checkAdminUser()
         this.checkTmpFolder()
+        this.addExperimentCreator()
     },
 
     // Cria a pasta /uploads/tmp
@@ -44,6 +47,28 @@ const enviromentPreparations = {
         .catch(err => {
             console.log(err.errors)
         });  
+    },
+
+    // Criado um usuário padrão caso nenhum esteja cadastrado
+    addExperimentCreator() {
+        let count = 0
+        experimentoModel.find() 
+            .then(experimentos => {
+                experimentos.forEach(experimento => {
+                    if(!experimento.creator && experimento.createdBy) {
+                        experimento.creator = new ObjectId(experimento.createdBy)
+                        experimento.save()
+                        count++
+                    }
+                })
+
+                if(count > 0 ){
+                    console.log("Experimentos com criadores ajustados")
+                }
+            })
+            .catch(err => {
+                console.log(err.errors)
+            });  
     }
 }
 

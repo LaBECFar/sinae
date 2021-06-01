@@ -87,6 +87,9 @@ export default {
                 key:'createdAt',
                 label: 'Data Experimento'
             },{
+                key:'creator.name',
+                label: 'Criador'
+            },{
                 key: 'codigo',
                 label: 'Código'
             },{

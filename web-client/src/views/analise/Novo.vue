@@ -48,15 +48,25 @@
 				</b-form-group>
 
 				<b-form-group label="Vídeo" label-for="upload">
-					<p class="form-label-description">O tamanho do vídeo esta limitado a 5GB de dados</p>
-					<div class="upload-actions">
-						<b-form-file
-							v-model="video.file"
-							:state="Boolean(video.file)"
-							placeholder="Escolha um arquivo ou arraste aqui..."
-							drop-placeholder="Arraste o arquivo aqui..."
-							accept=".avi,.mp4"
-						></b-form-file>
+					<div class="tabs-video">
+						<button :class="{'selected' : tab == 'enviar'}" @click="tab = 'enviar'">Enviar</button>
+						<button :class="{'selected' : tab != 'enviar'}" @click="tab = 'copiar'">Copiar</button>
+					</div>
+					<div class="tabs-container" v-if="tab == 'enviar'">
+						<p class="form-label-description">O tamanho do vídeo esta limitado a 5GB de dados</p>
+						<div class="upload-actions">
+							<b-form-file
+								v-model="video.file"
+								:state="Boolean(video.file)"
+								placeholder="Escolha um arquivo ou arraste aqui..."
+								drop-placeholder="Arraste o arquivo aqui..."
+								accept=".avi,.mp4"
+							></b-form-file>
+						</div>
+					</div>
+					<div class="tabs-container" v-else>
+						<p class="form-label-description">Selecione uma análise para copiar o vídeo</p>
+						<b-form-select v-model="form.copyVideoFromAnalysis" :options="analysisWithVideo"></b-form-select>
 					</div>
 				</b-form-group>
 
@@ -134,6 +144,7 @@ export default {
 				placa: "",
 				dataColeta: new Date().toISOString().slice(0, 10),
 				experimentoCodigo: "",
+				copyVideoFromAnalysis: ""
 			},
 			analiseId: "",
 			video: {
@@ -145,6 +156,8 @@ export default {
 				text: "",
 				type: "",
 			},
+			tab: "enviar",
+			analysisWithVideo: []
 		}
 	},
 	methods: {
@@ -157,19 +170,27 @@ export default {
 		onSubmit(evt) {
 			evt.preventDefault()
 
-			if (!this.video.file || this.video.uploadPercentage > 0) {
-				return false
+			if(!this.form.copyVideoFromAnalysis) {
+				if (!this.video.file || this.video.uploadPercentage > 0) {
+					return false
+				}
 			}
 
 			apiAnalise
 				.novoAnalise(this.form)
 				.then((res) => {
-					this.msg.text = "Enviando vídeo..."
-					this.msg.type = "info"
+					if(this.video.file){
+						this.msg.text = "Enviando vídeo..."
+						this.msg.type = "info"
 
-					if (res._id) {
-						this.analiseId = res._id
-						this.uploadVideo()
+						if (res._id) {
+							this.analiseId = res._id
+							this.uploadVideo()
+						}
+					} else {
+						this.msg.text = "Análise cadastrada com sucesso"
+						this.msg.type = "success"
+						setTimeout(this.back, 1000)
 					}
 				})
 				.catch((e) => {
@@ -219,6 +240,22 @@ export default {
 
 	created() {
 		this.form.experimentoCodigo = this.$route.params.experimentoCodigo
+
+		apiAnalise.listAllWithVideo(this.form.experimentoCodigo)
+                .then((data) => {
+                    this.analysisWithVideo = data.map(analysis => { 
+						return {
+							value: analysis.video,
+							text: 'Tempo: '+ analysis.tempo + ' - Placa: ' +  analysis.placa
+						}
+					})
+					this.analysisWithVideo.unshift( {value: '', text: "Não copiar"})
+                    this.isBusy = false
+                })
+                .catch(e => {
+                    console.log(e)
+                    this.isBusy = false
+                })
 	},
 }
 </script>
@@ -231,6 +268,33 @@ export default {
 }
 .btn-extract {
 	margin-top: 20px;
+}
+
+.tabs-video {
+    display: flex;
+}
+
+.tabs-video button {
+    background: #fff;
+    width: 100%;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.tabs-video button.selected {
+	background: #eee;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    margin-bottom: -1px;
+}
+
+.tabs-container {
+	background: #eee;
+    padding: 20px;
+	border: 1px solid #ccc;
 }
 </style>
 

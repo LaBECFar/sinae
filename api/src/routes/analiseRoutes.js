@@ -9,6 +9,9 @@ router.post('/', analiseController.post);
 // lists
 router.get('/', auth, analiseController.list);
 
+// lists only analysis with video
+router.get('/all-with-video', auth, analiseController.listAllWithVideo);
+
 // datails
 router.get('/:id', auth, analiseController.get);
 
@@ -46,5 +49,6 @@ router.post('/:id/extract-frames', auth, analiseController.extractFrames);
 router.post('/:id/start-motility-processor', auth, analiseController.startMotilityProcessor);
 
 router.post('/:id/reset-motility', auth, analiseController.resetMotility);
+
 
 module.exports = router;

@@ -112,8 +112,23 @@ const analiseController = {
 			interval: req.body.interval || 1000,
 			experimentoCodigo: req.body.experimentoCodigo,
 			placa: req.body.placa,
-			dataColeta: dataColeta
+			dataColeta: dataColeta,
 		})
+
+		if(req.body.copyVideoFromAnalysis && fs.existsSync(req.body.copyVideoFromAnalysis)) {
+			const videoPath = req.body.copyVideoFromAnalysis
+			const targetPath = analise.getLocation() + path.basename(videoPath);
+
+			if (!fs.existsSync(path.dirname(targetPath))) {
+				fs.mkdirSync(path.dirname(targetPath), {recursive: true}) // create directory if it doesn't exists
+			}
+
+			analise.video = targetPath
+			
+			fs.copyFile(videoPath, targetPath, function(err){
+				if(err) {console.log("Erro ao copiar "+ err)}
+			})
+		}
 
 		placaModel
 			.find({
@@ -752,6 +767,32 @@ const analiseController = {
 			message: 'Motilidade da analise resetada',
 			success: true,
 		})
+	},
+
+	listAllWithVideo: (req, res, next) => {
+		let search = {
+			video: { $exists: true, $ne: "" }
+		}
+
+		if (req.params.experimentoCodigo) {
+			search.experimentoCodigo = req.params.experimentoCodigo
+		} else if (req.query.experimentoCodigo) {
+			search.experimentoCodigo = req.query.experimentoCodigo
+		}
+
+		analiseModel
+			.find(search, {
+				tempo: 1,
+				experimentoCodigo: 1,
+				video: 1,
+				placa: 1
+			})
+			.then((analises) => {
+				return res.status(201).json(analises)
+			})
+			.catch((err) => {
+				return res.status(422).send(err.errors)
+			})
 	},
 }
 module.exports = analiseController

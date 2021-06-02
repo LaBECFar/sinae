@@ -167,7 +167,7 @@ export default {
 						if(!placa.experimentoCodigo) {
 							placa.experimento.text = 'Não informado'
 						} else {
-							if(!placa.experimento){
+							if(!placa.experimento || !placa.experimento._id){
 								placa.experimento = {
 									text: `${placa.experimentoCodigo} (Não encontrado)`
 								}
@@ -179,7 +179,7 @@ export default {
 					this.items = data
 					this.isBusy = false
 				})
-				.catch(function() {
+				.catch(() => {
 					this.isBusy = false
 				})
 		},

@@ -1,5 +1,7 @@
 const placaModel = require("../models/placaModel");
+const experimentoModel = require("../models/experimentoModel");
 const { Parser } = require('json2csv');
+const ObjectId = require('mongodb').ObjectID;
 
 const placaController = {
 	list: (req, res, next) => {
@@ -10,14 +12,14 @@ const placaController = {
             filtros.createdBy = req.user.userid
 		}
 
-		placaModel
-			.find(filtros)
-			.then(placas => {
-				return res.status(201).json(placas);
-			})
-			.catch(err => {
-				return res.status(422).send(err.errors);
-			});
+		placaModel.find(filtros)
+			.populate('experimento')
+			.exec(function (err, results) {
+                if(err) { 
+					return res.status(422).send(err.errors);
+				}
+                return res.status(201).json(results);
+            })
 	},
 
 	get: (req, res, next) => {
@@ -33,12 +35,23 @@ const placaController = {
 			});
 	},
 
-	post: (req, res, next) => {
+	post: async (req, res, next) => {
 		const placa = new placaModel({
 			label: req.body.label,
 			experimentoCodigo: req.body.experimentoCodigo,
 			pocos: req.body.pocos || []
 		})
+
+		if(placa.experimentoCodigo) {
+			try {
+				const experimento = await experimentoModel.findOne({ codigo: placa.experimentoCodigo })
+				if(experimento){
+					placa.experimento = new ObjectId(experimento._id)
+				}
+			} catch( e ) {
+				console.log(e)
+			}
+		}
 
 		if(req.user){
             placa.createdBy = req.user.userid
@@ -56,41 +69,52 @@ const placaController = {
 		});
 	},
 
-	put: (req, res, next) => {
+	put: async (req, res, next) => {
 		var id = req.params.id;
 
-		placaModel
-			.findById(id)
-			.populate("placas")
-			.exec()
-			.then(placa => {
-				if (!placa) {
-					return res.status(404).send();
-				}
+		try {
+			const placa = await placaModel.findById(id).populate("placas").exec()
 
-				if (typeof req.body.label != "undefined") {
-					placa.label = req.body.label
-				}
+			if (!placa) {
+				return res.status(404).send();
+			}
 
-				if (typeof req.body.experimentoCodigo != "undefined"){
-                    placa.experimentoCodigo = req.body.experimentoCodigo
-                }
+			if (typeof req.body.label != "undefined") {
+				placa.label = req.body.label
+			}
 
-                if (typeof req.body.pocos != "undefined"){
-                    placa.pocos = req.body.pocos
-                }
+			if (typeof req.body.experimentoCodigo != "undefined"){
+				placa.experimentoCodigo = req.body.experimentoCodigo
 
-				placa.save(function(err, placa) {
-					if (err) {
-						return res.status(500).json({
-							message: "Erro ao atualizar placa.",
-							error: err,
-							success: false
-						});
+				if(placa.experimentoCodigo) {
+					try {
+						const experimento = await experimentoModel.findOne({ codigo: placa.experimentoCodigo })
+						if(experimento){
+							placa.experimento = new ObjectId(experimento._id)
+						}
+					} catch( e ) {
+						console.log(e)
 					}
-					return res.status(201).json(placa);
-				});
+				}
+			}
+
+			if (typeof req.body.pocos != "undefined"){
+				placa.pocos = req.body.pocos
+			}
+
+			placa.save(function(err, placa) {
+				if (err) {
+					return res.status(500).json({
+						message: "Erro ao atualizar placa.",
+						error: err,
+						success: false
+					});
+				}
+				return res.status(201).json(placa);
 			});
+		} catch(e) {
+			return res.status(500).send();
+		}
 	},
 
 	delete: (req, res, next) => {

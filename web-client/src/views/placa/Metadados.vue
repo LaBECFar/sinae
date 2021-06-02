@@ -192,6 +192,7 @@ import { apiTipoMetadado } from "../tipo-metadado/api"
 import PocoMetadados from "../../components/metadado/PocoMetadados"
 import PocosPlaca from "../../components/metadado/PocosPlaca"
 import ListSelector from "../../components/ListSelector"
+import moment from 'moment'
 
 export default {
 	name: "PlacaMetadados",
@@ -440,11 +441,24 @@ export default {
 				.listarPlacas()
 				.then((data) => {
 					let placas = data.filter((placa) => {
-						placa.titulo =
-							placa.label +
-							(placa.experimentoCodigo
-								? " (" + placa.experimentoCodigo + ")"
-								: "")
+						placa.titulo = `<strong>${placa.label}</strong>`
+						placa.titulo += '<br>'
+						if(placa.experimentoCodigo) {
+							placa.titulo += `<small>Experimento: `
+
+							if(placa.experimento){
+								placa.titulo += `${placa.experimento.label} - `
+							}
+
+							placa.titulo += placa.experimentoCodigo
+
+							if(placa.experimento){
+								placa.titulo += ` - ${moment(placa.experimento.createdAt).format("DD/MM/YYYY")}`
+							}
+
+							placa.titulo += '</small>'
+						}
+
 						return placa._id != this.placaId
 					})
 

@@ -15,9 +15,8 @@
 				:key="index"
 				v-on:click="select(item)"
 				v-show="item[list.itemTitle].toLowerCase().indexOf(search) > -1"
-			>
-				{{ item[list.itemTitle] }}
-			</li>
+				v-html="item[list.itemTitle]"
+			></li>
 		</ul>
 		<p class="empty-list" v-show="list.items.length <= 0">
 			{{ list.empty }}
@@ -124,4 +123,5 @@ li:hover {
     border-radius: 30px;
     line-height: 1;
 }
+.list-selector li{line-height: 1.2;}
 </style>

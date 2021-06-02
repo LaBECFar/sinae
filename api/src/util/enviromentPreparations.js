@@ -1,12 +1,14 @@
 const userModel = require("../models/userModel")
 const ObjectId = require('mongodb').ObjectID;
 const experimentoModel = require("../models/experimentoModel")
+const placaModel = require("../models/placaModel")
 
 const enviromentPreparations = {
     check()  {
         this.checkAdminUser()
         this.checkTmpFolder()
         this.addExperimentCreator()
+        this.addExperimentoToPlaca()
     },
 
     // Cria a pasta /uploads/tmp
@@ -68,6 +70,31 @@ const enviromentPreparations = {
             })
             .catch(err => {
                 console.log(err.errors)
+            });  
+    },
+
+    // Criado um usuário padrão caso nenhum esteja cadastrado
+    addExperimentoToPlaca() {
+        placaModel.find()
+            .then(placas => {
+                placas.forEach(placa => {
+                    if(!placa.experimento && placa.experimentoCodigo) {
+                        experimentoModel.findOne({ codigo: placa.experimentoCodigo })
+                            .then(experimento => {
+                                if(experimento){
+                                    placa.experimento = new ObjectId(experimento._id)
+                                    placa.save()
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });      
+                        
+                    }
+                })
+            })
+            .catch(err => {
+                console.log(err)
             });  
     }
 }

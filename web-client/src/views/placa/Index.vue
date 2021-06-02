@@ -93,6 +93,7 @@
 import {apiPlaca} from "./api"
 import Loading from "vue-loading-overlay"
 import "vue-loading-overlay/dist/vue-loading.css"
+import moment from 'moment'
 
 export default {
 	name: "PlacaIndex",
@@ -107,7 +108,7 @@ export default {
 					label: "Placa",
 				},
 				{
-					key: "experimentoCodigo",
+					key: "experimento.text",
 					label: "Experimento",
 				},
 				{
@@ -162,6 +163,19 @@ export default {
 			apiPlaca
 				.listarPlacas()
 				.then((data) => {
+					data.forEach(placa => {
+						if(!placa.experimentoCodigo) {
+							placa.experimento.text = 'Não informado'
+						} else {
+							if(!placa.experimento){
+								placa.experimento = {
+									text: `${placa.experimentoCodigo} (Não encontrado)`
+								}
+							} else {
+								placa.experimento.text = `${placa.experimento.label} - ${placa.experimento.codigo} - Data: ${moment(placa.experimento.createdAt).format("DD/MM/YYYY")}`
+							}
+						}
+					})
 					this.items = data
 					this.isBusy = false
 				})

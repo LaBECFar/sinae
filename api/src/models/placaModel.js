@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+//const experimentoModel = require("./experimentoModel")
 var Schema = mongoose.Schema;
 
 const placaSchema = new Schema(
@@ -10,6 +11,11 @@ const placaSchema = new Schema(
 
 		experimentoCodigo: {
 			type: String
+		},
+
+		experimento: {
+			type: Schema.Types.ObjectId, 
+			ref: 'experimento' 
 		},
 
 		pocos: [

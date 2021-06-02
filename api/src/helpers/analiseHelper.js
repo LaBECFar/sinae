@@ -155,6 +155,10 @@ const analiseHelper = {
 
 					row["Metadata_Well"] = wellName
 					row["Metadata_ExperimentCode"] = analise.experimentoCodigo
+					if(analise.experimento){
+						row["Metadata_ExperimentLabel"] = analise.experimento.label
+						row["Metadata_ExperimentDate"] = analise.experimento.createdAt
+					}
 					row["Metadata_Plate"] = analise.placa
 					row["Metadata_Time"] = analise.tempo
 
@@ -184,6 +188,9 @@ const analiseHelper = {
 
 	mergeMetadataToResults: async (analise) => {
 		const experimento = await experimentoModel.findOne({codigo: analise.experimentoCodigo})
+		if(experimento){
+			analise.experimento = experimento
+		}
 		
 		const placa = await placaModel.findOne({
 			label: analise.placa,
@@ -194,6 +201,7 @@ const analiseHelper = {
 		let metadados = []
 
 		if(placa){
+			analise.placaObject = placa
 			metadados = placaHelper.getWellsMetadata(placa)
 		}
 

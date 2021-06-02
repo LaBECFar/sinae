@@ -165,7 +165,9 @@ export default {
 				.then((data) => {
 					data.forEach(placa => {
 						if(!placa.experimentoCodigo) {
-							placa.experimento.text = 'Não informado'
+							placa.experimento = {
+								text: 'Não informado'
+							}
 						} else {
 							if(!placa.experimento || !placa.experimento._id){
 								placa.experimento = {

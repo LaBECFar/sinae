@@ -599,6 +599,7 @@ const analiseController = {
 		try {
 			analise = await analiseModel.findById(analiseId)
 			analise.interval = interval
+			analise.save()
 		} catch (err) {
 			return res.status(422).send(err.errors)
 		}

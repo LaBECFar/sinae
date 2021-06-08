@@ -1,9 +1,9 @@
 <template>
-    <header id="header" style="min-height:75px">
-        <div class="float-left logo-container">
-            <em>SchistoSPro</em>
+    <header id="header" style="min-height:70px">
+        <div class="logo-container">
+            <img src="../../assets/logo-white.png" width="auto" height="50" />
         </div>
-        <b-button style="margin-right:15px; margin-top:5px" class="float-right" @click="logout()" variant="light">
+        <b-button @click="logout()" variant="light">
             <v-icon style="font-weight: bolder" name="x"></v-icon>
         </b-button>
     </header>
@@ -30,8 +30,12 @@ export default {
 #header {
     background-color: #2c3e50;
     border-bottom: 5px solid #e5e5e5;
-    padding-top: 5px;
-    padding-left: 10px;
+    padding: 0 20px;
     color: #fff;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
 }
+
+#header img { display:block;}
 </style>

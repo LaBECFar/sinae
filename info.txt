@@ -1,7 +1,0 @@
-Coisas para fazer
-
-1 - compartilhar o volume entre vários containers 
-
-2 - processar todos os frames de um determinado quadrante 
-
-3 - 

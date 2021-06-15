@@ -70,9 +70,19 @@ h2 {
 	border-color: #cb6ce6 !important;
 }
 
+.btn-secondary {
+	background-color: #1d4056 !important;
+	border-color: #1d4056 !important;
+}
+
 .btn-primary:hover {
 	background-color: #a954c1 !important;
 	border-color: #a954c1 !important;
+}
+
+.btn-secondary:hover {
+	background-color: #193547 !important;
+	border-color: #193547 !important;
 }
 
 .organizacoes img {
@@ -217,7 +227,7 @@ h2 {
 		display: block;
 	}
 	.nav-item .nav-link:hover {
-		color:#cb6ce6;
+		color: #cb6ce6;
 	}
 
 	nav.menu .navbar-nav {
@@ -246,12 +256,21 @@ h2 {
 	#sobre .col + .col {
 		display: none;
 	}
-	
+
 	.organizacoes img {
 		width: 28%;
 	}
 }
-
+@media (max-width: 580px) {
+	#instalacao .actions {
+		flex-direction: column;
+		max-width: 300px;
+		margin: 0 auto;
+	}
+	#instalacao .btn + .btn {
+		margin-top: 5px;
+	}
+}
 @media (max-width: 480px) {
 	.contact span span {
 		font-size: 14px;

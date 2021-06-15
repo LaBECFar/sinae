@@ -42,6 +42,12 @@ services:
       - express-mongo-network-sinae
     logging:
       driver: none
+  site-sinae:
+        hostname: site-sinae
+        container_name: site-sinae
+        build: ./site
+        ports:
+          - "80:80"
 networks: 
     express-mongo-network-sinae:
       driver: bridge

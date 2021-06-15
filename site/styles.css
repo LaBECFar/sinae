@@ -145,10 +145,16 @@ h2 {
 .contact {
 	background: #fff;
 	box-shadow: 0 2px 4px #0002;
+	text-decoration: none;
+	transition: background-color 0.5s;
 }
 
-.contact a {
-	text-decoration: none;
+.contact strong {
+	color: #222;
+}
+
+.contact:hover {
+	background-color: #ddd;
 }
 
 #apresentacao {
@@ -210,6 +216,9 @@ h2 {
 	nav.menu.open {
 		display: block;
 	}
+	.nav-item .nav-link:hover {
+		color:#cb6ce6;
+	}
 
 	nav.menu .navbar-nav {
 		flex-direction: column;
@@ -229,13 +238,45 @@ h2 {
 		border-top: 1px solid #fff1;
 	}
 }
-
+.row.organizacoes .col {
+	align-items: center;
+	justify-content: center;
+}
 @media (max-width: 980px) {
 	#sobre .col + .col {
 		display: none;
 	}
-	.row.organizacoes .col {
-		align-items: center;
-		justify-content: center;
+	
+	.organizacoes img {
+		width: 28%;
+	}
+}
+
+@media (max-width: 480px) {
+	.contact span span {
+		font-size: 14px;
+		word-break: break-all;
+		display: block;
+	}
+	h1 {
+		font-size: 2rem;
+	}
+	h2 {
+		font-size: 1.7rem;
+	}
+	#sobre .d-flex {
+		flex-direction: column;
+	}
+	.intro .btn {
+		margin-top: 10px;
+	}
+	.intro .gplay {
+		background: #000;
+		text-align: center;
+		border-radius: 5px;
+		margin: 0 !important;
+	}
+	.organizacoes img {
+		width: 44%;
 	}
 }

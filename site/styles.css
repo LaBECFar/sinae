@@ -193,6 +193,12 @@ h2 {
 	z-index: -1;
 }
 
+#automatizacao {
+	background-color: #eee;
+}
+#automatizacao .lead {
+	max-width: 680px;
+}
 .menu-toggler.open svg path {
 	fill: white;
 }

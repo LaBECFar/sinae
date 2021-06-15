@@ -296,7 +296,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 dao.insertFrame(frame)
 
             } catch (e: Exception) {
-                Log.e("Erro", "${timeToString(frame.tempoMilis)}: ${e.message}")
+                // Log.e("Erro", "${timeToString(frame.tempoMilis)}: ${e.message}")
             }
 
             count++
@@ -312,13 +312,13 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
         try {
             mediaretriever.release()
         } catch (e: NoSuchMethodError) {
-            Log.e("Error", "Erro em release() MediaMetadataRetriver")
+            //Log.e("Error", "Erro em release() MediaMetadataRetriver")
         }
 
         try {
             mediaretriever.close()
         } catch (e: NoSuchMethodError) {
-            Log.e("Error", "Erro em close() MediaMetadataRetriver")
+            // Log.e("Error", "Erro em close() MediaMetadataRetriver")
         }
     }
 
@@ -419,9 +419,10 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 if(text.matches(regex)) {
                     val time = stringToTime(edt.text.toString())
                     it.seekTo(time)
-                } else {
-                    Log.d("Teste", "Não funcionou regex")
                 }
+                /*else {
+                    Log.d("Teste", "Não funcionou regex")
+                }*/
             }
         }
     }
@@ -512,7 +513,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 it.stop()
                 it.release()
             } catch (e: Exception) {
-                Log.e("Error", "Erro em releasePlayer()")
+                // Log.e("Error", "Erro em releasePlayer()")
             }
         }
         player = null

@@ -38,7 +38,7 @@ class Frame {
                 try {
                     file.delete()
                 } catch (e: Exception){
-                    Log.e("ExperimentoActivity", "Não foi possível excluir o arquivo: "+e.message)
+                    //Log.e("ExperimentoActivity", "Não foi possível excluir o arquivo: "+e.message)
                     return false
                 }
             }

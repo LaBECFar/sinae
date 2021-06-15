@@ -20,9 +20,8 @@ class FrameClient(val context: Context)  {
 
         val fileUri = Uri.parse(frame.uri)
         if(fileUri === null){
-            Log.d("SINAE", "FrameClient: Null URI")
+            // Log.d("SINAE", "FrameClient: Null URI")
         } else {
-
             val file = File(fileUri.path!!)
             val fileType = getMimeType(frame.uri)
             val requestFile = RequestBody.create(MediaType.parse(fileType), file)
@@ -46,7 +45,7 @@ class FrameClient(val context: Context)  {
                 response?.body()?.let {
                     successo(it.toFrame())
                 } ?: run {
-                    Log.d("Teste", "Não foi possível cadastrar no servidor" + response?.toString())
+                    //Log.d("Teste", "Não foi possível cadastrar no servidor" + response?.toString())
                 }
 
                 thorwable?.let {

@@ -24,6 +24,8 @@ class Analise : Serializable {
 
     var fps: Int = 1
 
+    var interval: Int = 1000
+
     var quadrantes: List<String> = listOf()
 
     var idserver: String = ""

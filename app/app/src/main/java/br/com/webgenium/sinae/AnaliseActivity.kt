@@ -69,7 +69,7 @@ class AnaliseActivity : AppCompatActivity() {
     private fun refreshActivity(){
         analise?.let {
             txt_titulo.text = it.tempo
-            txt_fps.text = getString(R.string.fps_count, it.fps)
+            txt_interval.text = getString(R.string.interval_attr, it.interval)
             txt_placa.text = getString(R.string.board_value, it.placa)
 
             var data = it.dataColeta

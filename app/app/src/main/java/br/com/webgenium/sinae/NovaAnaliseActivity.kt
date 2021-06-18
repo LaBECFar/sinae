@@ -69,7 +69,7 @@ class NovaAnaliseActivity : AppCompatActivity() {
     private fun selectVideo(){
         val sharedPreference = SharedPreference( this )
 
-        analise.fps = sharedPreference.getValueInt("fps")
+        analise.interval = sharedPreference.getValueInt("interval")
         analise.tempo = et_tempo.text.toString()
         analise.placa = et_placa.text.toString()
         analise.dataColeta = et_data.tag as String

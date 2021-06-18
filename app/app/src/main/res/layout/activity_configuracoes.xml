@@ -67,16 +67,16 @@
                 tools:ignore="HardcodedText" />
 
 
-            <!-- Frames por segundo (FPS) -->
+            <!-- Interval -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/frames_per_second"
+                android:text="@string/interval"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/et_fps"
+                android:id="@+id/et_interval"
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
                 android:importantForAutofill="no"
                 android:inputType="number"
                 android:padding="10dp"
-                android:text="1"
+                android:text="1000"
                 tools:ignore="HardcodedText" />
 
 

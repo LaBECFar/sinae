@@ -67,11 +67,11 @@
             android:hint="@string/collection_date"/>
 
         <TextView
-            android:id="@+id/txt_fps"
+            android:id="@+id/txt_interval"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:hint="@string/fps"/>
+            android:hint="@string/interval"/>
 
         <TextView
             android:id="@+id/txt_frames"

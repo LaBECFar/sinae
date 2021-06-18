@@ -18,7 +18,7 @@
     <string name="btn_start">INICIAR</string>
     <string name="register_experiment_before_begin">Cadastre o experimento no sistema antes de iniciar</string>
     <string name="continue_video_analise">Continue para selecionar o vídeo da analise</string>
-    <string name="fps">Frames por Segundo</string>
+    <string name="interval">Intervalo</string>
     <string name="experiment_time">Tempo do Experimento</string>
     <string name="experiment">Experimento</string>
     <string name="experiments">Experimentos</string>
@@ -29,7 +29,7 @@
     <string name="frames">Frames</string>
     <string name="frames_count">Frames: %s</string>
     <string name="frames_uploaded">Upload de frames concluído</string>
-    <string name="fps_count">FPS: %d</string>
+    <string name="interval_attr">Intervalo: %d</string>
     <string name="analisis">Análises</string>
     <string name="analisis_exclude">Excluir Análises</string>
     <string name="frames_exclude">Excluir Frames</string>
@@ -55,7 +55,7 @@
     <string name="no_frames">Nenhum frame vinculado a essa análise</string>
     <string name="api_port">Porta da API</string>
     <string name="api_url">Endereço da API</string>
-    <string name="frames_per_second">Extração de frames por segundo (FPS)</string>
+    <string name="frames_per_second">Extrair frame a cada quantos milissegundos (ms)</string>
     <string name="title">Título</string>
     <string name="sync_warning_analise">Essa análise não foi salva no servidor, \nclique para sincronizar</string>
     <string name="syncing_warning_analise">Sincronizando …</string>
@@ -81,6 +81,7 @@
     <string name="import_default_quadrants">Importar Padrão</string>
     <string name="file_format">Formato de arquivos</string>
     <string name="frame_file_format">Formato de arquivo dos frames</string>
+    <string name="default_interval">1000</string>
     <string-array name="filetypes">
         <item>PNG</item>
         <item>JPG</item>

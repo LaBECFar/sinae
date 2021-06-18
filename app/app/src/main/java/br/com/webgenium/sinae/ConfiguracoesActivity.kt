@@ -34,7 +34,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
     private fun loadConfig(){
         loadUrl()
         loadPort()
-        loadFps()
+        loadInterval()
         loadFiletype()
         loadQuadrants()
     }
@@ -79,44 +79,44 @@ class ConfiguracoesActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadFps(){
-        val fps = sharedPreference.getValueInt("fps")
-        if (fps > 0) {
-            et_fps.setText(fps.toString())
+    private fun loadInterval(){
+        val interval = sharedPreference.getValueInt("interval")
+        if (interval > 0) {
+            et_interval.setText(interval.toString())
         } else {
-            et_fps.setText("1")
+            et_interval.setText(getString(R.string.default_interval))
         }
     }
 
     private fun saveConfig() {
         val isPortSaved = savePort()
         val isUrlSaved = saveUrl()
-        val isFpsSaved = saveFps()
+        val isIntervalSaved = saveInterval()
         val isQuadrantsSaved = saveQuadrants()
         val isFiletypeSaved = saveFiletype()
 
-        if(isPortSaved && isUrlSaved && isFpsSaved && isQuadrantsSaved && isFiletypeSaved){
+        if(isPortSaved && isUrlSaved && isIntervalSaved && isQuadrantsSaved && isFiletypeSaved){
             toast(getString(R.string.config_saved), TOAST_SUCCESS)
         } else {
             toast(getString(R.string.config_invalid), TOAST_ERROR)
         }
     }
 
-    private fun saveFps(): Boolean {
-        var fps = 1
+    private fun saveInterval(): Boolean {
+        var interval = 1000
 
-        if(et_fps.text.toString().isNotEmpty()){
-            fps = et_fps.text.toString().toInt()
+        if(et_interval.text.toString().isNotEmpty()){
+            interval = et_interval.text.toString().toInt()
         } else {
-            et_fps.setText(fps)
+            et_interval.setText(interval)
         }
 
-        if (fps <= 0) {
-            et_fps.error = getString(R.string.bigger_than_0)
+        if (interval <= 0) {
+            et_interval.error = getString(R.string.bigger_than_0)
         }
 
-        if(et_fps.error == null){
-            sharedPreference.save("fps", fps)
+        if(et_interval.error == null){
+            sharedPreference.save("interval", interval)
             return true
         }
 
@@ -124,7 +124,7 @@ class ConfiguracoesActivity : AppCompatActivity() {
     }
 
     private fun saveFiletype(): Boolean {
-        var filetype = et_filetype.selectedItem.toString()
+        val filetype = et_filetype.selectedItem.toString()
         sharedPreference.save("filetype", filetype)
         return true
     }

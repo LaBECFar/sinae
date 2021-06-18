@@ -244,7 +244,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
     private fun extractFrames(): List<Frame> {
 
         val frames = mutableListOf<Frame>()
-        val milisecondsToFrame: Long = (1000 / analise.fps).toLong()
+        val milisecondsToFrame: Long = (analise.interval).toLong()
 
         var q = 1
         analise.quadrantes.forEach {

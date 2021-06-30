@@ -625,15 +625,14 @@ const analiseController = {
 			ffmpeg.ffprobe(videopath, function (err, metadata) {
 				const meta = metadata.streams[0]
 
-				let ratio = meta.display_aspect_ratio.split(':').map((num) => parseInt(num))
-				if (ratio[0] <= ratio[1]) {
-					ratio = ratio[0] / ratio[1]
-				} else {
-					ratio = ratio[1] / ratio[0]
-				}
+				let width = meta.width //Math.round(meta.height * ratio)
+				let height = meta.height
 
-				const width = Math.round(meta.height * ratio)
-				const height = meta.height
+				// invert width/height when video orientation is incorrect
+				if(meta.rotation == '-90' || meta.tags?.rotate == '90'){
+					width = meta.height
+					height = meta.width
+				}
 
 				ffmpeg(videopath)
 					.on('end', function () {

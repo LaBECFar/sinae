@@ -633,7 +633,6 @@ const analiseController = {
 					width = meta.height
 					height = meta.width
 				} else {
-					const biggerDimension = height > width ? height : width
 					let ratio = meta.display_aspect_ratio.split(':').map((num) => parseInt(num))
 
 					if (ratio[0] <= ratio[1]) {
@@ -642,8 +641,7 @@ const analiseController = {
 						ratio = ratio[1] / ratio[0]
 					}
 
-					width = Math.round(biggerDimension * ratio)
-					height = biggerDimension
+					width = Math.round(height * ratio)
 				}
 
 				ffmpeg(videopath)

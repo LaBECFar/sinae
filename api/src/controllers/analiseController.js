@@ -632,6 +632,18 @@ const analiseController = {
 				if(meta.rotation == '-90' || meta.tags?.rotate == '90'){
 					width = meta.height
 					height = meta.width
+				} else {
+					const biggerDimension = height > width ? height : width
+					let ratio = meta.display_aspect_ratio.split(':').map((num) => parseInt(num))
+
+					if (ratio[0] <= ratio[1]) {
+						ratio = ratio[0] / ratio[1]
+					} else {
+						ratio = ratio[1] / ratio[0]
+					}
+
+					width = Math.round(biggerDimension * ratio)
+					height = biggerDimension
 				}
 
 				ffmpeg(videopath)

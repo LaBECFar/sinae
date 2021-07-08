@@ -44,8 +44,10 @@
      
             <h4>Realização:</h4>
             <div class="creditos">
-                <img src="../assets/labecfar.png" width="auto" height="200" />
-                <img src="../assets/logo_rpt.svg"  width="auto" height="160"/>
+                <img src="../assets/labecfar.png" width="auto" />
+                <img src="../assets/logo_rpt.svg"  width="auto"/>
+                <img src="../assets/fiocruz_logo.jpg" width="auto"  />
+                <img src="../assets/inova_logo.jpeg" width="auto"/>
             </div>
         </div>
     </div>
@@ -94,17 +96,20 @@ export default {
 }
 .creditos { 
     display: flex;
-    
+    margin:0 -1%;
 }
 .creditos img {
-       margin-right: 20px;
+    margin: 0 1%;
     display: inline-block;
     object-fit: contain;
-    width: 300px;
+    width: 23%;
     height: 200px;
     border: 1px solid #ddd;
     padding: 10px 20px;
     border-radius: 2px;
 } 
-.realizacao h4 {margin-bottom: 10px; font-size: 20px;}
+.realizacao h4 {
+    margin-bottom: 10px; 
+    font-size: 20px;
+}
 </style>

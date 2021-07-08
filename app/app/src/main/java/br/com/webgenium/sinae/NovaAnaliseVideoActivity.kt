@@ -286,7 +286,7 @@ class NovaAnaliseVideoActivity : AppCompatActivity() {
                 val microseconds = "${frame.tempoMilis}000".toLong()
                 val bmp: Bitmap = mediaretriever.getFrameAtTime(
                     microseconds,
-                    MediaMetadataRetriever.OPTION_CLOSEST_SYNC
+                    MediaMetadataRetriever.OPTION_CLOSEST
                 )
 
                 val file = saveFrameToInternalStorage(bmp, frame)

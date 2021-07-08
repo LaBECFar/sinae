@@ -117,7 +117,7 @@
 			</b-form-group>
 
 			<b-form-group
-				label="Número maximo de containers para processamento de motilidade de poços:"
+				label="Número maximo de containers para extração de parâmetros fenotípicos de poços:"
 				label-for="maxMotilityContainers"
 			>
 				<b-form-input

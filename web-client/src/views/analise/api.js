@@ -155,7 +155,7 @@ export const apiAnalise = {
 					resolve(resp.data);
 				})
 				.catch(e => {
-					reject(new Error(`Erro ao iniciar processador de motilidade ${e}`));
+					reject(new Error(`Erro ao iniciar a extração de parâmetros fenotípicos ${e}`));
 				});
 		});
 	},
@@ -171,7 +171,7 @@ export const apiAnalise = {
 					resolve(resp.data);
 				})
 				.catch(e => {
-					reject(new Error(`Erro ao iniciar processador de motilidade ${e}`));
+					reject(new Error(`Erro ao iniciar a extração de parâmetros fenotípicos ${e}`));
 				});
 		});
 	},

@@ -30,6 +30,14 @@
 		</b-row>
 		<b-row>
 			<b-col>
+				<strong>Experimento:</strong>
+				<span>
+					{{ analise.experimentoCodigo }} - {{analise.experimento.label || ''}}
+				</span>
+			</b-col>
+		</b-row>
+		<b-row>
+			<b-col>
 				<strong>Data Coleta:</strong>
 				<span>
 					{{ analise.dataColeta | moment("utc", "DD/MM/YYYY") }}
@@ -208,7 +216,7 @@
 			</b-col>
 
 			<b-col md="3">
-				<b-card title="Motilidade">
+				<b-card title="Extração de parâmetros fenotípicos">
 					<b-card-text>
 						<b-alert
 							variant="warning"
@@ -219,9 +227,7 @@
 									analise.framesTotal < 1
 							"
 						>
-							O botão para iniciar o processador de dados de
-							motilidade só será habilitado após a extração de
-							todos os poços
+							O botão para iniciar a extração só será habilitado após a extração de todos os poços
 						</b-alert>
 						<div
 							v-show="
@@ -232,8 +238,7 @@
 									analise.pocosProcessados.length <= 0
 							"
 						>
-							Você já pode iniciar o processador de motilidade
-							clicando no botão abaixo
+							Você já pode iniciar a extração clicando no botão abaixo
 						</div>
 
 						<div
@@ -250,8 +255,7 @@
 						</div>
 
 						<div v-show="analise.pocosProcessados.length >= 60">
-							Você pode baixar os resultados do processo de
-							motilidade clicando no botão abaixo
+							Você pode baixar os resultados da extração clicando no botão abaixo
 						</div>
 					</b-card-text>
 
@@ -264,7 +268,7 @@
 								analise.framesTotal < 1 || processingMotility
 						"
 					>
-						Processar motilidade
+						Iniciar extração
 					</b-button>
 
 					<div
@@ -397,13 +401,13 @@ export default {
 				.startMotilityProcessor(this.analiseCodigo)
 				.then(() => {
 					this.msg.text =
-						"Inciado processador de motilidade, isso pode demorar um tempo"
+						"Inciada a extração de parâmetros fenotípicos, isso pode demorar um tempo"
 					this.msg.type = "info"
 					this.processingMotility = true
 				})
 				.catch(() => {
 					this.msg.text =
-						"Não foi posível iniciar o processador de motilidade"
+						"Não foi posível iniciar a extração de parâmetros fenotípicos"
 					this.msg.type = "danger"
 					this.processingMotility = false
 				})
@@ -435,8 +439,8 @@ export default {
 		resetMotility() {
 			this.$swal
 				.fire({
-					title: "Resetar motilidade",
-					text: "Tem certeza que deseja resetar a motilidade dos poços? Sera necessário reprocessar após o reset.",
+					title: "Resetar extração",
+					text: "Tem certeza que deseja resetar a extração de parâmetros fenotípicos dos poços? Sera necessário reprocessar após o reset.",
 					type: "warning",
 					showCancelButton: true,
 					confirmButtonText: "Sim, resetar!",
@@ -448,13 +452,13 @@ export default {
 						apiAnalise
 							.resetMotility(this.analiseCodigo)
 							.then(() => {
-								this.msg.text = "Motilidade resetada"
+								this.msg.text = "Extração de parâmetros fenotípicos resetada"
 								this.msg.type = "info"
 								this.refresh()
 							})
 							.catch(() => {
 								this.msg.text =
-									"Não foi posível resetar a motilidade da analise"
+									"Não foi posível resetar a extração de parâmetros fenotípicos da analise"
 								this.msg.type = "danger"
 							})
 					}

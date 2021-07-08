@@ -1,4 +1,5 @@
 const analiseModel = require('../models/analiseModel')
+const experimentoModel = require("../models/experimentoModel")
 const moment = require('moment')
 const frameModel = require('../models/frameModel')
 const placaModel = require('../models/placaModel')
@@ -51,6 +52,8 @@ const analiseController = {
 			.then(async (analise) => {
 				let obj = analise.toObject()
 				obj.idserver = analise._id
+
+				obj.experimento = await experimentoModel.findOne({ codigo: analise.experimentoCodigo })
 
 				obj.isProcessingMotility = await dockerHelper.isAnyContainerActive('cellprofiler_processor', `${analise.experimentoCodigo}/${analise.placa}/${analise.tempo}/`)
 
@@ -774,7 +777,7 @@ const analiseController = {
 		const analise = await analiseModel.findById(analiseId)
 		analiseHelper.resetProcessedMotility(analise)
 		return res.status(201).json({
-			message: 'Motilidade da analise resetada',
+			message: 'Extração de parâmetros fenotípicos da analise resetada',
 			success: true,
 		})
 	},

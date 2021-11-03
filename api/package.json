@@ -33,7 +33,7 @@
     "p-queue": "^6.6.2",
     "rimraf": "^3.0.0",
     "shortid": "^2.2.15",
-    "validator": "^12.1.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "jest": "^24.9.0",

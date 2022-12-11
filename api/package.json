@@ -17,7 +17,7 @@
     "cors": "^2.8.5",
     "dockerode": "^3.0.2",
     "env-cmd": "^9.0.3",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-validator": "^6.4.1",
     "fast-csv": "^4.3.2",
     "ffmpeg-extract-frames": "^2.0.2",
